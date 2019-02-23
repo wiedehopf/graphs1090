@@ -25,6 +25,10 @@ Find this section:
 </Plugin>
 ```
 And change the URL to where your dump1090 webinterface is located.
+After changing the URL, restart collectd:
+```
+sudo systemctl restart collectd
+```
 
 ## View the graphs:
 
