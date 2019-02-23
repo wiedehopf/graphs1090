@@ -11,7 +11,9 @@ sudo bash -c "$(wget -O - https://raw.githubusercontent.com/wiedehopf/graphs1090
 Click the following URL and replace the IP address with the IP address of the Raspberry Pi you installed combine1090 on.
 
 http://192.168.x.yy/graphs1090
+
 or
+
 http://192.168.x.yy/perf
 
 
