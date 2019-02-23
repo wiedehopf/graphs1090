@@ -1,0 +1,13 @@
+#!/bin/bash
+
+ipath=/usr/share/graphs1090
+
+cp /etc/collectd/collectd.conf.graphs1090 /etc/collectd/collectd.conf
+rm /etc/cron.d/cron-graphs1090
+
+lighty-disable-mod graphs1090 >/dev/null
+
+apt-get remove -y $(ls $ipath/installed)
+
+systemctl restart collectd
+rm -r $ipath
