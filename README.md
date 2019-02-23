@@ -10,6 +10,7 @@ sudo bash -c "$(wget -O - https://raw.githubusercontent.com/wiedehopf/graphs1090
 
 If you are not using dump1090-fa, the URL where the webinterface is available needs to be changed in
 `/etc/collectd/collectd.conf`
+
 Find this section:
 ```
 <Plugin python>
