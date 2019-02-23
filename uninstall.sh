@@ -2,7 +2,7 @@
 
 ipath=/usr/share/graphs1090
 
-cp /etc/collectd/collectd.conf.graphs1090 /etc/collectd/collectd.conf
+mv /etc/collectd/collectd.conf.graphs1090 /etc/collectd/collectd.conf
 rm /etc/cron.d/cron-graphs1090
 
 lighty-disable-mod graphs1090 >/dev/null
