@@ -4,6 +4,7 @@ from contextlib import closing
 from urllib2 import urlopen, URLError
 import urlparse
 import time
+import subprocess
 
 def handle_config(root):
     for child in root.children:
@@ -172,6 +173,29 @@ def read_stats(instance_name, host, url):
                    type_instance=k,
                    time=T(stats['total']['end']),
                    values = [stats['total']['cpu'][k]])
+
+    #airspy cpu usage
+    p = subprocess.Popen("cat /proc/$(pgrep airspy_adsb)/task/$(ls /proc/$(pgrep airspy)/task | awk NR==3)/stat | cut -d ' ' -f 14,15 && getconf CLK_TCK",
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE,
+                        shell=True)
+
+    out, err = p.communicate()
+    ptime=0
+
+    if p.returncode == 0 :
+        out, clk_tck = out.split('\n', 1)
+        out = [int(int(i)*1000/int(clk_tck)) for i in out.split(' ')]
+        ptime = sum(out)
+        utime = out[0]
+        stime = out[1]
+
+    V.dispatch(plugin_instance = instance_name,
+               host=host,
+               type='dump1090_cpu',
+               type_instance='airspy',
+               time=time.time(),
+               values = [ptime])
 
 def greatcircle(lat0, lon0, lat1, lon1):
     lat0 = lat0 * math.pi / 180.0;

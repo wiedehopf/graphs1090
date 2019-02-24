@@ -52,7 +52,9 @@ aircraft_message_rate_graph() {
   --right-axis 10:0 \
   "TEXTALIGN:center" \
   "DEF:aircrafts=$2/dump1090_aircraft-recent.rrd:total:AVERAGE" \
-  "DEF:messages=$2/dump1090_messages-local_accepted.rrd:value:AVERAGE" \
+  "DEF:messages1=$2/dump1090_messages-local_accepted.rrd:value:AVERAGE" \
+  "DEF:messages2=$2/dump1090_messages-remote_accepted.rrd:value:AVERAGE" \
+  "CDEF:messages=messages1,messages2,+" \
   "CDEF:provisional=messages,aircrafts,/" \
   "CDEF:rate=aircrafts,0,GT,provisional,0,IF" \
   "CDEF:aircrafts10=aircrafts,10,/" \
@@ -83,9 +85,12 @@ cpu_graph_dump1090() {
   "CDEF:readerp=reader,10,/" \
   "DEF:background=$2/dump1090_cpu-background.rrd:value:AVERAGE" \
   "CDEF:backgroundp=background,10,/" \
+  "DEF:airspy=$2/dump1090_cpu-airspy.rrd:value:AVERAGE" \
+  "CDEF:airspyp=airspy,10,/" \
   "AREA:readerp#008000:USB" \
   "AREA:backgroundp#00C000:Other:STACK" \
-  "AREA:demodp#00FF00:Demodulator\c:STACK" \
+  "AREA:demodp#00FF00:Demodulator:STACK" \
+  "LINE1:airspyp#FF0000:Airspy\c" \
   "COMMENT: \n" \
   --watermark "Drawn: $nowlit";
 }
@@ -348,7 +353,9 @@ local_rate_graph() {
   --lower-limit 0  \
   --units-exponent 0 \
   --right-axis 360:0 \
-  "DEF:messages=$2/dump1090_messages-local_accepted.rrd:value:AVERAGE" \
+  "DEF:messages1=$2/dump1090_messages-local_accepted.rrd:value:AVERAGE" \
+  "DEF:messages2=$2/dump1090_messages-remote_accepted.rrd:value:AVERAGE" \
+  "CDEF:messages=messages1,messages2,+" \
   "DEF:strong=$2/dump1090_messages-strong_signals.rrd:value:AVERAGE" \
   "DEF:positions=$2/dump1090_messages-positions.rrd:value:AVERAGE" \
   "CDEF:y2positions=positions,10,*" \
@@ -373,35 +380,79 @@ local_trailing_rate_graph() {
   --right-axis 360:0 \
   --pango-markup \
   "TEXTALIGN:center" \
-  "DEF:messages=$2/dump1090_messages-local_accepted.rrd:value:AVERAGE" \
-  "DEF:a=$2/dump1090_messages-local_accepted.rrd:value:AVERAGE:end=now-86400:start=end-86400" \
-  "DEF:b=$2/dump1090_messages-local_accepted.rrd:value:AVERAGE:end=now-172800:start=end-86400" \
-  "DEF:c=$2/dump1090_messages-local_accepted.rrd:value:AVERAGE:end=now-259200:start=end-86400" \
-  "DEF:d=$2/dump1090_messages-local_accepted.rrd:value:AVERAGE:end=now-345600:start=end-86400" \
-  "DEF:e=$2/dump1090_messages-local_accepted.rrd:value:AVERAGE:end=now-432000:start=end-86400" \
-  "DEF:f=$2/dump1090_messages-local_accepted.rrd:value:AVERAGE:end=now-518400:start=end-86400" \
-  "DEF:g=$2/dump1090_messages-local_accepted.rrd:value:AVERAGE:end=now-604800:start=end-86400" \
-  "DEF:amin=$2/dump1090_messages-local_accepted.rrd:value:MIN:end=now-86400:start=end-86400" \
-  "DEF:bmin=$2/dump1090_messages-local_accepted.rrd:value:MIN:end=now-172800:start=end-86400" \
-  "DEF:cmin=$2/dump1090_messages-local_accepted.rrd:value:MIN:end=now-259200:start=end-86400" \
-  "DEF:dmin=$2/dump1090_messages-local_accepted.rrd:value:MIN:end=now-345600:start=end-86400" \
-  "DEF:emin=$2/dump1090_messages-local_accepted.rrd:value:MIN:end=now-432000:start=end-86400" \
-  "DEF:fmin=$2/dump1090_messages-local_accepted.rrd:value:MIN:end=now-518400:start=end-86400" \
-  "DEF:gmin=$2/dump1090_messages-local_accepted.rrd:value:MIN:end=now-604800:start=end-86400" \
-  "DEF:amax=$2/dump1090_messages-local_accepted.rrd:value:MAX:end=now-86400:start=end-86400" \
-  "DEF:bmax=$2/dump1090_messages-local_accepted.rrd:value:MAX:end=now-172800:start=end-86400" \
-  "DEF:cmax=$2/dump1090_messages-local_accepted.rrd:value:MAX:end=now-259200:start=end-86400" \
-  "DEF:dmax=$2/dump1090_messages-local_accepted.rrd:value:MAX:end=now-345600:start=end-86400" \
-  "DEF:emax=$2/dump1090_messages-local_accepted.rrd:value:MAX:end=now-432000:start=end-86400" \
-  "DEF:fmax=$2/dump1090_messages-local_accepted.rrd:value:MAX:end=now-518400:start=end-86400" \
-  "DEF:gmax=$2/dump1090_messages-local_accepted.rrd:value:MAX:end=now-604800:start=end-86400" \
-  "CDEF:a1=a,UN,0,a,IF" \
-  "CDEF:b1=b,UN,0,b,IF" \
-  "CDEF:c1=c,UN,0,c,IF" \
-  "CDEF:d1=d,UN,0,d,IF" \
-  "CDEF:e1=e,UN,0,e,IF" \
-  "CDEF:f1=f,UN,0,f,IF" \
-  "CDEF:g1=g,UN,0,g,IF" \
+  "DEF:messages1=$2/dump1090_messages-local_accepted.rrd:value:AVERAGE" \
+  "DEF:a1=$2/dump1090_messages-local_accepted.rrd:value:AVERAGE:end=now-86400:start=end-86400" \
+  "DEF:b1=$2/dump1090_messages-local_accepted.rrd:value:AVERAGE:end=now-172800:start=end-86400" \
+  "DEF:c1=$2/dump1090_messages-local_accepted.rrd:value:AVERAGE:end=now-259200:start=end-86400" \
+  "DEF:d1=$2/dump1090_messages-local_accepted.rrd:value:AVERAGE:end=now-345600:start=end-86400" \
+  "DEF:e1=$2/dump1090_messages-local_accepted.rrd:value:AVERAGE:end=now-432000:start=end-86400" \
+  "DEF:f1=$2/dump1090_messages-local_accepted.rrd:value:AVERAGE:end=now-518400:start=end-86400" \
+  "DEF:g1=$2/dump1090_messages-local_accepted.rrd:value:AVERAGE:end=now-604800:start=end-86400" \
+  "DEF:amin1=$2/dump1090_messages-local_accepted.rrd:value:MIN:end=now-86400:start=end-86400" \
+  "DEF:bmin1=$2/dump1090_messages-local_accepted.rrd:value:MIN:end=now-172800:start=end-86400" \
+  "DEF:cmin1=$2/dump1090_messages-local_accepted.rrd:value:MIN:end=now-259200:start=end-86400" \
+  "DEF:dmin1=$2/dump1090_messages-local_accepted.rrd:value:MIN:end=now-345600:start=end-86400" \
+  "DEF:emin1=$2/dump1090_messages-local_accepted.rrd:value:MIN:end=now-432000:start=end-86400" \
+  "DEF:fmin1=$2/dump1090_messages-local_accepted.rrd:value:MIN:end=now-518400:start=end-86400" \
+  "DEF:gmin1=$2/dump1090_messages-local_accepted.rrd:value:MIN:end=now-604800:start=end-86400" \
+  "DEF:amax1=$2/dump1090_messages-local_accepted.rrd:value:MAX:end=now-86400:start=end-86400" \
+  "DEF:bmax1=$2/dump1090_messages-local_accepted.rrd:value:MAX:end=now-172800:start=end-86400" \
+  "DEF:cmax1=$2/dump1090_messages-local_accepted.rrd:value:MAX:end=now-259200:start=end-86400" \
+  "DEF:dmax1=$2/dump1090_messages-local_accepted.rrd:value:MAX:end=now-345600:start=end-86400" \
+  "DEF:emax1=$2/dump1090_messages-local_accepted.rrd:value:MAX:end=now-432000:start=end-86400" \
+  "DEF:fmax1=$2/dump1090_messages-local_accepted.rrd:value:MAX:end=now-518400:start=end-86400" \
+  "DEF:gmax1=$2/dump1090_messages-local_accepted.rrd:value:MAX:end=now-604800:start=end-86400" \
+  "DEF:messages2=$2/dump1090_messages-remote_accepted.rrd:value:AVERAGE" \
+  "DEF:a2=$2/dump1090_messages-remote_accepted.rrd:value:AVERAGE:end=now-86400:start=end-86400" \
+  "DEF:b2=$2/dump1090_messages-remote_accepted.rrd:value:AVERAGE:end=now-172800:start=end-86400" \
+  "DEF:c2=$2/dump1090_messages-remote_accepted.rrd:value:AVERAGE:end=now-259200:start=end-86400" \
+  "DEF:d2=$2/dump1090_messages-remote_accepted.rrd:value:AVERAGE:end=now-345600:start=end-86400" \
+  "DEF:e2=$2/dump1090_messages-remote_accepted.rrd:value:AVERAGE:end=now-432000:start=end-86400" \
+  "DEF:f2=$2/dump1090_messages-remote_accepted.rrd:value:AVERAGE:end=now-518400:start=end-86400" \
+  "DEF:g2=$2/dump1090_messages-remote_accepted.rrd:value:AVERAGE:end=now-604800:start=end-86400" \
+  "DEF:amin2=$2/dump1090_messages-remote_accepted.rrd:value:MIN:end=now-86400:start=end-86400" \
+  "DEF:bmin2=$2/dump1090_messages-remote_accepted.rrd:value:MIN:end=now-172800:start=end-86400" \
+  "DEF:cmin2=$2/dump1090_messages-remote_accepted.rrd:value:MIN:end=now-259200:start=end-86400" \
+  "DEF:dmin2=$2/dump1090_messages-remote_accepted.rrd:value:MIN:end=now-345600:start=end-86400" \
+  "DEF:emin2=$2/dump1090_messages-remote_accepted.rrd:value:MIN:end=now-432000:start=end-86400" \
+  "DEF:fmin2=$2/dump1090_messages-remote_accepted.rrd:value:MIN:end=now-518400:start=end-86400" \
+  "DEF:gmin2=$2/dump1090_messages-remote_accepted.rrd:value:MIN:end=now-604800:start=end-86400" \
+  "DEF:amax2=$2/dump1090_messages-remote_accepted.rrd:value:MAX:end=now-86400:start=end-86400" \
+  "DEF:bmax2=$2/dump1090_messages-remote_accepted.rrd:value:MAX:end=now-172800:start=end-86400" \
+  "DEF:cmax2=$2/dump1090_messages-remote_accepted.rrd:value:MAX:end=now-259200:start=end-86400" \
+  "DEF:dmax2=$2/dump1090_messages-remote_accepted.rrd:value:MAX:end=now-345600:start=end-86400" \
+  "DEF:emax2=$2/dump1090_messages-remote_accepted.rrd:value:MAX:end=now-432000:start=end-86400" \
+  "DEF:fmax2=$2/dump1090_messages-remote_accepted.rrd:value:MAX:end=now-518400:start=end-86400" \
+  "DEF:gmax2=$2/dump1090_messages-remote_accepted.rrd:value:MAX:end=now-604800:start=end-86400" \
+  "CDEF:messages=messages1,messages2,+" \
+  "CDEF:a=a1,a2,+" \
+  "CDEF:b=b1,b2,+" \
+  "CDEF:c=c1,c2,+" \
+  "CDEF:d=d1,d2,+" \
+  "CDEF:e=e1,e2,+" \
+  "CDEF:f=f1,f2,+" \
+  "CDEF:g=g1,g2,+" \
+  "CDEF:amin=amin1,amin2,+" \
+  "CDEF:bmin=bmin1,bmin2,+" \
+  "CDEF:cmin=cmin1,cmin2,+" \
+  "CDEF:dmin=dmin1,dmin2,+" \
+  "CDEF:emin=emin1,emin2,+" \
+  "CDEF:fmin=fmin1,fmin2,+" \
+  "CDEF:gmin=gmin1,gmin2,+" \
+  "CDEF:amax=amax1,amax2,+" \
+  "CDEF:bmax=bmax1,bmax2,+" \
+  "CDEF:cmax=cmax1,cmax2,+" \
+  "CDEF:dmax=dmax1,dmax2,+" \
+  "CDEF:emax=emax1,emax2,+" \
+  "CDEF:fmax=fmax1,fmax2,+" \
+  "CDEF:gmax=gmax1,gmax2,+" \
+  "CDEF:a3=a,UN,0,a,IF" \
+  "CDEF:b3=b,UN,0,b,IF" \
+  "CDEF:c3=c,UN,0,c,IF" \
+  "CDEF:d3=d,UN,0,d,IF" \
+  "CDEF:e3=e,UN,0,e,IF" \
+  "CDEF:f3=f,UN,0,f,IF" \
+  "CDEF:g3=g,UN,0,g,IF" \
   "DEF:strong=$2/dump1090_messages-strong_signals.rrd:value:AVERAGE" \
   "DEF:positions=$2/dump1090_messages-positions.rrd:value:AVERAGE" \
   "CDEF:y2positions=positions,10,*" \
@@ -410,13 +461,13 @@ local_trailing_rate_graph() {
   "CDEF:hundred=messages,UN,100,100,IF" \
   "CDEF:strong_percent=strong_total,hundred,*,messages_total,/" \
   "VDEF:strong_percent_vdef=strong_percent,LAST" \
-  "SHIFT:a1:86400" \
-  "SHIFT:b1:172800" \
-  "SHIFT:c1:259200" \
-  "SHIFT:d1:345600" \
-  "SHIFT:e1:432000" \
-  "SHIFT:f1:518400" \
-  "SHIFT:g1:604800" \
+  "SHIFT:a3:86400" \
+  "SHIFT:b3:172800" \
+  "SHIFT:c3:259200" \
+  "SHIFT:d3:345600" \
+  "SHIFT:e3:432000" \
+  "SHIFT:f3:518400" \
+  "SHIFT:g3:604800" \
   "SHIFT:amin:86400" \
   "SHIFT:bmin:172800" \
   "SHIFT:cmin:259200" \
@@ -431,7 +482,7 @@ local_trailing_rate_graph() {
   "SHIFT:emax:432000" \
   "SHIFT:fmax:518400" \
   "SHIFT:gmax:604800" \
-  "CDEF:7dayaverage=a1,b1,c1,d1,e1,f1,g1,+,+,+,+,+,+,7,/" \
+  "CDEF:7dayaverage=a3,b3,c3,d3,e3,f3,g3,+,+,+,+,+,+,7,/" \
   "CDEF:min1=amin,bmin,MINNAN" \
   "CDEF:min2=cmin,dmin,MINNAN" \
   "CDEF:min3=emin,fmin,MINNAN" \
