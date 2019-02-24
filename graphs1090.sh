@@ -70,6 +70,11 @@ aircraft_message_rate_graph() {
 }
 
 cpu_graph_dump1090() {
+  if [ -f $2/dump1090_cpu-airspy.rrd ]; then
+	  airspy_graph1="DEF:airspy=$2/dump1090_cpu-airspy.rrd:value:AVERAGE"
+	  airspy_graph2="CDEF:airspyp=airspy,10,/"
+	  airspy_graph3="LINE2:airspyp#FF0000:Airspy"
+  fi
   $pre; rrdtool graph \
   "$1" \
   --start end-$4 \
@@ -85,12 +90,12 @@ cpu_graph_dump1090() {
   "CDEF:readerp=reader,10,/" \
   "DEF:background=$2/dump1090_cpu-background.rrd:value:AVERAGE" \
   "CDEF:backgroundp=background,10,/" \
-  "DEF:airspy=$2/dump1090_cpu-airspy.rrd:value:AVERAGE" \
-  "CDEF:airspyp=airspy,10,/" \
+  $airspy_graph1 \
+  $airspy_graph2 \
+  $airspy_graph3 \
   "AREA:readerp#008000:USB" \
   "AREA:backgroundp#00C000:Other:STACK" \
-  "AREA:demodp#00FF00:Demodulator:STACK" \
-  "LINE1:airspyp#FF0000:Airspy\c" \
+  "AREA:demodp#00FF00:Demodulator\c:STACK" \
   "COMMENT: \n" \
   --watermark "Drawn: $nowlit";
 }
