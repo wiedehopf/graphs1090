@@ -50,8 +50,15 @@ cp 88-graphs1090.conf /etc/lighttpd/conf-available
 lighty-enable-mod graphs1090 >/dev/null
 
 
+if wget http://localhost/dump1090/data/stats.json -O /dev/null -q
+then
+	sed -i 's?localhost/dump1090-fa?localhost/dump1090?' /etc/collectd/collectd.conf
+	echo --------------
+	echo "dump1090 webaddress automatically set to http://localhost/dump1090/"
+fi
+
 systemctl daemon-reload
-systemctl enable collectd
+systemctl enable collectd &>/dev/null
 systemctl restart collectd lighttpd
 
 
