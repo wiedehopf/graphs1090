@@ -187,13 +187,14 @@ def read_stats(instance_name, host, url):
     if p.returncode == 0 :
         try:
             out, clk_tck = out.split('\n', 1)
-            out = [int(int(i)*1000/int(clk_tck)) for i in out.split(' ')]
+            out = [(int(i)*1000)/int(clk_tck) for i in out.split(' ')]
             ptime = sum(out)
             utime = out[0]
             stime = out[1]
 
         except:
             ptime=0
+
     if ptime != 0 :
         V.dispatch(plugin_instance = instance_name,
                    host=host,
