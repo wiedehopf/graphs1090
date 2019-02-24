@@ -6,9 +6,9 @@ renice -n 5 -p $$
 
 ## DUMP1090 GRAPHS
 grid="-c GRID#FFFFFF --grid-dash 2:1"
-fontsize=9
-small="$grid -n DEFAULT:$fontsize -D --width 619 --height 324"
-big="$grid -n DEFAULT:$fontsize --width 1084 --height 234"
+fontsize="-n TITLE:10:. -n AXIS:8:. -n UNIT:9:. -n LEGEND:9:."
+small="$grid $fontsize -D --width 619 --height 324"
+big="$grid $fontsize --width 1084 --height 234"
 
 pre="sleep 0.2"
 
@@ -31,7 +31,7 @@ aircraft_graph() {
   "VDEF:maxac=all,MAXIMUM" \
   "AREA:all#00FF00:Aircraft Seen / Tracked,   " \
   "GPRINT:avgac:Average\:%3.0lf     " \
-  "GPRINT:maxac:Maximum\:%3.0lf             " \
+  "GPRINT:maxac:Maximum\:%3.0lf\c" \
   "LINE1:pos#0000FF:w/ Positions" \
   "LINE1:noloc#FF0000:w/o Positions" \
   "LINE1:mlat#000000:mlat" \
