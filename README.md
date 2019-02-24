@@ -18,7 +18,7 @@ or
 
 http://192.168.x.yy/perf
 
-#Non-standard configuration:
+### Non-standard configuration:
 
 If your local map is not reachable at /dump1090-fa or /dump1090, you can edit the following the file to input the URL of your local map:
 
