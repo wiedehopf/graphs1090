@@ -55,6 +55,11 @@ then
 	sed -i 's?localhost/dump1090-fa?localhost/dump1090?' /etc/collectd/collectd.conf
 	echo --------------
 	echo "dump1090 webaddress automatically set to http://localhost/dump1090/"
+elif ! wget http://localhost/dump1090-fa/data/stats.json -O /dev/null -q
+then
+	echo --------------
+	echo "Non-standard configuration detected, you need to change the data URL in /etc/collectd/collectd.conf!"
+	echo --------------
 fi
 
 systemctl daemon-reload
