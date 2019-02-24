@@ -8,10 +8,24 @@ Also works for other dump1090 variants supplying stats.json
 sudo bash -c "$(wget -O - https://raw.githubusercontent.com/wiedehopf/graphs1090/master/install.sh)"
 ```
 
-If you are not using dump1090-fa, the URL where the webinterface is available needs to be changed in
-`/etc/collectd/collectd.conf`
+## View the graphs:
+
+Click the following URL and replace the IP address with the IP address of the Raspberry Pi you installed combine1090 on.
+
+http://192.168.x.yy/graphs1090
+
+or
+
+http://192.168.x.yy/perf
+
+#Non-standard configuration:
+
+If your local map is not reachable at /dump1090-fa or /dump1090, you can edit the following the file to input the URL of your local map:
+
+```/etc/collectd/collectd.conf```
 
 Find this section:
+
 ```
 <Plugin python>
         ModulePath "/usr/share/graphs1090"
@@ -30,15 +44,6 @@ After changing the URL, restart collectd:
 sudo systemctl restart collectd
 ```
 
-## View the graphs:
-
-Click the following URL and replace the IP address with the IP address of the Raspberry Pi you installed combine1090 on.
-
-http://192.168.x.yy/graphs1090
-
-or
-
-http://192.168.x.yy/perf
 
 
 ### Deinstallation:
