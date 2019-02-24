@@ -63,7 +63,7 @@ then
 fi
 
 mkdir -p /var/lib/collectd/rrd/localhost/dump1090-localhost
-cp -n dump1090_cpu-airspy.rrd /var/lib/collectd/rrd/localhost/dump1090-localhost
+#cp -n dump1090_cpu-airspy.rrd /var/lib/collectd/rrd/localhost/dump1090-localhost
 
 systemctl daemon-reload
 systemctl enable collectd &>/dev/null
