@@ -7,8 +7,10 @@ renice -n 5 -p $$
 ## DUMP1090 GRAPHS
 grid="-c GRID#FFFFFF --grid-dash 2:1"
 fontsize="-n TITLE:10:. -n AXIS:8:. -n UNIT:9:. -n LEGEND:9:."
-small="$grid $fontsize -D --width 619 --height 324"
-big="$grid $fontsize --width 1084 --height 234"
+options="$grid $fontsize -Z"
+small="$options -D --width 619 --height 324"
+big="$options --width 960 --height 235"
+#1096 or 960
 
 pre="sleep 0.2"
 
