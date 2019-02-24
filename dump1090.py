@@ -182,6 +182,8 @@ def read_stats(instance_name, host, url):
 
     out, err = p.communicate()
 
+    ptime=0
+
     if p.returncode == 0 :
         try:
             out, clk_tck = out.split('\n', 1)
@@ -190,14 +192,15 @@ def read_stats(instance_name, host, url):
             utime = out[0]
             stime = out[1]
 
-            V.dispatch(plugin_instance = instance_name,
-                       host=host,
-                       type='dump1090_cpu',
-                       type_instance='airspy',
-                       time=time.time(),
-                       values = [ptime])
         except:
             ptime=0
+    if ptime != 0 :
+        V.dispatch(plugin_instance = instance_name,
+                   host=host,
+                   type='dump1090_cpu',
+                   type_instance='airspy',
+                   time=time.time(),
+                   values = [ptime])
 
 
 def greatcircle(lat0, lon0, lat1, lon1):
