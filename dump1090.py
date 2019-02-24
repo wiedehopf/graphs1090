@@ -181,21 +181,24 @@ def read_stats(instance_name, host, url):
                         shell=True)
 
     out, err = p.communicate()
-    ptime=0
 
     if p.returncode == 0 :
-        out, clk_tck = out.split('\n', 1)
-        out = [int(int(i)*1000/int(clk_tck)) for i in out.split(' ')]
-        ptime = sum(out)
-        utime = out[0]
-        stime = out[1]
+        try:
+            out, clk_tck = out.split('\n', 1)
+            out = [int(int(i)*1000/int(clk_tck)) for i in out.split(' ')]
+            ptime = sum(out)
+            utime = out[0]
+            stime = out[1]
 
-    V.dispatch(plugin_instance = instance_name,
-               host=host,
-               type='dump1090_cpu',
-               type_instance='airspy',
-               time=time.time(),
-               values = [ptime])
+            V.dispatch(plugin_instance = instance_name,
+                       host=host,
+                       type='dump1090_cpu',
+                       type_instance='airspy',
+                       time=time.time(),
+                       values = [ptime])
+        except:
+            ptime=0
+
 
 def greatcircle(lat0, lon0, lat1, lon1):
     lat0 = lat0 * math.pi / 180.0;
