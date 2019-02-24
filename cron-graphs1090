@@ -7,7 +7,7 @@ PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/usr/share/gra
 2-59/4 * * * * root bash graphs1090.sh 6h >/dev/null 2>&1
 3-59/4 * * * * root bash graphs1090.sh 24h >/dev/null 2>&1
 4-59/8 * * * * root bash graphs1090.sh 48h >/dev/null 2>&1
-8-40 * * * * root bash graphs1090.sh 7d >/dev/null 2>&1
+8,40 * * * * root bash graphs1090.sh 7d >/dev/null 2>&1
 16 * * * * root bash graphs1090.sh 14d >/dev/null 2>&1
 24 * * * * root bash graphs1090.sh 30d >/dev/null 2>&1
 32 * * * * root bash graphs1090.sh 90d >/dev/null 2>&1
