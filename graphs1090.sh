@@ -97,7 +97,7 @@ aircraft_message_rate_graph() {
 		"DEF:aircrafts=$2/dump1090_aircraft-recent.rrd:total:AVERAGE" \
 		"DEF:messages1=$2/dump1090_messages-local_accepted.rrd:value:AVERAGE" \
 		"DEF:messages2=$2/dump1090_messages-remote_accepted.rrd:value:AVERAGE" \
-		"CDEF:messages=messages1,messages2,+" \
+		"CDEF:messages=messages1,messages2,ADDNAN" \
 		"CDEF:provisional=messages,aircrafts,/" \
 		"CDEF:rate=aircrafts,0,GT,provisional,0,IF" \
 		"CDEF:aircrafts10=aircrafts,10,/" \
@@ -442,7 +442,7 @@ local_rate_graph() {
 		--right-axis 360:0 \
 		"DEF:messages1=$2/dump1090_messages-local_accepted.rrd:value:AVERAGE" \
 		"DEF:messages2=$2/dump1090_messages-remote_accepted.rrd:value:AVERAGE" \
-		"CDEF:messages=messages1,messages2,+" \
+		"CDEF:messages=messages1,messages2,ADDNAN" \
 		"DEF:strong=$2/dump1090_messages-strong_signals.rrd:value:AVERAGE" \
 		"DEF:positions=$2/dump1090_messages-positions.rrd:value:AVERAGE" \
 		"CDEF:y2positions=positions,10,*" \
@@ -511,28 +511,28 @@ local_trailing_rate_graph() {
 		"DEF:emax2=$2/dump1090_messages-remote_accepted.rrd:value:MAX:end=now-432000:start=end-86400" \
 		"DEF:fmax2=$2/dump1090_messages-remote_accepted.rrd:value:MAX:end=now-518400:start=end-86400" \
 		"DEF:gmax2=$2/dump1090_messages-remote_accepted.rrd:value:MAX:end=now-604800:start=end-86400" \
-		"CDEF:messages=messages1,messages2,+" \
-		"CDEF:a=a1,a2,+" \
-		"CDEF:b=b1,b2,+" \
-		"CDEF:c=c1,c2,+" \
-		"CDEF:d=d1,d2,+" \
-		"CDEF:e=e1,e2,+" \
-		"CDEF:f=f1,f2,+" \
-		"CDEF:g=g1,g2,+" \
-		"CDEF:amin=amin1,amin2,+" \
-		"CDEF:bmin=bmin1,bmin2,+" \
-		"CDEF:cmin=cmin1,cmin2,+" \
-		"CDEF:dmin=dmin1,dmin2,+" \
-		"CDEF:emin=emin1,emin2,+" \
-		"CDEF:fmin=fmin1,fmin2,+" \
-		"CDEF:gmin=gmin1,gmin2,+" \
-		"CDEF:amax=amax1,amax2,+" \
-		"CDEF:bmax=bmax1,bmax2,+" \
-		"CDEF:cmax=cmax1,cmax2,+" \
-		"CDEF:dmax=dmax1,dmax2,+" \
-		"CDEF:emax=emax1,emax2,+" \
-		"CDEF:fmax=fmax1,fmax2,+" \
-		"CDEF:gmax=gmax1,gmax2,+" \
+		"CDEF:messages=messages1,messages2,ADDNAN" \
+		"CDEF:a=a1,a2,ADDNAN" \
+		"CDEF:b=b1,b2,ADDNAN" \
+		"CDEF:c=c1,c2,ADDNAN" \
+		"CDEF:d=d1,d2,ADDNAN" \
+		"CDEF:e=e1,e2,ADDNAN" \
+		"CDEF:f=f1,f2,ADDNAN" \
+		"CDEF:g=g1,g2,ADDNAN" \
+		"CDEF:amin=amin1,amin2,ADDNAN" \
+		"CDEF:bmin=bmin1,bmin2,ADDNAN" \
+		"CDEF:cmin=cmin1,cmin2,ADDNAN" \
+		"CDEF:dmin=dmin1,dmin2,ADDNAN" \
+		"CDEF:emin=emin1,emin2,ADDNAN" \
+		"CDEF:fmin=fmin1,fmin2,ADDNAN" \
+		"CDEF:gmin=gmin1,gmin2,ADDNAN" \
+		"CDEF:amax=amax1,amax2,ADDNAN" \
+		"CDEF:bmax=bmax1,bmax2,ADDNAN" \
+		"CDEF:cmax=cmax1,cmax2,ADDNAN" \
+		"CDEF:dmax=dmax1,dmax2,ADDNAN" \
+		"CDEF:emax=emax1,emax2,ADDNAN" \
+		"CDEF:fmax=fmax1,fmax2,ADDNAN" \
+		"CDEF:gmax=gmax1,gmax2,ADDNAN" \
 		"CDEF:a3=a,UN,0,a,IF" \
 		"CDEF:b3=b,UN,0,b,IF" \
 		"CDEF:c3=c,UN,0,c,IF" \
