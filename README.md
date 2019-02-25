@@ -8,6 +8,19 @@ Also works for other dump1090 variants supplying stats.json
 sudo bash -c "$(wget -O - https://raw.githubusercontent.com/wiedehopf/graphs1090/master/install.sh)"
 ```
 
+## Configuration (optional):
+Edit the configuration file to change graph layout options, for example size:
+```
+sudo nano /etc/default/graph
+```
+Ctrl-x to exit, y (yes) and enter to save.
+
+Reset configuration to defaults:
+```
+sudo cp /usr/share/graphs1090/default /etc/default/graphs1090
+```
+
+
 ## View the graphs:
 
 Click the following URL and replace the IP address with the IP address of the Raspberry Pi you installed combine1090 on.
