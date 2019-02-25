@@ -1,5 +1,5 @@
 # set to 1 to enable farenheit instead of celsius
-farenheit=1
+farenheit=0
 
 # set range graph to either nautical, statute, or metric
 range=nautical
