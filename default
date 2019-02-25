@@ -4,9 +4,17 @@ farenheit=0
 # set range graph to either nautical, statute, or metric
 range=nautical
 
+# set graph size, possible values: small, default, large, huge, custom
+graph_size=default
+
+# font size, default 10.0 (relative to graph size)
+font_size=10.0
+
+# if graph_size is set to custom, the following sizes are used:
+
 # large graph dimensions are the actual graph area
-# define the width of the larger graph, default is 960, maximum is 1096
-lwidth=960
+# define the width of the larger graph, default is 1096, 960 also looks good in my opinion
+lwidth=1096
 # define the height of the larger graph, default is 235
 lheight=235
 
@@ -15,6 +23,3 @@ lheight=235
 swidth=619
 # height, default 324
 sheight=324
-
-
-

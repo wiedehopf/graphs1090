@@ -15,12 +15,6 @@ html, body {
     height: 100%;
     margin: 0 auto -60px;
 }
- .container {
-    padding-top: 60px;
-  max-width: 100%;
-  padding: 0 0px;
-
-}
 .credits {
     margin: 20px 0;
 }
@@ -35,6 +29,9 @@ html, body {
   margin-left: 0px;
 }
 
+.panel-body {
+  padding: 10px 10px;
+}
 .column {
   flex: 50%;
   max-width: 100%;
@@ -48,16 +45,13 @@ html, body {
   margin-right: auto;
 }
 
-@media screen and (max-width: 1363px) {
-  .container {
-    width: 96%;
-  }
+ .container {
+  padding-top: 60px;
+  width: max-content;
+  max-width: 100%;
+  padding: 8px 8px;
 }
-@media screen and (min-width: 1364px) {
-  .container {
-    width: 1310px;
-  }
-}
+
 
 @media screen and (max-width: 1000px) {
   .column {
