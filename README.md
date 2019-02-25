@@ -34,6 +34,7 @@ http://192.168.x.yy/perf
 ### Reducing writes to the sd-card
 
 The rrd databases get written to every minute, this adds up to around 100 Megabytes written per hour.
+While most modern SD-cards should handle this for 10 or more years easily, you can reduce the amount written if you want to.
 Per default linux writes data to disk after a maximum of 30 seconds in the cache.
 Increasing this to 10 minutes reduces actual disk writes to around 10 Megabytes per hour.
 
