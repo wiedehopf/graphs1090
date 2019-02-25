@@ -8,8 +8,8 @@ mult() {
 	echo $1 $2 | awk '{printf "%.3f", $1 * $2}'
 }
 
-wifi="$(ls /var/lib/collectd/rrd/localhost | grep interface-w -m1)"
-ether="$(ls /var/lib/collectd/rrd/localhost | grep interface-e -m1)"
+ether="$(ls /var/lib/collectd/rrd/localhost | grep interface -m1)"
+wifi="$(ls /var/lib/collectd/rrd/localhost | grep interface -m2 | tail -n1)"
 
 disk="$(ls /var/lib/collectd/rrd/localhost | grep disk -m1)"
 
@@ -321,7 +321,22 @@ memory_graph() {
 		--watermark "Drawn: $nowlit";
 	}
 
+
 network_graph() {
+	if [[ $(ls /var/lib/collectd/rrd/localhost | grep interface -c) < 2 ]]
+	then
+		interfaces=(\
+			"DEF:rx=$2$ether/if_octets.rrd:rx:AVERAGE" \
+			"DEF:tx=$2$ether/if_octets.rrd:tx:AVERAGE" )
+	else
+		interfaces=(\
+			"DEF:rx1=$2$wifi/if_octets.rrd:rx:AVERAGE" \
+			"DEF:tx1=$2$wifi/if_octets.rrd:tx:AVERAGE" \
+			"DEF:rx2=$2$ether/if_octets.rrd:rx:AVERAGE" \
+			"DEF:tx2=$2$ether/if_octets.rrd:tx:AVERAGE" \
+			"CDEF:rx=rx1,rx2,ADDNAN" \
+			"CDEF:tx=tx1,tx2,ADDNAN")
+	fi
 	$pre; rrdtool graph \
 		"$1" \
 		--start end-$4 \
@@ -330,12 +345,7 @@ network_graph() {
 		--title "Bandwidth Usage (wireless + ethernet)" \
 		--vertical-label "Bytes/Sec" \
 		"TEXTALIGN:center" \
-		"DEF:rx1=$2$wifi/if_octets.rrd:rx:AVERAGE" \
-		"DEF:tx1=$2$wifi/if_octets.rrd:tx:AVERAGE" \
-		"DEF:rx2=$2$ether/if_octets.rrd:rx:AVERAGE" \
-		"DEF:tx2=$2$ether/if_octets.rrd:tx:AVERAGE" \
-		"CDEF:rx=rx1,rx2,ADDNAN" \
-		"CDEF:tx=tx1,tx2,ADDNAN" \
+		"${interfaces[@]}" \
 		"CDEF:tx_neg=tx,-1,*" \
 		"AREA:rx#32CD32:Incoming" \
 		"LINE1:rx#336600" \
