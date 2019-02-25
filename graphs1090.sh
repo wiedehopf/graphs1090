@@ -573,7 +573,7 @@ local_trailing_rate_graph() {
 		"CDEF:max5=max3,gmax,MAXNAN" \
 		"CDEF:max=max4,max5,MAXNAN" \
 		"CDEF:maxarea=max,min,-" \
-		"LINE1:messages#0000FF:Messages Received" \
+		"LINE0:messages#0000FF:Messages Received" \
 		"LINE1:min#FFFF99" \
 		"AREA:maxarea#FFFF99:Min/Max:STACK" \
 		"LINE1:7dayaverage#00FF00:7 Day Average" \
