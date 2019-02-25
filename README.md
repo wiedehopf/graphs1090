@@ -31,6 +31,34 @@ or
 
 http://192.168.x.yy/perf
 
+### Reducing writes to the sd-card
+
+The rrd databases get written to every minute, this adds up to around 100 Megabytes written per hour.
+Per default linux writes data to disk after a maximum of 30 seconds in the cache.
+Increasing this to 10 minutes reduces actual disk writes to around 10 Megabytes per hour.
+
+Don't change this if you handle data on the Raspberry Pi which you don't want to lose the last 10 minutes of.
+
+Increasing this write delay to 10 minutes can be done like this (takes effect after reboot):
+```
+sudo cat >/etc/sysctl.d/07-dirty.conf <<EOF
+vm.dirty_ratio = 40
+vm.dirty_background_ratio = 30
+vm.dirty_expire_centisecs = 60000
+EOF
+```
+
+Because i don't mind losing data on my Raspberry Pi when it loses power, i have set this to one hour:
+```
+sudo cat >/etc/sysctl.d/07-dirty.conf <<EOF
+vm.dirty_ratio = 40
+vm.dirty_background_ratio = 30
+vm.dirty_expire_centisecs = 360000
+EOF
+```
+
+
+
 ### Non-standard configuration:
 
 If your local map is not reachable at /dump1090-fa or /dump1090, you can edit the following the file to input the URL of your local map:
