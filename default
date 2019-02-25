@@ -1,0 +1,20 @@
+# set to 1 to enable farenheit instead of celsius
+farenheit=1
+
+# set range graph to either nautical, statute, or metric
+range=nautical
+
+# large graph dimensions are the actual graph area
+# define the width of the larger graph, default is 960, maximum is 1096
+lwidth=960
+# define the height of the larger graph, default is 235
+lheight=235
+
+# small graph dimensions are the actual total size
+# width, default 619
+swidth=619
+# height, default 324
+sheight=324
+
+
+

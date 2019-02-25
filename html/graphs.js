@@ -49,10 +49,10 @@ function switchView(newTimeFrame) {
     $("#dump1090-tracks-image").attr("src", "graphs/dump1090-" + $hostName + "-tracks-" + $timeFrame + ".png?time=" + $timestamp);
     $("#dump1090-tracks-link").attr("href", "graphs/dump1090-" + $hostName + "-tracks-" + $timeFrame + ".png?time=" + $timestamp);
 
-    element =  document.getElementById('dump1090-range_imperial_nautical-image');
+    element =  document.getElementById('dump1090-range-image');
     if (typeof(element) != 'undefined' && element != null) {
-        $("#dump1090-range_imperial_nautical-image").attr("src", "graphs/dump1090-" + $hostName + "-range_imperial_nautical-" + $timeFrame + ".png?time=" + $timestamp);
-        $("#dump1090-range_imperial_nautical-link").attr("href", "graphs/dump1090-" + $hostName + "-range_imperial_nautical-" + $timeFrame + ".png?time=" + $timestamp);
+        $("#dump1090-range-image").attr("src", "graphs/dump1090-" + $hostName + "-range-" + $timeFrame + ".png?time=" + $timestamp);
+        $("#dump1090-range-link").attr("href", "graphs/dump1090-" + $hostName + "-range-" + $timeFrame + ".png?time=" + $timestamp);
     }
 
     element =  document.getElementById('dump1090-range_imperial_statute-image');
@@ -81,10 +81,10 @@ function switchView(newTimeFrame) {
         $("#system-eth0_bandwidth-image").attr("src", "graphs/system-" + $hostName + "-eth0_bandwidth-" + $timeFrame + ".png?time=" + $timestamp);
         $("#system-eth0_bandwidth-link").attr("href", "graphs/system-" + $hostName + "-eth0_bandwidth-" + $timeFrame + ".png?time=" + $timestamp);
     }
-    element =  document.getElementById('system-wlan0_bandwidth-image');
+    element =  document.getElementById('system-network_bandwidth-image');
     if (typeof(element) != 'undefined' && element != null) {
-        $("#system-wlan0_bandwidth-image").attr("src", "graphs/system-" + $hostName + "-wlan0_bandwidth-" + $timeFrame + ".png?time=" + $timestamp);
-        $("#system-wlan0_bandwidth-link").attr("href", "graphs/system-" + $hostName + "-wlan0_bandwidth-" + $timeFrame + ".png?time=" + $timestamp);
+        $("#system-network_bandwidth-image").attr("src", "graphs/system-" + $hostName + "-network_bandwidth-" + $timeFrame + ".png?time=" + $timestamp);
+        $("#system-network_bandwidth-link").attr("href", "graphs/system-" + $hostName + "-network_bandwidth-" + $timeFrame + ".png?time=" + $timestamp);
     }
     
     $("#system-memory-image").attr("src", "graphs/system-" + $hostName + "-memory-" + $timeFrame + ".png?time=" + $timestamp);
@@ -95,10 +95,10 @@ function switchView(newTimeFrame) {
         $("#system-temperature_imperial-image").attr("src", "graphs/system-" + $hostName + "-temperature_imperial-" + $timeFrame + ".png?time=" + $timestamp);
         $("#system-temperature_imperial-link").attr("href", "graphs/system-" + $hostName + "-temperature_imperial-" + $timeFrame + ".png?time=" + $timestamp);
     }
-    element =  document.getElementById('system-temperature_metric-image');
+    element =  document.getElementById('system-temperature-image');
     if (typeof(element) != 'undefined' && element != null) {
-        $("#system-temperature_metric-image").attr("src", "graphs/system-" + $hostName + "-temperature_metric-" + $timeFrame + ".png?time=" + $timestamp);
-        $("#system-temperature_metric-link").attr("href", "graphs/system-" + $hostName + "-temperature_metric-" + $timeFrame + ".png?time=" + $timestamp);
+        $("#system-temperature-image").attr("src", "graphs/system-" + $hostName + "-temperature-" + $timeFrame + ".png?time=" + $timestamp);
+        $("#system-temperature-link").attr("href", "graphs/system-" + $hostName + "-temperature-" + $timeFrame + ".png?time=" + $timestamp);
     }
 
     $("#system-df_root-image").attr("src", "graphs/system-" + $hostName + "-df_root-" + $timeFrame + ".png?time=" + $timestamp);

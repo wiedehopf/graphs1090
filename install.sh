@@ -45,6 +45,7 @@ cp -n /etc/collectd/collectd.conf /etc/collectd/collectd.conf.graphs1090
 cp collectd.conf /etc/collectd/collectd.conf
 cp cron-graphs1090 /etc/cron.d/
 cp -r html $ipath
+cp -n default /etc/default/graphs1090
 
 cp 88-graphs1090.conf /etc/lighttpd/conf-available
 lighty-enable-mod graphs1090 >/dev/null

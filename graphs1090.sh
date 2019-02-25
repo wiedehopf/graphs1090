@@ -4,13 +4,27 @@ DOCUMENTROOT=/run/graphs1090
 
 renice -n 5 -p $$
 
+
+wifi="$(ls /var/lib/collectd/rrd/localhost | grep interface-w -m1)"
+ether="$(ls /var/lib/collectd/rrd/localhost | grep interface-e -m1)"
+
+disk="$(ls /var/lib/collectd/rrd/localhost | grep disk -m1)"
+
+lwidth=960
+#1096 or 960
+lheight=235
+swidth=619
+sheight=324
+
+source /etc/default/graphs1090
+
+
 ## DUMP1090 GRAPHS
 grid="-c GRID#FFFFFF --grid-dash 2:1"
 fontsize="-n TITLE:10:. -n AXIS:8:. -n UNIT:9:. -n LEGEND:9:."
 options="$grid $fontsize -Z"
-small="$options -D --width 619 --height 324"
-big="$options --width 960 --height 235"
-#1096 or 960
+small="$options -D --width $swidth --height $sheight"
+big="$options --width $lwidth --height $lheight"
 
 pre="sleep 0.2"
 
@@ -277,6 +291,35 @@ memory_graph() {
   "AREA:cached#00FF00:Cached:STACK" \
   "AREA:free#FFFFFF:Free\c:STACK" \
   "COMMENT: \n" \
+  --watermark "Drawn: $nowlit";
+}
+
+network_graph() {
+  $pre; rrdtool graph \
+  "$1" \
+  --start end-$4 \
+  $small \
+  -Z --step "$5" \
+  --title "Bandwidth Usage (wireless + ethernet)" \
+  --vertical-label "Bytes/Sec" \
+  "TEXTALIGN:center" \
+  "DEF:rx1=$2$wifi/if_octets.rrd:rx:AVERAGE" \
+  "DEF:tx1=$2$wifi/if_octets.rrd:tx:AVERAGE" \
+  "DEF:rx2=$2$ether/if_octets.rrd:rx:AVERAGE" \
+  "DEF:tx2=$2$ether/if_octets.rrd:tx:AVERAGE" \
+  "CDEF:rx=rx1,rx2,ADDNAN" \
+  "CDEF:tx=tx1,tx2,ADDNAN" \
+  "CDEF:tx_neg=tx,-1,*" \
+  "AREA:rx#32CD32:Incoming" \
+  "LINE1:rx#336600" \
+  "GPRINT:rx:MAX:Max\:%8.1lf %s" \
+  "GPRINT:rx:AVERAGE:Avg\:%8.1lf %S" \
+  "GPRINT:rx:LAST:Current\:%8.1lf %Sbytes/sec\c" \
+  "AREA:tx_neg#4169E1:Outgoing" \
+  "LINE1:tx_neg#0033CC" \
+  "GPRINT:tx:MAX:Max\:%8.1lf %S" \
+  "GPRINT:tx:AVERAGE:Avg\:%8.1lf %S" \
+  "GPRINT:tx:LAST:Current\:%8.1lf %Sbytes/sec\c" \
   --watermark "Drawn: $nowlit";
 }
 
@@ -651,13 +694,18 @@ dump1090_graphs() {
 system_graphs() {
   cpu_graph ${DOCUMENTROOT}/system-$2-cpu-$4.png /var/lib/collectd/rrd/$1/aggregation-cpu-average "$3" "$4" "$5"
   df_root_graph ${DOCUMENTROOT}/system-$2-df_root-$4.png /var/lib/collectd/rrd/$1/df-root "$3" "$4" "$5"
-  disk_io_iops_graph ${DOCUMENTROOT}/system-$2-disk_io_iops-$4.png /var/lib/collectd/rrd/$1/disk-mmcblk0 "$3" "$4" "$5"
-  disk_io_octets_graph ${DOCUMENTROOT}/system-$2-disk_io_octets-$4.png /var/lib/collectd/rrd/$1/disk-mmcblk0 "$3" "$4" "$5"
-  eth0_graph ${DOCUMENTROOT}/system-$2-eth0_bandwidth-$4.png /var/lib/collectd/rrd/$1/interface-eth0 "$3" "$4" "$5"
+  disk_io_iops_graph ${DOCUMENTROOT}/system-$2-disk_io_iops-$4.png /var/lib/collectd/rrd/$1/$disk "$3" "$4" "$5"
+  disk_io_octets_graph ${DOCUMENTROOT}/system-$2-disk_io_octets-$4.png /var/lib/collectd/rrd/$1/$disk "$3" "$4" "$5"
+  #eth0_graph ${DOCUMENTROOT}/system-$2-eth0_bandwidth-$4.png /var/lib/collectd/rrd/$1/$ether "$3" "$4" "$5"
   memory_graph ${DOCUMENTROOT}/system-$2-memory-$4.png /var/lib/collectd/rrd/$1/memory "$3" "$4" "$5"
-  temp_graph_imperial ${DOCUMENTROOT}/system-$2-temperature_imperial-$4.png /var/lib/collectd/rrd/$1/table-$2 "$3" "$4" "$5"
-  temp_graph_metric ${DOCUMENTROOT}/system-$2-temperature_metric-$4.png /var/lib/collectd/rrd/$1/table-$2 "$3" "$4" "$5"
-  wlan0_graph ${DOCUMENTROOT}/system-$2-wlan0_bandwidth-$4.png /var/lib/collectd/rrd/$1/interface-wlan0 "$3" "$4" "$5"
+  network_graph ${DOCUMENTROOT}/system-$2-network_bandwidth-$4.png /var/lib/collectd/rrd/$1/ "$3" "$4" "$5"
+  if [[ $farenheit == 1 ]]
+  then
+	  temp_graph_imperial ${DOCUMENTROOT}/system-$2-temperature-$4.png /var/lib/collectd/rrd/$1/table-$2 "$3" "$4" "$5"
+  else
+	  temp_graph_metric ${DOCUMENTROOT}/system-$2-temperature-$4.png /var/lib/collectd/rrd/$1/table-$2 "$3" "$4" "$5"
+  fi
+  #wlan0_graph ${DOCUMENTROOT}/system-$2-wlan0_bandwidth-$4.png /var/lib/collectd/rrd/$1/$wifi "$3" "$4" "$5"
 }
 
 dump1090_receiver_graphs() {
@@ -665,9 +713,15 @@ dump1090_receiver_graphs() {
   system_graphs "$1" "$2" "$3" "$4" "$5"
   local_rate_graph ${DOCUMENTROOT}/dump1090-$2-local_rate-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
   local_trailing_rate_graph ${DOCUMENTROOT}/dump1090-$2-local_trailing_rate-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
-  range_graph_imperial_nautical ${DOCUMENTROOT}/dump1090-$2-range_imperial_nautical-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
-  range_graph_imperial_statute ${DOCUMENTROOT}/dump1090-$2-range_imperial_statute-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
-  range_graph_metric ${DOCUMENTROOT}/dump1090-$2-range_metric-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
+  if [[ $range == "statute" ]]
+  then
+	  range_graph_imperial_statute ${DOCUMENTROOT}/dump1090-$2-range-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
+  elif [[ $range == "metric" ]]
+  then
+	  range_graph_metric ${DOCUMENTROOT}/dump1090-$2-range-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
+  else
+	  range_graph_imperial_nautical ${DOCUMENTROOT}/dump1090-$2-range-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
+  fi
   signal_graph ${DOCUMENTROOT}/dump1090-$2-signal-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
 }
 
