@@ -116,7 +116,7 @@ cpu_graph_dump1090() {
 	if [ -f $2/dump1090_cpu-airspy.rrd ]; then
 		airspy_graph1="DEF:airspy=$2/dump1090_cpu-airspy.rrd:value:AVERAGE"
 		airspy_graph2="CDEF:airspyp=airspy,10,/"
-		airspy_graph3="LINE2:airspyp#FF0000:Airspy"
+		airspy_graph3="AREA:airspyp#4169E1:Airspy"
 	fi
 	$pre; rrdtool graph \
 		"$1" \
