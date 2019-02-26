@@ -464,7 +464,7 @@ local_trailing_rate_graph() {
 		--vertical-label "Messages/Second" \
 		--lower-limit 0  \
 		--units-exponent 0 \
-		--right-axis 360:0 \
+		--right-axis 0.1:0 \
 		--pango-markup \
 		"TEXTALIGN:center" \
 		"DEF:messages1=$2/dump1090_messages-local_accepted.rrd:value:AVERAGE" \
@@ -590,7 +590,7 @@ local_trailing_rate_graph() {
 		"LINE1:messages#0000FF" \
 		"AREA:strong#FF0000:Messages > -3dBFS\g" \
 		"GPRINT:strong_percent_vdef: (%1.1lf<span font='2'> </span>%% of messages)" \
-		"LINE1:y2positions#00c0FF:Positions/Hr (RHS)\c" \
+		"LINE1:y2positions#00c0FF:Positions/s (RHS)\c" \
 		--watermark "Drawn: $nowlit";
 	}
 
