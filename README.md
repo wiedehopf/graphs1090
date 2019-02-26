@@ -5,7 +5,7 @@ Also works for other dump1090 variants supplying stats.json
 
 ## Installation:
 ```
-sudo bash -c "$(wget -O - https://raw.githubusercontent.com/wiedehopf/graphs1090/master/install.sh)"
+sudo bash -c "$(wget -q -O - https://raw.githubusercontent.com/wiedehopf/graphs1090/master/install.sh)"
 ```
 
 ## Configuration (optional):

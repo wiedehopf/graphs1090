@@ -36,7 +36,7 @@ then
 		echo "Unable to download files, exiting!"
 		exit 1
 	fi
-	unzip -o master.zip
+	unzip -q -o master.zip
 	cd graphs1090-master
 fi
 
