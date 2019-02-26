@@ -772,5 +772,10 @@ period="$1"
 step="$2"
 nowlit=`date '+%m/%d/%y %H:%M %Z'`;
 
-dump1090_receiver_graphs localhost localhost "ADS-B" "$period" "$step"
+if [ -z $1 ]
+then
+	dump1090_receiver_graphs localhost localhost "ADS-B" "24h" "$step"
+else
+	dump1090_receiver_graphs localhost localhost "ADS-B" "$period" "$step"
+fi
 #hub_graphs localhost rpi "ADS-B" "$period" "$step"
