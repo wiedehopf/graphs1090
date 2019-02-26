@@ -47,6 +47,7 @@ cp -r html $ipath
 cp -n default /etc/default/graphs1090
 cp default $ipath
 
+
 cp 88-graphs1090.conf /etc/lighttpd/conf-available
 lighty-enable-mod graphs1090 >/dev/null
 
@@ -61,6 +62,14 @@ then
 	echo --------------
 	echo "Non-standard configuration detected, you need to change the data URL in /etc/collectd/collectd.conf!"
 	echo --------------
+fi
+
+if grep jessie /etc/os-release
+then
+	echo --------------
+	echo "Some features are not available on jessie!"
+	echo --------------
+	cp jessie.sh $ipath/graphs1090.sh
 fi
 
 mkdir -p /var/lib/collectd/rrd/localhost/dump1090-localhost
