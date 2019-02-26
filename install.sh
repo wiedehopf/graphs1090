@@ -3,7 +3,7 @@
 ipath=/usr/share/graphs1090
 install=0
 
-packages="collectd rrdtool lighttpd"
+packages="collectd rrdtool lighttpd unzip"
 mkdir -p $ipath/installed
 
 for i in $packages
@@ -31,12 +31,11 @@ fi
 if [ -z $1 ] || [ $1 != "test" ]
 then
 	cd /tmp
-	if ! wget -q -O master.zip https://github.com/wiedehopf/graphs1090/archive/master.zip
+	if ! wget -q -O master.zip https://github.com/wiedehopf/graphs1090/archive/master.zip || ! unzip -q -o master.zip
 	then
-		echo "Unable to download files, exiting!"
+		echo "Unable to download or unzip files, exiting!"
 		exit 1
 	fi
-	unzip -q -o master.zip
 	cd graphs1090-master
 fi
 
