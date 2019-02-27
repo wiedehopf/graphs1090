@@ -12,7 +12,8 @@ PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/usr/share/gra
 24 * * * * root bash graphs1090.sh 30d >/dev/null 2>&1
 32 * * * * root bash graphs1090.sh 90d >/dev/null 2>&1
 48 * * * * root bash graphs1090.sh 180d >/dev/null 2>&1
-0 */12 * * * root bash graphs1090.sh 365d >/dev/null 2>&1
-0 1 * * * root bash graphs1090.sh 730d >/dev/null 2>&1
+0 1-23/6 * * * root bash graphs1090.sh 365d >/dev/null 2>&1
+0 2-23/6 * * * root bash graphs1090.sh 730d >/dev/null 2>&1
+0 3-23/6 * * * root bash graphs1090.sh 1095d >/dev/null 2>&1
 
 @reboot root bash boot.sh >/dev/null 2>&1
