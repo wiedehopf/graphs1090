@@ -122,5 +122,6 @@ function switchView(newTimeFrame) {
     $("#btn-180d").removeClass('active');
     $("#btn-365d").removeClass('active');
     $("#btn-730d").removeClass('active');
+    $("#btn-1095d").removeClass('active');
     $("#btn-" + $timeFrame).addClass('active');
 }
