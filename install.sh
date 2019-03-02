@@ -69,7 +69,7 @@ then
 	echo --------------
 	echo "Some features are not available on jessie!"
 	echo --------------
-	sed -i -e 's/ADDNAN/+/' -e 's/MAXNAN/MAX/' -e 's/MINNAN/MIN/' $ipath/graphs1090.sh
+	sed -i -e 's/ADDNAN/+/' -e 's/TRENDNAN/TREND/' -e 's/MAXNAN/MAX/' -e 's/MINNAN/MIN/' $ipath/graphs1090.sh
 fi
 
 mkdir -p /var/lib/collectd/rrd/localhost/dump1090-localhost

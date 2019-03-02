@@ -238,9 +238,9 @@ def read_aircraft(instance_name, host, url):
             with_pos += 1
             if rlat is not None:
                 distance = greatcircle(rlat, rlon, a['lat'], a['lon'])
-                if distance > max_range: max_range = distance
-            if 'lat' in a.get('mlat', ()):
-                mlat += 1
+                if 'lat' in a.get('mlat', ()):
+                    if distance > max_range: max_range = distance
+                    mlat += 1
 
     V.dispatch(plugin_instance = instance_name,
                host=host,

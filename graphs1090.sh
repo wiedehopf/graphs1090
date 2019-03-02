@@ -157,8 +157,10 @@ tracks_graph() {
 		"DEF:single=$2/dump1090_tracks-single_message.rrd:value:AVERAGE" \
 		"CDEF:hall=all,3600,*" \
 		"CDEF:hsingle=single,3600,*" \
-		"AREA:hsingle#FF0000:Tracks with single message" \
-		"AREA:hall#00FF00:Unique tracks\c:STACK" \
+		"CDEF:rhall=hall,300,TRENDNAN" \
+		"CDEF:rsingle=hsingle,300,TRENDNAN" \
+		"AREA:rsingle#FF0000:Tracks with single message" \
+		"AREA:rhall#00FF00:Unique tracks\c:STACK" \
 		"COMMENT: \n" \
 		--watermark "Drawn: $nowlit";
 	}
