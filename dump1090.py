@@ -240,7 +240,7 @@ def read_aircraft(instance_name, host, url):
                 distance = greatcircle(rlat, rlon, a['lat'], a['lon'])
                 if 'lat' in a.get('mlat', ()):
                     mlat += 1
-                else
+                else:
                     if distance > max_range: max_range = distance
 
     V.dispatch(plugin_instance = instance_name,
