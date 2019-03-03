@@ -79,6 +79,8 @@ systemctl daemon-reload
 systemctl enable collectd &>/dev/null
 systemctl restart collectd lighttpd
 
+mkdir -p /run/graphs1090
+
 if [ -f /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_messages-local_accepted.rrd ]
 then
 	$ipath/graphs1090.sh
