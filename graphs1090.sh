@@ -53,6 +53,19 @@ big="$options --width $lwidth --height $lheight"
 
 pre="sleep 0.2"
 
+#checks a file name for existence and otherwise uses an "empty" rrd as a source so the graphs can still be printed even if the file is missing
+
+check() {
+	if [ -f $1 ]
+	then
+		echo $1
+	else
+		echo "File $1 not found! Associated graph will be empty!" 1>&2
+		echo "/var/lib/collectd/rrd/$collectd_hostname/dump1090-$dump1090_instance/dump1090_dbfs-NaN.rrd"
+	fi
+}
+
+
 ## DUMP1090 GRAPHS
 
 aircraft_graph() {
@@ -66,9 +79,9 @@ aircraft_graph() {
 		--lower-limit 0 \
 		--units-exponent 0 \
 		"TEXTALIGN:center" \
-		"DEF:all=$2/dump1090_aircraft-recent.rrd:total:AVERAGE" \
-		"DEF:pos=$2/dump1090_aircraft-recent.rrd:positions:AVERAGE" \
-		"DEF:mlat=$2/dump1090_mlat-recent.rrd:value:AVERAGE" \
+		"DEF:all=$(check $2/dump1090_aircraft-recent.rrd):total:AVERAGE" \
+		"DEF:pos=$(check $2/dump1090_aircraft-recent.rrd):positions:AVERAGE" \
+		"DEF:mlat=$(check $2/dump1090_mlat-recent.rrd):value:AVERAGE" \
 		"CDEF:noloc=all,pos,-" \
 		"VDEF:avgac=all,AVERAGE" \
 		"VDEF:maxac=all,MAXIMUM" \
@@ -94,9 +107,9 @@ aircraft_message_rate_graph() {
 		--units-exponent 0 \
 		--right-axis 10:0 \
 		"TEXTALIGN:center" \
-		"DEF:aircrafts=$2/dump1090_aircraft-recent.rrd:total:AVERAGE" \
-		"DEF:messages1=$2/dump1090_messages-local_accepted.rrd:value:AVERAGE" \
-		"DEF:messages2=$2/dump1090_messages-remote_accepted.rrd:value:AVERAGE" \
+		"DEF:aircrafts=$(check $2/dump1090_aircraft-recent.rrd):total:AVERAGE" \
+		"DEF:messages1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE" \
+		"DEF:messages2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE" \
 		"CDEF:messages=messages1,messages2,ADDNAN" \
 		"CDEF:provisional=messages,aircrafts,/" \
 		"CDEF:rate=aircrafts,0,GT,provisional,0,IF" \
@@ -127,11 +140,11 @@ cpu_graph_dump1090() {
 		--vertical-label "CPU %" \
 		--lower-limit 0 \
 		--rigid \
-		"DEF:demod=$2/dump1090_cpu-demod.rrd:value:AVERAGE" \
+		"DEF:demod=$(check $2/dump1090_cpu-demod.rrd):value:AVERAGE" \
 		"CDEF:demodp=demod,10,/" \
-		"DEF:reader=$2/dump1090_cpu-reader.rrd:value:AVERAGE" \
+		"DEF:reader=$(check $2/dump1090_cpu-reader.rrd):value:AVERAGE" \
 		"CDEF:readerp=reader,10,/" \
-		"DEF:background=$2/dump1090_cpu-background.rrd:value:AVERAGE" \
+		"DEF:background=$(check $2/dump1090_cpu-background.rrd):value:AVERAGE" \
 		"CDEF:backgroundp=background,10,/" \
 		$airspy_graph1 \
 		$airspy_graph2 \
@@ -153,8 +166,8 @@ tracks_graph() {
 		--vertical-label "Tracks/Hour" \
 		--lower-limit 0 \
 		--units-exponent 0 \
-		"DEF:all=$2/dump1090_tracks-all.rrd:value:AVERAGE" \
-		"DEF:single=$2/dump1090_tracks-single_message.rrd:value:AVERAGE" \
+		"DEF:all=$(check $2/dump1090_tracks-all.rrd):value:AVERAGE" \
+		"DEF:single=$(check $2/dump1090_tracks-single_message.rrd):value:AVERAGE" \
 		"CDEF:hall=all,3600,*" \
 		"CDEF:hsingle=single,3600,*" \
 		"CDEF:rhall=hall,300,TRENDNAN" \
@@ -178,14 +191,14 @@ cpu_graph() {
 		--lower-limit 0 \
 		--rigid \
 		--units-exponent 0 \
-		"DEF:idle=$2/cpu-idle.rrd:value:AVERAGE" \
-		"DEF:interrupt=$2/cpu-interrupt.rrd:value:AVERAGE" \
-		"DEF:nice=$2/cpu-nice.rrd:value:AVERAGE" \
-		"DEF:softirq=$2/cpu-softirq.rrd:value:AVERAGE" \
-		"DEF:steal=$2/cpu-steal.rrd:value:AVERAGE" \
-		"DEF:system=$2/cpu-system.rrd:value:AVERAGE" \
-		"DEF:user=$2/cpu-user.rrd:value:AVERAGE" \
-		"DEF:wait=$2/cpu-wait.rrd:value:AVERAGE" \
+		"DEF:idle=$(check $2/cpu-idle.rrd):value:AVERAGE" \
+		"DEF:interrupt=$(check $2/cpu-interrupt.rrd):value:AVERAGE" \
+		"DEF:nice=$(check $2/cpu-nice.rrd):value:AVERAGE" \
+		"DEF:softirq=$(check $2/cpu-softirq.rrd):value:AVERAGE" \
+		"DEF:steal=$(check $2/cpu-steal.rrd):value:AVERAGE" \
+		"DEF:system=$(check $2/cpu-system.rrd):value:AVERAGE" \
+		"DEF:user=$(check $2/cpu-user.rrd):value:AVERAGE" \
+		"DEF:wait=$(check $2/cpu-wait.rrd):value:AVERAGE" \
 		"CDEF:all=idle,interrupt,nice,softirq,steal,system,user,wait,+,+,+,+,+,+,+" \
 		"CDEF:pinterrupt=100,interrupt,*,all,/" \
 		"CDEF:pnice=100,nice,*,all,/" \
@@ -214,9 +227,9 @@ df_root_graph() {
 		--vertical-label "" \
 		--lower-limit 0  \
 		"TEXTALIGN:center" \
-		"DEF:used=$2/df_complex-used.rrd:value:AVERAGE" \
-		"DEF:reserved=$2/df_complex-reserved.rrd:value:AVERAGE" \
-		"DEF:free=$2/df_complex-free.rrd:value:AVERAGE" \
+		"DEF:used=$(check $2/df_complex-used.rrd):value:AVERAGE" \
+		"DEF:reserved=$(check $2/df_complex-reserved.rrd):value:AVERAGE" \
+		"DEF:free=$(check $2/df_complex-free.rrd):value:AVERAGE" \
 		"CDEF:totalused=used,reserved,+" \
 		"AREA:totalused#4169E1:Used:STACK" \
 		"AREA:free#32C734:Free\c:STACK" \
@@ -233,8 +246,8 @@ disk_io_iops_graph() {
 		--title "Disk I/O - IOPS" \
 		--vertical-label "IOPS" \
 		"TEXTALIGN:center" \
-		"DEF:read=$2/disk_ops.rrd:read:AVERAGE" \
-		"DEF:write=$2/disk_ops.rrd:write:AVERAGE" \
+		"DEF:read=$(check $2/disk_ops.rrd):read:AVERAGE" \
+		"DEF:write=$(check $2/disk_ops.rrd):write:AVERAGE" \
 		"CDEF:write_neg=write,-1,*" \
 		"AREA:read#32CD32:Reads " \
 		"LINE1:read#336600" \
@@ -259,8 +272,8 @@ disk_io_octets_graph() {
 		--title "Disk I/O - Bandwidth" \
 		--vertical-label "Bytes/Sec" \
 		"TEXTALIGN:center" \
-		"DEF:read=$2/disk_octets.rrd:read:AVERAGE" \
-		"DEF:write=$2/disk_octets.rrd:write:AVERAGE" \
+		"DEF:read=$(check $2/disk_octets.rrd):read:AVERAGE" \
+		"DEF:write=$(check $2/disk_octets.rrd):write:AVERAGE" \
 		"CDEF:write_neg=write,-1,*" \
 		"AREA:read#32CD32:Reads " \
 		"LINE1:read#336600" \
@@ -285,8 +298,8 @@ eth0_graph() {
 		--title "Bandwidth Usage (eth0)" \
 		--vertical-label "Bytes/Sec" \
 		"TEXTALIGN:center" \
-		"DEF:rx=$2/if_octets.rrd:rx:AVERAGE" \
-		"DEF:tx=$2/if_octets.rrd:tx:AVERAGE" \
+		"DEF:rx=$(check $2/if_octets.rrd):rx:AVERAGE" \
+		"DEF:tx=$(check $2/if_octets.rrd):tx:AVERAGE" \
 		"CDEF:tx_neg=tx,-1,*" \
 		"AREA:rx#32CD32:Incoming" \
 		"LINE1:rx#336600" \
@@ -311,10 +324,10 @@ memory_graph() {
 		--title "Memory Utilization" \
 		--vertical-label "" \
 		"TEXTALIGN:center" \
-		"DEF:buffered=$2/memory-buffered.rrd:value:AVERAGE" \
-		"DEF:cached=$2/memory-cached.rrd:value:AVERAGE" \
-		"DEF:free=$2/memory-free.rrd:value:AVERAGE" \
-		"DEF:used=$2/memory-used.rrd:value:AVERAGE" \
+		"DEF:buffered=$(check $2/memory-buffered.rrd):value:AVERAGE" \
+		"DEF:cached=$(check $2/memory-cached.rrd):value:AVERAGE" \
+		"DEF:free=$(check $2/memory-free.rrd):value:AVERAGE" \
+		"DEF:used=$(check $2/memory-used.rrd):value:AVERAGE" \
 		"AREA:used#4169E1:Used:STACK" \
 		"AREA:buffered#32C734:Buffered:STACK" \
 		"AREA:cached#00FF00:Cached:STACK" \
@@ -328,14 +341,14 @@ network_graph() {
 	if [[ $(ls /var/lib/collectd/rrd/localhost | grep interface -c) < 2 ]]
 	then
 		interfaces=(\
-			"DEF:rx=$2$ether/if_octets.rrd:rx:AVERAGE" \
-			"DEF:tx=$2$ether/if_octets.rrd:tx:AVERAGE" )
+			"DEF:rx=$(check $2/$ether/if_octets.rrd):rx:AVERAGE" \
+			"DEF:tx=$(check $2/$ether/if_octets.rrd):tx:AVERAGE" )
 	else
 		interfaces=(\
-			"DEF:rx1=$2$wifi/if_octets.rrd:rx:AVERAGE" \
-			"DEF:tx1=$2$wifi/if_octets.rrd:tx:AVERAGE" \
-			"DEF:rx2=$2$ether/if_octets.rrd:rx:AVERAGE" \
-			"DEF:tx2=$2$ether/if_octets.rrd:tx:AVERAGE" \
+			"DEF:rx1=$(check $2/$wifi/if_octets.rrd):rx:AVERAGE" \
+			"DEF:tx1=$(check $2/$wifi/if_octets.rrd):tx:AVERAGE" \
+			"DEF:rx2=$(check $2/$ether/if_octets.rrd):rx:AVERAGE" \
+			"DEF:tx2=$(check $2/$ether/if_octets.rrd):tx:AVERAGE" \
 			"CDEF:rx=rx1,rx2,ADDNAN" \
 			"CDEF:tx=tx1,tx2,ADDNAN")
 	fi
@@ -374,7 +387,7 @@ temp_graph_imperial() {
 		--upper-limit 212 \
 		--rigid \
 		--units-exponent 1 \
-		"DEF:traw=$2/gauge-cpu_temp.rrd:value:MAX" \
+		"DEF:traw=$(check $2/gauge-cpu_temp.rrd):value:MAX" \
 		"CDEF:tta=traw,1000,/" \
 		"CDEF:ttb=tta,1.8,*" \
 		"CDEF:ttc=ttb,32,+" \
@@ -396,7 +409,7 @@ temp_graph_metric() {
 		--upper-limit 100 \
 		--rigid \
 		--units-exponent 1 \
-		"DEF:traw=$2/gauge-cpu_temp.rrd:value:MAX" \
+		"DEF:traw=$(check $2/gauge-cpu_temp.rrd):value:MAX" \
 		"CDEF:tfin=traw,1000,/" \
 		"AREA:tfin#ffcc00" \
 		"COMMENT: \n" \
@@ -413,8 +426,8 @@ wlan0_graph() {
 		--title "Bandwidth Usage (wlan0)" \
 		--vertical-label "Bytes/Sec" \
 		"TEXTALIGN:center" \
-		"DEF:rx=$2/if_octets.rrd:rx:AVERAGE" \
-		"DEF:tx=$2/if_octets.rrd:tx:AVERAGE" \
+		"DEF:rx=$(check $2/if_octets.rrd):rx:AVERAGE" \
+		"DEF:tx=$(check $2/if_octets.rrd):tx:AVERAGE" \
 		"CDEF:tx_neg=tx,-1,*" \
 		"AREA:rx#32CD32:Incoming" \
 		"LINE1:rx#336600" \
@@ -442,11 +455,11 @@ local_rate_graph() {
 		--lower-limit 0  \
 		--units-exponent 0 \
 		--right-axis 360:0 \
-		"DEF:messages1=$2/dump1090_messages-local_accepted.rrd:value:AVERAGE" \
-		"DEF:messages2=$2/dump1090_messages-remote_accepted.rrd:value:AVERAGE" \
+		"DEF:messages1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE" \
+		"DEF:messages2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE" \
 		"CDEF:messages=messages1,messages2,ADDNAN" \
-		"DEF:strong=$2/dump1090_messages-strong_signals.rrd:value:AVERAGE" \
-		"DEF:positions=$2/dump1090_messages-positions.rrd:value:AVERAGE" \
+		"DEF:strong=$(check $2/dump1090_messages-strong_signals.rrd):value:AVERAGE" \
+		"DEF:positions=$(check $2/dump1090_messages-positions.rrd):value:AVERAGE" \
 		"CDEF:y2positions=positions,10,*" \
 		"LINE1:messages#0000FF:Messages Received" \
 		"AREA:strong#FF0000:Messages > -3dBFS" \
@@ -469,50 +482,50 @@ local_trailing_rate_graph() {
 		--right-axis 0.1:0 \
 		--pango-markup \
 		"TEXTALIGN:center" \
-		"DEF:messages1=$2/dump1090_messages-local_accepted.rrd:value:AVERAGE" \
-		"DEF:a1=$2/dump1090_messages-local_accepted.rrd:value:AVERAGE:end=now-86400:start=end-86400" \
-		"DEF:b1=$2/dump1090_messages-local_accepted.rrd:value:AVERAGE:end=now-172800:start=end-86400" \
-		"DEF:c1=$2/dump1090_messages-local_accepted.rrd:value:AVERAGE:end=now-259200:start=end-86400" \
-		"DEF:d1=$2/dump1090_messages-local_accepted.rrd:value:AVERAGE:end=now-345600:start=end-86400" \
-		"DEF:e1=$2/dump1090_messages-local_accepted.rrd:value:AVERAGE:end=now-432000:start=end-86400" \
-		"DEF:f1=$2/dump1090_messages-local_accepted.rrd:value:AVERAGE:end=now-518400:start=end-86400" \
-		"DEF:g1=$2/dump1090_messages-local_accepted.rrd:value:AVERAGE:end=now-604800:start=end-86400" \
-		"DEF:amin1=$2/dump1090_messages-local_accepted.rrd:value:MIN:end=now-86400:start=end-86400" \
-		"DEF:bmin1=$2/dump1090_messages-local_accepted.rrd:value:MIN:end=now-172800:start=end-86400" \
-		"DEF:cmin1=$2/dump1090_messages-local_accepted.rrd:value:MIN:end=now-259200:start=end-86400" \
-		"DEF:dmin1=$2/dump1090_messages-local_accepted.rrd:value:MIN:end=now-345600:start=end-86400" \
-		"DEF:emin1=$2/dump1090_messages-local_accepted.rrd:value:MIN:end=now-432000:start=end-86400" \
-		"DEF:fmin1=$2/dump1090_messages-local_accepted.rrd:value:MIN:end=now-518400:start=end-86400" \
-		"DEF:gmin1=$2/dump1090_messages-local_accepted.rrd:value:MIN:end=now-604800:start=end-86400" \
-		"DEF:amax1=$2/dump1090_messages-local_accepted.rrd:value:MAX:end=now-86400:start=end-86400" \
-		"DEF:bmax1=$2/dump1090_messages-local_accepted.rrd:value:MAX:end=now-172800:start=end-86400" \
-		"DEF:cmax1=$2/dump1090_messages-local_accepted.rrd:value:MAX:end=now-259200:start=end-86400" \
-		"DEF:dmax1=$2/dump1090_messages-local_accepted.rrd:value:MAX:end=now-345600:start=end-86400" \
-		"DEF:emax1=$2/dump1090_messages-local_accepted.rrd:value:MAX:end=now-432000:start=end-86400" \
-		"DEF:fmax1=$2/dump1090_messages-local_accepted.rrd:value:MAX:end=now-518400:start=end-86400" \
-		"DEF:gmax1=$2/dump1090_messages-local_accepted.rrd:value:MAX:end=now-604800:start=end-86400" \
-		"DEF:messages2=$2/dump1090_messages-remote_accepted.rrd:value:AVERAGE" \
-		"DEF:a2=$2/dump1090_messages-remote_accepted.rrd:value:AVERAGE:end=now-86400:start=end-86400" \
-		"DEF:b2=$2/dump1090_messages-remote_accepted.rrd:value:AVERAGE:end=now-172800:start=end-86400" \
-		"DEF:c2=$2/dump1090_messages-remote_accepted.rrd:value:AVERAGE:end=now-259200:start=end-86400" \
-		"DEF:d2=$2/dump1090_messages-remote_accepted.rrd:value:AVERAGE:end=now-345600:start=end-86400" \
-		"DEF:e2=$2/dump1090_messages-remote_accepted.rrd:value:AVERAGE:end=now-432000:start=end-86400" \
-		"DEF:f2=$2/dump1090_messages-remote_accepted.rrd:value:AVERAGE:end=now-518400:start=end-86400" \
-		"DEF:g2=$2/dump1090_messages-remote_accepted.rrd:value:AVERAGE:end=now-604800:start=end-86400" \
-		"DEF:amin2=$2/dump1090_messages-remote_accepted.rrd:value:MIN:end=now-86400:start=end-86400" \
-		"DEF:bmin2=$2/dump1090_messages-remote_accepted.rrd:value:MIN:end=now-172800:start=end-86400" \
-		"DEF:cmin2=$2/dump1090_messages-remote_accepted.rrd:value:MIN:end=now-259200:start=end-86400" \
-		"DEF:dmin2=$2/dump1090_messages-remote_accepted.rrd:value:MIN:end=now-345600:start=end-86400" \
-		"DEF:emin2=$2/dump1090_messages-remote_accepted.rrd:value:MIN:end=now-432000:start=end-86400" \
-		"DEF:fmin2=$2/dump1090_messages-remote_accepted.rrd:value:MIN:end=now-518400:start=end-86400" \
-		"DEF:gmin2=$2/dump1090_messages-remote_accepted.rrd:value:MIN:end=now-604800:start=end-86400" \
-		"DEF:amax2=$2/dump1090_messages-remote_accepted.rrd:value:MAX:end=now-86400:start=end-86400" \
-		"DEF:bmax2=$2/dump1090_messages-remote_accepted.rrd:value:MAX:end=now-172800:start=end-86400" \
-		"DEF:cmax2=$2/dump1090_messages-remote_accepted.rrd:value:MAX:end=now-259200:start=end-86400" \
-		"DEF:dmax2=$2/dump1090_messages-remote_accepted.rrd:value:MAX:end=now-345600:start=end-86400" \
-		"DEF:emax2=$2/dump1090_messages-remote_accepted.rrd:value:MAX:end=now-432000:start=end-86400" \
-		"DEF:fmax2=$2/dump1090_messages-remote_accepted.rrd:value:MAX:end=now-518400:start=end-86400" \
-		"DEF:gmax2=$2/dump1090_messages-remote_accepted.rrd:value:MAX:end=now-604800:start=end-86400" \
+		"DEF:messages1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE" \
+		"DEF:a1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE:end=now-86400:start=end-86400" \
+		"DEF:b1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE:end=now-172800:start=end-86400" \
+		"DEF:c1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE:end=now-259200:start=end-86400" \
+		"DEF:d1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE:end=now-345600:start=end-86400" \
+		"DEF:e1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE:end=now-432000:start=end-86400" \
+		"DEF:f1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE:end=now-518400:start=end-86400" \
+		"DEF:g1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE:end=now-604800:start=end-86400" \
+		"DEF:amin1=$(check $2/dump1090_messages-local_accepted.rrd):value:MIN:end=now-86400:start=end-86400" \
+		"DEF:bmin1=$(check $2/dump1090_messages-local_accepted.rrd):value:MIN:end=now-172800:start=end-86400" \
+		"DEF:cmin1=$(check $2/dump1090_messages-local_accepted.rrd):value:MIN:end=now-259200:start=end-86400" \
+		"DEF:dmin1=$(check $2/dump1090_messages-local_accepted.rrd):value:MIN:end=now-345600:start=end-86400" \
+		"DEF:emin1=$(check $2/dump1090_messages-local_accepted.rrd):value:MIN:end=now-432000:start=end-86400" \
+		"DEF:fmin1=$(check $2/dump1090_messages-local_accepted.rrd):value:MIN:end=now-518400:start=end-86400" \
+		"DEF:gmin1=$(check $2/dump1090_messages-local_accepted.rrd):value:MIN:end=now-604800:start=end-86400" \
+		"DEF:amax1=$(check $2/dump1090_messages-local_accepted.rrd):value:MAX:end=now-86400:start=end-86400" \
+		"DEF:bmax1=$(check $2/dump1090_messages-local_accepted.rrd):value:MAX:end=now-172800:start=end-86400" \
+		"DEF:cmax1=$(check $2/dump1090_messages-local_accepted.rrd):value:MAX:end=now-259200:start=end-86400" \
+		"DEF:dmax1=$(check $2/dump1090_messages-local_accepted.rrd):value:MAX:end=now-345600:start=end-86400" \
+		"DEF:emax1=$(check $2/dump1090_messages-local_accepted.rrd):value:MAX:end=now-432000:start=end-86400" \
+		"DEF:fmax1=$(check $2/dump1090_messages-local_accepted.rrd):value:MAX:end=now-518400:start=end-86400" \
+		"DEF:gmax1=$(check $2/dump1090_messages-local_accepted.rrd):value:MAX:end=now-604800:start=end-86400" \
+		"DEF:messages2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE" \
+		"DEF:a2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE:end=now-86400:start=end-86400" \
+		"DEF:b2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE:end=now-172800:start=end-86400" \
+		"DEF:c2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE:end=now-259200:start=end-86400" \
+		"DEF:d2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE:end=now-345600:start=end-86400" \
+		"DEF:e2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE:end=now-432000:start=end-86400" \
+		"DEF:f2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE:end=now-518400:start=end-86400" \
+		"DEF:g2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE:end=now-604800:start=end-86400" \
+		"DEF:amin2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MIN:end=now-86400:start=end-86400" \
+		"DEF:bmin2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MIN:end=now-172800:start=end-86400" \
+		"DEF:cmin2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MIN:end=now-259200:start=end-86400" \
+		"DEF:dmin2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MIN:end=now-345600:start=end-86400" \
+		"DEF:emin2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MIN:end=now-432000:start=end-86400" \
+		"DEF:fmin2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MIN:end=now-518400:start=end-86400" \
+		"DEF:gmin2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MIN:end=now-604800:start=end-86400" \
+		"DEF:amax2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MAX:end=now-86400:start=end-86400" \
+		"DEF:bmax2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MAX:end=now-172800:start=end-86400" \
+		"DEF:cmax2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MAX:end=now-259200:start=end-86400" \
+		"DEF:dmax2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MAX:end=now-345600:start=end-86400" \
+		"DEF:emax2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MAX:end=now-432000:start=end-86400" \
+		"DEF:fmax2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MAX:end=now-518400:start=end-86400" \
+		"DEF:gmax2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MAX:end=now-604800:start=end-86400" \
 		"CDEF:messages=messages1,messages2,ADDNAN" \
 		"CDEF:a=a1,a2,ADDNAN" \
 		"CDEF:b=b1,b2,ADDNAN" \
@@ -542,8 +555,8 @@ local_trailing_rate_graph() {
 		"CDEF:e3=e,UN,0,e,IF" \
 		"CDEF:f3=f,UN,0,f,IF" \
 		"CDEF:g3=g,UN,0,g,IF" \
-		"DEF:strong=$2/dump1090_messages-strong_signals.rrd:value:AVERAGE" \
-		"DEF:positions=$2/dump1090_messages-positions.rrd:value:AVERAGE" \
+		"DEF:strong=$(check $2/dump1090_messages-strong_signals.rrd):value:AVERAGE" \
+		"DEF:positions=$(check $2/dump1090_messages-positions.rrd):value:AVERAGE" \
 		"CDEF:y2positions=positions,10,*" \
 		"VDEF:strong_total=strong,TOTAL" \
 		"VDEF:messages_total=messages,TOTAL" \
@@ -607,7 +620,7 @@ range_graph_imperial_nautical(){
 		--units-exponent 0 \
 		--right-axis 1.852:0 \
 		--right-axis-label "Kilometres" \
-		"DEF:rangem=$2/dump1090_range-max_range.rrd:value:MAX" \
+		"DEF:rangem=$(check $2/dump1090_range-max_range.rrd):value:MAX" \
 		"CDEF:rangekm=rangem,0.001,*" \
 		"CDEF:rangenm=rangekm,0.539956803,*" \
 		"LINE1:rangenm#0000FF:Max Range" \
@@ -632,7 +645,7 @@ range_graph_imperial_statute(){
 		--units-exponent 0 \
 		--right-axis 1.609:0 \
 		--right-axis-label "Kilometres" \
-		"DEF:rangem=$2/dump1090_range-max_range.rrd:value:MAX" \
+		"DEF:rangem=$(check $2/dump1090_range-max_range.rrd):value:MAX" \
 		"CDEF:rangekm=rangem,0.001,*" \
 		"CDEF:rangesm=rangekm,0.621371,*" \
 		"LINE1:rangesm#0000FF:Max Range" \
@@ -657,7 +670,7 @@ range_graph_metric() {
 		--units-exponent 0 \
 		--right-axis 0.5399:0 \
 		--right-axis-label "Nautical Miles" \
-		"DEF:rangem=$2/dump1090_range-max_range.rrd:value:MAX" \
+		"DEF:rangem=$(check $2/dump1090_range-max_range.rrd):value:MAX" \
 		"CDEF:range=rangem,0.001,*" \
 		"LINE1:range#0000FF:Max Range" \
 		"VDEF:avgrange=range,AVERAGE" \
@@ -683,9 +696,9 @@ signal_graph() {
 		--rigid \
 		--units-exponent 0 \
 		"TEXTALIGN:center" \
-		"DEF:signal=$2/dump1090_dbfs-signal.rrd:value:AVERAGE" \
-		"DEF:peak=$2/dump1090_dbfs-peak_signal.rrd:value:AVERAGE" \
-		"DEF:noise=$2/dump1090_dbfs-noise.rrd:value:AVERAGE" \
+		"DEF:signal=$(check $2/dump1090_dbfs-signal.rrd):value:AVERAGE" \
+		"DEF:peak=$(check $2/dump1090_dbfs-peak_signal.rrd):value:AVERAGE" \
+		"DEF:noise=$(check $2/dump1090_dbfs-noise.rrd):value:AVERAGE" \
 		"CDEF:us=signal,UN,-100,signal,IF" \
 		"AREA:-100#00FF00:Mean Level\\:" \
 		"AREA:us#FFFFFF" \
@@ -714,8 +727,8 @@ remote_rate_graph() {
 		--lower-limit 0  \
 		--units-exponent 0 \
 		--right-axis 360:0 \
-		"DEF:messages=$2/dump1090_messages-remote_accepted.rrd:value:AVERAGE" \
-		"DEF:positions=$2/dump1090_messages-positions.rrd:value:AVERAGE" \
+		"DEF:messages=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE" \
+		"DEF:positions=$(check $2/dump1090_messages-positions.rrd):value:AVERAGE" \
 		"CDEF:y2positions=positions,10,*" \
 		"LINE1:messages#0000FF:messages received" \
 		"LINE1:y2positions#00c0FF:position / hr (RHS)" \
@@ -737,7 +750,7 @@ system_graphs() {
 	disk_io_octets_graph ${DOCUMENTROOT}/system-$2-disk_io_octets-$4.png /var/lib/collectd/rrd/$1/$disk "$3" "$4" "$5"
 	#eth0_graph ${DOCUMENTROOT}/system-$2-eth0_bandwidth-$4.png /var/lib/collectd/rrd/$1/$ether "$3" "$4" "$5"
 	memory_graph ${DOCUMENTROOT}/system-$2-memory-$4.png /var/lib/collectd/rrd/$1/memory "$3" "$4" "$5"
-	network_graph ${DOCUMENTROOT}/system-$2-network_bandwidth-$4.png /var/lib/collectd/rrd/$1/ "$3" "$4" "$5"
+	network_graph ${DOCUMENTROOT}/system-$2-network_bandwidth-$4.png /var/lib/collectd/rrd/$1 "$3" "$4" "$5"
 	if [[ $farenheit == 1 ]]
 	then
 		temp_graph_imperial ${DOCUMENTROOT}/system-$2-temperature-$4.png /var/lib/collectd/rrd/$1/table-$2 "$3" "$4" "$5"
@@ -774,10 +787,14 @@ period="$1"
 step="$2"
 nowlit=`date '+%m/%d/%y %H:%M %Z'`;
 
+# Changing the following two variables means you need to change the names in html/graph.js as well so that the graphs are correctly displayed
+dump1090_instance="localhost"
+collectd_hostname="localhost"
+
 if [ -z $1 ]
 then
-	dump1090_receiver_graphs localhost localhost "ADS-B" "24h" "$step"
+	dump1090_receiver_graphs $collectd_hostname $dump1090_instance "ADS-B" "24h" "$step"
 else
-	dump1090_receiver_graphs localhost localhost "ADS-B" "$period" "$step"
+	dump1090_receiver_graphs $collectd_hostname $dump1090_instance "ADS-B" "$period" "$step"
 fi
 #hub_graphs localhost rpi "ADS-B" "$period" "$step"

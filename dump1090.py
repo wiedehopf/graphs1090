@@ -94,6 +94,13 @@ def read_stats_1min(instance_name, host, url):
 
 
 def read_stats(instance_name, host, url):
+    #NaN rrd
+    V.dispatch(plugin_instance = instance_name,
+               host=host,
+               type='dump1090_dbfs',
+               type_instance='NaN',
+               time=time.time(),
+               values = [1])
     try:
         with closing(urlopen(url + '/data/stats.json', None, 5.0)) as stats_file:
             stats = json.load(stats_file)
