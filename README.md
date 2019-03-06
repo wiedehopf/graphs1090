@@ -1,3 +1,6 @@
+![Screenshot](https://raw.githubusercontent.com/wiedehopf/graphs1090/screenshots/screenshot1.png)
+![Screenshot](https://raw.githubusercontent.com/wiedehopf/graphs1090/screenshots/screenshot2.png)
+
 # graphs1090
 Graphs for dump1090-fa (based on dump1090-tools by mutability)
 
