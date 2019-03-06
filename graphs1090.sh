@@ -95,6 +95,10 @@ aircraft_graph() {
 	}
 
 aircraft_message_rate_graph() {
+	if [ -f $2/dump1090_messages-remote_accepted.rrd ]
+	then messages="CDEF:messages=messages1,messages2,ADDNAN"
+	else messages="CDEF:messages=messages1"
+	fi
 	$pre; rrdtool graph \
 		"$1" \
 		--start end-$4 \
@@ -110,7 +114,7 @@ aircraft_message_rate_graph() {
 		"DEF:aircrafts=$(check $2/dump1090_aircraft-recent.rrd):total:AVERAGE" \
 		"DEF:messages1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE" \
 		"DEF:messages2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE" \
-		"CDEF:messages=messages1,messages2,ADDNAN" \
+		$messages \
 		"CDEF:provisional=messages,aircrafts,/" \
 		"CDEF:rate=aircrafts,0,GT,provisional,0,IF" \
 		"CDEF:aircrafts10=aircrafts,10,/" \
@@ -457,11 +461,11 @@ local_rate_graph() {
 		--right-axis 360:0 \
 		"DEF:messages1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE" \
 		"DEF:messages2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE" \
-		"CDEF:messages=messages1,messages2,ADDNAN" \
 		"DEF:strong=$(check $2/dump1090_messages-strong_signals.rrd):value:AVERAGE" \
 		"DEF:positions=$(check $2/dump1090_messages-positions.rrd):value:AVERAGE" \
 		"CDEF:y2positions=positions,10,*" \
-		"LINE1:messages#0000FF:Messages Received" \
+		"LINE1:messages1#0000FF:Local" \
+		"LINE1:messages2#009900:Remote" \
 		"AREA:strong#FF0000:Messages > -3dBFS" \
 		"LINE1:y2positions#00c0FF:Positions / Hr (RHS)\c" \
 		"COMMENT: \n" \
@@ -469,6 +473,10 @@ local_rate_graph() {
 	}
 
 local_trailing_rate_graph() {
+	if [ -f $2/dump1090_messages-remote_accepted.rrd ]
+	then messages="CDEF:messages=messages1,messages2,ADDNAN"
+	else messages="CDEF:messages=messages1"
+	fi
 	$pre; rrdtool graph \
 		"$1" \
 		--start end-$4 \
@@ -526,7 +534,7 @@ local_trailing_rate_graph() {
 		"DEF:emax2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MAX:end=now-432000:start=end-86400" \
 		"DEF:fmax2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MAX:end=now-518400:start=end-86400" \
 		"DEF:gmax2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MAX:end=now-604800:start=end-86400" \
-		"CDEF:messages=messages1,messages2,ADDNAN" \
+		$messages \
 		"CDEF:a=a1,a2,ADDNAN" \
 		"CDEF:b=b1,b2,ADDNAN" \
 		"CDEF:c=c1,c2,ADDNAN" \
