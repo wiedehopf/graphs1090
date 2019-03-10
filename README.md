@@ -15,7 +15,7 @@ sudo bash -c "$(wget -q -O - https://raw.githubusercontent.com/wiedehopf/graphs1
 ## Configuration (optional):
 Edit the configuration file to change graph layout options, for example size:
 ```
-sudo nano /etc/default/graph
+sudo nano /etc/default/graphs1090
 ```
 Ctrl-x to exit, y (yes) and enter to save.
 
