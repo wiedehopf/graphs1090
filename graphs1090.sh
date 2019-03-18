@@ -51,7 +51,7 @@ options="$grid $fontsize"
 small="$options -D --width $swidth --height $sheight"
 big="$options --width $lwidth --height $lheight"
 
-pre="sleep 0.2"
+pre="sleep 0.3"
 
 #checks a file name for existence and otherwise uses an "empty" rrd as a source so the graphs can still be printed even if the file is missing
 
