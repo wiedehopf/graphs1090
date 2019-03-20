@@ -91,6 +91,11 @@ sudo systemctl restart collectd
 ```
 
 
+### Known bugs:
+
+##### disk graphs with kernel >= 4.19 don't work due to a collectd bug
+https://github.com/collectd/collectd/issues/2951
+
 
 ### Deinstallation:
 ```
