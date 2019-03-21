@@ -8,7 +8,7 @@ mkdir -p $ipath/installed
 
 for i in $packages
 do
-	if ! dpkg -s $i &>/dev/null
+	if ! dpkg -s $i | grep 'Status.*installed' &>/dev/null
 	then
 		install=1
 		touch $ipath/installed/$i
