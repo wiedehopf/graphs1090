@@ -3,12 +3,12 @@
 ipath=/usr/share/graphs1090
 install=0
 
-packages="collectd rrdtool lighttpd unzip"
+packages="collectd-core rrdtool lighttpd unzip python"
 mkdir -p $ipath/installed
 
 for i in $packages
 do
-	if ! $i -h &>/dev/null
+	if ! dpkg -s $i &>/dev/null
 	then
 		install=1
 		touch $ipath/installed/$i
