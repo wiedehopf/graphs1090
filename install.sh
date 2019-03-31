@@ -27,6 +27,10 @@ then
 	fi
 fi
 
+if ! dpkg -s libpython2.7 | grep 'Status.*installed' &>/dev/null
+then
+	apt-get install -y libpython2.7
+fi
 
 if [ -z $1 ] || [ $1 != "test" ]
 then
@@ -38,6 +42,7 @@ then
 	fi
 	cd graphs1090-master
 fi
+
 
 cp graphs1090.sh dump1090.db dump1090.py boot.sh uninstall.sh LICENSE $ipath
 cp -n /etc/collectd/collectd.conf /etc/collectd/collectd.conf.graphs1090
@@ -64,14 +69,14 @@ then
 	echo --------------
 fi
 
-if grep jessie /etc/os-release
+if grep jessie /etc/os-release >/dev/null
 then
 	echo --------------
 	echo "Some features are not available on jessie!"
 	echo --------------
 	sed -i -e 's/ADDNAN/+/' -e 's/TRENDNAN/TREND/' -e 's/MAXNAN/MAX/' -e 's/MINNAN/MIN/' $ipath/graphs1090.sh
-	apt-get install -y libpython2.7
 fi
+
 
 mkdir -p /var/lib/collectd/rrd/localhost/dump1090-localhost
 #cp -n dump1090_cpu-airspy.rrd /var/lib/collectd/rrd/localhost/dump1090-localhost
