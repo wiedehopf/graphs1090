@@ -35,9 +35,9 @@ fi
 if [ -z $1 ] || [ $1 != "test" ]
 then
 	cd /tmp
-	if ! wget -q -O master.zip https://github.com/wiedehopf/graphs1090/archive/master.zip || ! unzip -q -o master.zip
+	if ! wget --timeout=30 -q -O master.zip https://github.com/wiedehopf/graphs1090/archive/master.zip || ! unzip -q -o master.zip
 	then
-		echo "Unable to download or unzip files, exiting!"
+		echo "Unable to download files, exiting! (Maybe try again?)"
 		exit 1
 	fi
 	cd graphs1090-master
@@ -57,12 +57,13 @@ cp 88-graphs1090.conf /etc/lighttpd/conf-available
 lighty-enable-mod graphs1090 >/dev/null
 
 
-if wget http://localhost/dump1090/data/stats.json -O /dev/null -q
+if wget --timeout=30 http://localhost/dump1090/data/stats.json -O /dev/null -q
 then
 	sed -i 's?localhost/dump1090-fa?localhost/dump1090?' /etc/collectd/collectd.conf
 	echo --------------
 	echo "dump1090 webaddress automatically set to http://localhost/dump1090/"
-elif ! wget http://localhost/dump1090-fa/data/stats.json -O /dev/null -q
+	echo --------------
+elif ! wget --timeout=30 http://localhost/dump1090-fa/data/stats.json -O /dev/null -q
 then
 	echo --------------
 	echo "Non-standard configuration detected, you need to change the data URL in /etc/collectd/collectd.conf!"
@@ -81,11 +82,12 @@ fi
 mkdir -p /var/lib/collectd/rrd/localhost/dump1090-localhost
 #cp -n dump1090_cpu-airspy.rrd /var/lib/collectd/rrd/localhost/dump1090-localhost
 
+mkdir -p /run/graphs1090
+
 systemctl daemon-reload
 systemctl enable collectd &>/dev/null
 systemctl restart collectd lighttpd
 
-mkdir -p /run/graphs1090
 
 if [ -f /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_messages-local_accepted.rrd ]
 then
