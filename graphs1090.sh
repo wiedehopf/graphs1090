@@ -722,6 +722,73 @@ signal_graph() {
 		--watermark "Drawn: $nowlit";
 	}
 
+978_aircraft() {
+	$pre; rrdtool graph \
+		"$1" \
+		--start end-$4 \
+		$small \
+		--step "$5" \
+		--title "UAT Aircraft Seen / Tracked" \
+		--vertical-label "Aircraft" \
+		--lower-limit 0 \
+		--units-exponent 0 \
+		"TEXTALIGN:center" \
+		"DEF:all=$2/dump1090_aircraft-recent_978.rrd:total:AVERAGE" \
+		"DEF:pos=$2/dump1090_aircraft-recent_978.rrd:positions:AVERAGE" \
+		"CDEF:noloc=all,pos,-" \
+		"VDEF:avgac=all,AVERAGE" \
+		"VDEF:maxac=all,MAXIMUM" \
+		"AREA:all#00FF00:Aircraft Seen / Tracked,   " \
+		"GPRINT:avgac:Average\:%3.0lf     " \
+		"GPRINT:maxac:Maximum\:%3.0lf\c" \
+		"LINE1:pos#0000FF:w/ Positions" \
+		"LINE1:noloc#FF0000:w/o Positions" \
+		--watermark "Drawn: $nowlit";
+	}
+
+978_range(){ $pre; rrdtool graph \
+		"$1" \
+		--start end-$4 \
+		$small \
+		--step "$5" \
+		--title "UAT Max Range" \
+		--vertical-label "Nautical Miles" \
+		--units-exponent 0 \
+		--right-axis 1.852:0 \
+		--right-axis-label "Kilometres" \
+		"DEF:rangem=$2/dump1090_range-max_range_978.rrd:value:MAX" \
+		"CDEF:rangekm=rangem,0.001,*" \
+		"CDEF:rangenm=rangekm,0.539956803,*" \
+		"LINE1:rangenm#0000FF:Max Range" \
+		"VDEF:avgrange=rangenm,AVERAGE" \
+		"LINE1:avgrange#666666:Avr Range\\::dashes" \
+		"VDEF:peakrange=rangenm,MAXIMUM" \
+		"GPRINT:avgrange:%1.1lf NM" \
+		"LINE1:peakrange#FF0000:Peak Range\\:" \
+		"GPRINT:peakrange:%1.1lf NM\c" \
+		"COMMENT: \n" \
+		--watermark "Drawn: $nowlit";
+	}
+
+978_messages() {
+	$pre; rrdtool graph \
+		"$1" \
+		--start end-$4 \
+		$small \
+		--step "$5" \
+		--title "UAT Message Rate" \
+		--vertical-label "Messages/Second" \
+		--lower-limit 0  \
+		--units-exponent 0 \
+		--right-axis 1:0 \
+		--right-axis-format "%.1lf" \
+		--left-axis-format "%.1lf" \
+		"DEF:messages1=$2/dump1090_messages-messages_978.rrd:value:AVERAGE" \
+		"LINE1:messages1#0000FF:Messages\c" \
+		"COMMENT: \n" \
+		--watermark "Drawn: $nowlit";
+	}
+
 ## HUB GRAPHS
 
 remote_rate_graph() {
@@ -783,6 +850,9 @@ dump1090_receiver_graphs() {
 		range_graph_imperial_nautical ${DOCUMENTROOT}/dump1090-$2-range-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
 	fi
 	signal_graph ${DOCUMENTROOT}/dump1090-$2-signal-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
+	978_range ${DOCUMENTROOT}/dump1090-$2-range_978-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
+	978_aircraft ${DOCUMENTROOT}/dump1090-$2-aircraft_978-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
+	978_messages ${DOCUMENTROOT}/dump1090-$2-messages_978-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
 }
 
 dump1090_hub_graphs() {

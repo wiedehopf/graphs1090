@@ -16,11 +16,13 @@ def handle_config(root):
             for ch2 in child.children:
                 if ch2.key == 'URL':
                     url = ch2.values[0]
+                if ch2.key == 'URL_978':
+                    url_978 = ch2.values[0]
             if not url:
                 collectd.warning('No URL found in dump1090 Instance ' + instance_name)
             else:
                 collectd.register_read(callback=handle_read,
-                                       data=(instance_name, urlparse.urlparse(url).hostname, url),
+                                       data=(instance_name, urlparse.urlparse(url).hostname, url, url_978),
                                        name='dump1090.' + instance_name)
                 collectd.register_read(callback=handle_read_1min,
                                        data=(instance_name, urlparse.urlparse(url).hostname, url),
@@ -38,10 +40,12 @@ def T(provisional):
     else: return now
 
 def handle_read(data):
-    instance_name,host,url = data
+    instance_name,host,url,url_978 = data
 
     read_stats(instance_name, host, url)
     read_aircraft(instance_name, host, url)
+    if url_978:
+        read_aircraft_978(instance_name, host, url_978)
 
 def handle_read_1min(data):
     instance_name,host,url = data
@@ -271,5 +275,53 @@ def read_aircraft(instance_name, host, url):
                    time=aircraft_data['now'],
                    values = [max_range])
 
+def read_aircraft_978(instance_name, host, url):
+    try:
+        with closing(urlopen(url + '/data/receiver.json', None, 5.0)) as receiver_file:
+            receiver = json.load(receiver_file)
+
+        if receiver.has_key('lat'):
+            rlat = float(receiver['lat'])
+            rlon = float(receiver['lon'])
+        else:
+            rlat = rlon = None
+
+        with closing(urlopen(url + '/data/aircraft.json', None, 5.0)) as aircraft_file:
+            aircraft_data = json.load(aircraft_file)
+
+    except URLError as error:
+        return
+
+    total = 0
+    with_pos = 0
+    max_range = 0
+    for a in aircraft_data['aircraft']:
+        if a['seen'] < 15: total += 1
+        if a.has_key('seen_pos') and a['seen_pos'] < 15:
+            with_pos += 1
+            if rlat is not None:
+                distance = greatcircle(rlat, rlon, a['lat'], a['lon'])
+                if distance > max_range: max_range = distance
+
+    V.dispatch(plugin_instance = instance_name,
+               host=host,
+               type='dump1090_aircraft',
+               type_instance='recent_978',
+               time=T(aircraft_data['now']),
+               values = [total, with_pos])
+
+    V.dispatch(plugin_instance = instance_name,
+               host=host,
+               type='dump1090_range',
+               type_instance='max_range_978',
+               time=T(aircraft_data['now']),
+               values = [max_range])
+
+    V.dispatch(plugin_instance = instance_name,
+               host=host,
+               type='dump1090_messages',
+               type_instance='messages_978',
+               time=T(aircraft_data['now']),
+               values = [aircraft_data['messages']])
 
 collectd.register_config(callback=handle_config, name='dump1090')
