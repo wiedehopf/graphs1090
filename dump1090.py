@@ -271,12 +271,13 @@ def read_aircraft(instance_name, host, url):
                time=aircraft_data['now'],
                values = [mlat])
 
-    V.dispatch(plugin_instance = instance_name,
-               host=host,
-               type='dump1090_tisb',
-               type_instance='recent',
-               time=aircraft_data['now'],
-               values = [tisb])
+    if tisb > 0:
+        V.dispatch(plugin_instance = instance_name,
+                   host=host,
+                   type='dump1090_tisb',
+                   type_instance='recent',
+                   time=aircraft_data['now'],
+                   values = [tisb])
 
     if max_range > 0:
         V.dispatch(plugin_instance = instance_name,
@@ -325,12 +326,13 @@ def read_aircraft_978(instance_name, host, url):
                time=T(aircraft_data['now']),
                values = [total, with_pos])
 
-    V.dispatch(plugin_instance = instance_name,
-               host=host,
-               type='dump1090_tisb',
-               type_instance='recent_978',
-               time=aircraft_data['now'],
-               values = [tisb])
+    if tisb > 0:
+        V.dispatch(plugin_instance = instance_name,
+                   host=host,
+                   type='dump1090_tisb',
+                   type_instance='recent_978',
+                   time=aircraft_data['now'],
+                   values = [tisb])
 
     V.dispatch(plugin_instance = instance_name,
                host=host,

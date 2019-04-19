@@ -737,7 +737,7 @@ signal_graph() {
 		"TEXTALIGN:center" \
 		"DEF:all=$2/dump1090_aircraft-recent_978.rrd:total:AVERAGE" \
 		"DEF:pos=$2/dump1090_aircraft-recent_978.rrd:positions:AVERAGE" \
-		"DEF:tisb=$2/dump1090_tisb-recent_978.rrd:value:AVERAGE" \
+		"DEF:tisb=$(check $2/dump1090_tisb-recent_978.rrd):value:AVERAGE" \
 		"CDEF:noloc=all,pos,-" \
 		"VDEF:avgac=all,AVERAGE" \
 		"VDEF:maxac=all,MAXIMUM" \
@@ -854,9 +854,12 @@ dump1090_receiver_graphs() {
 		range_graph_imperial_nautical ${DOCUMENTROOT}/dump1090-$2-range-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
 	fi
 	signal_graph ${DOCUMENTROOT}/dump1090-$2-signal-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
-	978_range ${DOCUMENTROOT}/dump1090-$2-range_978-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
-	978_aircraft ${DOCUMENTROOT}/dump1090-$2-aircraft_978-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
-	978_messages ${DOCUMENTROOT}/dump1090-$2-messages_978-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
+	if [ -f $2/dump1090_messages-messages_978.rrd ]
+	then
+		978_range ${DOCUMENTROOT}/dump1090-$2-range_978-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
+		978_aircraft ${DOCUMENTROOT}/dump1090-$2-aircraft_978-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
+		978_messages ${DOCUMENTROOT}/dump1090-$2-messages_978-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
+	fi
 }
 
 dump1090_hub_graphs() {
