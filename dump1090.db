@@ -5,3 +5,4 @@ dump1090_aircraft	total:GAUGE:0:500, positions:GAUGE:0:500
 dump1090_range		value:GAUGE:0:1000000
 dump1090_tracks		value:DERIVE:0:500
 dump1090_mlat		value:GAUGE:0:500
+dump1090_tisb		value:GAUGE:0:500

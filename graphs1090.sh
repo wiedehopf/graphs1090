@@ -82,15 +82,17 @@ aircraft_graph() {
 		"DEF:all=$(check $2/dump1090_aircraft-recent.rrd):total:AVERAGE" \
 		"DEF:pos=$(check $2/dump1090_aircraft-recent.rrd):positions:AVERAGE" \
 		"DEF:mlat=$(check $2/dump1090_mlat-recent.rrd):value:AVERAGE" \
+		"DEF:tisb=$(check $2/dump1090_tisb-recent.rrd):value:AVERAGE" \
 		"CDEF:noloc=all,pos,-" \
 		"VDEF:avgac=all,AVERAGE" \
 		"VDEF:maxac=all,MAXIMUM" \
 		"AREA:all#00FF00:Aircraft Seen / Tracked,   " \
 		"GPRINT:avgac:Average\:%3.0lf     " \
 		"GPRINT:maxac:Maximum\:%3.0lf\c" \
-		"LINE1:pos#0000FF:w/ Positions" \
-		"LINE1:noloc#FF0000:w/o Positions" \
-		"LINE1:mlat#000000:mlat" \
+		"LINE1:pos#0000FF:w/ Position" \
+		"LINE1:noloc#FF0000:w/o Position" \
+		"LINE1:mlat#000000:MLAT" \
+		"LINE1:tisb#00c0FF:TIS-B" \
 		--watermark "Drawn: $nowlit";
 	}
 
@@ -735,14 +737,16 @@ signal_graph() {
 		"TEXTALIGN:center" \
 		"DEF:all=$2/dump1090_aircraft-recent_978.rrd:total:AVERAGE" \
 		"DEF:pos=$2/dump1090_aircraft-recent_978.rrd:positions:AVERAGE" \
+		"DEF:tisb=$2/dump1090_tisb-recent_978.rrd:value:AVERAGE" \
 		"CDEF:noloc=all,pos,-" \
 		"VDEF:avgac=all,AVERAGE" \
 		"VDEF:maxac=all,MAXIMUM" \
 		"AREA:all#00FF00:Aircraft Seen / Tracked,   " \
 		"GPRINT:avgac:Average\:%3.0lf     " \
 		"GPRINT:maxac:Maximum\:%3.0lf\c" \
-		"LINE1:pos#0000FF:w/ Positions" \
-		"LINE1:noloc#FF0000:w/o Positions" \
+		"LINE1:pos#0000FF:w/ Position" \
+		"LINE1:noloc#FF0000:w/o Position" \
+		"LINE1:tisb#00c0FF:TIS-B" \
 		--watermark "Drawn: $nowlit";
 	}
 

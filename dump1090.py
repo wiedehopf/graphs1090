@@ -243,6 +243,7 @@ def read_aircraft(instance_name, host, url):
     with_pos = 0
     max_range = 0
     mlat = 0
+    tisb = 0
     for a in aircraft_data['aircraft']:
         if a['seen'] < 15: total += 1
         if a.has_key('seen_pos') and a['seen_pos'] < 15:
@@ -251,6 +252,8 @@ def read_aircraft(instance_name, host, url):
                 distance = greatcircle(rlat, rlon, a['lat'], a['lon'])
                 if 'lat' in a.get('mlat', ()):
                     mlat += 1
+                elif 'lat' in a.get('tisb', ()):
+                    tisb += 1
                 else:
                     if distance > max_range: max_range = distance
 
@@ -260,12 +263,20 @@ def read_aircraft(instance_name, host, url):
                type_instance='recent',
                time=aircraft_data['now'],
                values = [total, with_pos])
+
     V.dispatch(plugin_instance = instance_name,
                host=host,
                type='dump1090_mlat',
                type_instance='recent',
                time=aircraft_data['now'],
                values = [mlat])
+
+    V.dispatch(plugin_instance = instance_name,
+               host=host,
+               type='dump1090_tisb',
+               type_instance='recent',
+               time=aircraft_data['now'],
+               values = [tisb])
 
     if max_range > 0:
         V.dispatch(plugin_instance = instance_name,
@@ -295,13 +306,17 @@ def read_aircraft_978(instance_name, host, url):
     total = 0
     with_pos = 0
     max_range = 0
+    tisb = 0
     for a in aircraft_data['aircraft']:
         if a['seen'] < 15: total += 1
         if a.has_key('seen_pos') and a['seen_pos'] < 15:
             with_pos += 1
             if rlat is not None:
                 distance = greatcircle(rlat, rlon, a['lat'], a['lon'])
-                if distance > max_range: max_range = distance
+                if 'lat' in a.get('tisb', ()):
+                    tisb += 1
+                else:
+                    if distance > max_range: max_range = distance
 
     V.dispatch(plugin_instance = instance_name,
                host=host,
@@ -309,6 +324,13 @@ def read_aircraft_978(instance_name, host, url):
                type_instance='recent_978',
                time=T(aircraft_data['now']),
                values = [total, with_pos])
+
+    V.dispatch(plugin_instance = instance_name,
+               host=host,
+               type='dump1090_tisb',
+               type_instance='recent_978',
+               time=aircraft_data['now'],
+               values = [tisb])
 
     V.dispatch(plugin_instance = instance_name,
                host=host,
