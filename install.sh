@@ -19,6 +19,7 @@ if [ $install == 1 ]
 then
 	echo "Installing required packages: $packages"
 	apt-get update
+	apt-get upgrade -y
 	if ! apt-get install -y $packages
 	then
 		echo "Failed to install required packages: $packages"
