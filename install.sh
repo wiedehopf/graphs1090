@@ -44,8 +44,8 @@ then
 	cd graphs1090-master
 fi
 
-cp -n /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_dbfs-NaN.rrd /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_tisb-recent.rrd
-cp -n /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_dbfs-NaN.rrd /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_tisb-recent_978.rrd
+cp -n /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_dbfs-NaN.rrd /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_tisb-recent.rrd 2>/dev/null
+cp -n /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_dbfs-NaN.rrd /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_tisb-recent_978.rrd 2>/dev/null
 cp graphs1090.sh dump1090.db dump1090.py boot.sh uninstall.sh LICENSE $ipath
 cp -n /etc/collectd/collectd.conf /etc/collectd/collectd.conf.graphs1090 2>/dev/null
 cp collectd.conf /etc/collectd/collectd.conf
@@ -82,7 +82,6 @@ fi
 
 
 mkdir -p /var/lib/collectd/rrd/localhost/dump1090-localhost
-#cp -n dump1090_cpu-airspy.rrd /var/lib/collectd/rrd/localhost/dump1090-localhost
 
 mkdir -p /run/graphs1090
 
