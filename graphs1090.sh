@@ -870,7 +870,7 @@ dump1090_hub_graphs() {
 
 period="$1"
 step="$2"
-nowlit=`date '+%m/%d/%y %H:%M %Z'`;
+nowlit=`date '+%Y-%m-%d %H:%M %Z'`;
 
 # Changing the following two variables means you need to change the names in html/graph.js as well so that the graphs are correctly displayed
 dump1090_instance="localhost"
