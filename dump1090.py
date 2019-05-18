@@ -98,6 +98,28 @@ def read_stats_1min(instance_name, host, url):
 
 
 def read_stats(instance_name, host, url):
+    #temp sensor
+
+    p = subprocess.Popen("grep -oP -e 't=\K[0-9]*' /sys/bus/w1/devices/28-0319977943e7/w1_slave",
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE,
+                        shell=True)
+
+    out, err = p.communicate()
+
+
+    if p.returncode == 0 :
+        try:
+            temp = int(out)
+            V.dispatch(plugin_instance = instance_name,
+                       host=host,
+                       type='gauge',
+                       type_instance='extra_temp',
+                       time=time.time(),
+                       values = [temp])
+        except:
+            pass
+
     #NaN rrd
     V.dispatch(plugin_instance = instance_name,
                host=host,

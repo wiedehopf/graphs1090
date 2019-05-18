@@ -423,6 +423,22 @@ temp_graph_metric() {
 		--watermark "Drawn: $nowlit";
 	}
 
+extra_temp() {
+	$pre; rrdtool graph \
+		"$1" \
+		--start end-$4 \
+		$small \
+		--step "$5" \
+		--title "Temperature" \
+		--vertical-label "Degrees Celcius" \
+		--units-exponent 1 \
+		"DEF:traw=$(check $2/gauge-extra_temp.rrd):value:AVERAGE" \
+		"CDEF:tfin=traw,1000,/" \
+		"AREA:tfin#ffcc00" \
+		"COMMENT: \n" \
+		--watermark "Drawn: $nowlit";
+	}
+
 wlan0_graph() {
 	$pre; rrdtool graph \
 		"$1" \
@@ -837,6 +853,7 @@ system_graphs() {
 		temp_graph_metric ${DOCUMENTROOT}/system-$2-temperature-$4.png /var/lib/collectd/rrd/$1/table-$2 "$3" "$4" "$5"
 	fi
 	#wlan0_graph ${DOCUMENTROOT}/system-$2-wlan0_bandwidth-$4.png /var/lib/collectd/rrd/$1/$wifi "$3" "$4" "$5"
+	extra_temp ${DOCUMENTROOT}/dump1090-$2-messages_978-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
 }
 
 dump1090_receiver_graphs() {
