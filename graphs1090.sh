@@ -80,12 +80,13 @@ aircraft_graph() {
 		--units-exponent 0 \
 		"TEXTALIGN:center" \
 		"DEF:all=$(check $2/dump1090_aircraft-recent.rrd):total:AVERAGE" \
+		"DEF:all_max=$(check $2/dump1090_aircraft-recent.rrd):total:MAX" \
 		"DEF:pos=$(check $2/dump1090_aircraft-recent.rrd):positions:AVERAGE" \
 		"DEF:mlat=$(check $2/dump1090_mlat-recent.rrd):value:AVERAGE" \
 		"DEF:tisb=$(check $2/dump1090_tisb-recent.rrd):value:AVERAGE" \
 		"CDEF:noloc=all,pos,-" \
 		"VDEF:avgac=all,AVERAGE" \
-		"VDEF:maxac=all,MAXIMUM" \
+		"VDEF:maxac=all_max,MAXIMUM" \
 		"AREA:all#00FF00:Aircraft Seen / Tracked,   " \
 		"GPRINT:avgac:Average\:%3.0lf     " \
 		"GPRINT:maxac:Maximum\:%3.0lf\c" \
