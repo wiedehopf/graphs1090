@@ -89,6 +89,8 @@ systemctl daemon-reload
 systemctl enable collectd &>/dev/null
 systemctl restart collectd lighttpd
 
+#fix readonly remount logic in fr24feed update script
+sed -i -e 's?$(mount | grep " on / " | grep rw)?{ mount | grep " on / " | grep rw; }?' /usr/lib/fr24/fr24feed_updater.sh &>/dev/null
 
 if [ -f /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_messages-local_accepted.rrd ]
 then
