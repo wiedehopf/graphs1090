@@ -632,10 +632,13 @@ range_graph_imperial_nautical(){
 		--right-axis 1.852:0 \
 		--right-axis-label "Kilometres" \
 		"DEF:rangem=$(check $2/dump1090_range-max_range.rrd):value:MAX" \
+		"DEF:rangem_a=$(check $2/dump1090_range-max_range.rrd):value:AVERAGE" \
 		"CDEF:rangekm=rangem,0.001,*" \
 		"CDEF:rangenm=rangekm,0.539956803,*" \
+		"CDEF:rangekm_a=rangem_a,0.001,*" \
+		"CDEF:rangenm_a=rangekm_a,0.539956803,*" \
 		"LINE1:rangenm#0000FF:Max Range" \
-		"VDEF:avgrange=rangenm,AVERAGE" \
+		"VDEF:avgrange=rangenm_a,AVERAGE" \
 		"LINE1:avgrange#666666:Avr Range\\::dashes" \
 		"VDEF:peakrange=rangenm,MAXIMUM" \
 		"GPRINT:avgrange:%1.1lf NM" \
@@ -657,10 +660,13 @@ range_graph_imperial_statute(){
 		--right-axis 1.609:0 \
 		--right-axis-label "Kilometres" \
 		"DEF:rangem=$(check $2/dump1090_range-max_range.rrd):value:MAX" \
+		"DEF:rangem_a=$(check $2/dump1090_range-max_range.rrd):value:AVERAGE" \
 		"CDEF:rangekm=rangem,0.001,*" \
 		"CDEF:rangesm=rangekm,0.621371,*" \
+		"CDEF:rangekm_a=rangem_a,0.001,*" \
+		"CDEF:rangesm_a=rangekm_a,0.621371,*" \
 		"LINE1:rangesm#0000FF:Max Range" \
-		"VDEF:avgrange=rangesm,AVERAGE" \
+		"VDEF:avgrange=rangesm_a,AVERAGE" \
 		"LINE1:avgrange#666666:Avr Range\\::dashes" \
 		"VDEF:peakrange=rangesm,MAXIMUM" \
 		"GPRINT:avgrange:%1.1lf SM" \
@@ -682,9 +688,11 @@ range_graph_metric() {
 		--right-axis 0.5399:0 \
 		--right-axis-label "Nautical Miles" \
 		"DEF:rangem=$(check $2/dump1090_range-max_range.rrd):value:MAX" \
+		"DEF:rangem_a=$(check $2/dump1090_range-max_range.rrd):value:AVERAGE" \
 		"CDEF:range=rangem,0.001,*" \
+		"CDEF:range_a=rangem_a,0.001,*" \
 		"LINE1:range#0000FF:Max Range" \
-		"VDEF:avgrange=range,AVERAGE" \
+		"VDEF:avgrange=range_a,AVERAGE" \
 		"LINE1:avgrange#666666:Avg Range\\::dashes" \
 		"VDEF:peakrange=range,MAXIMUM" \
 		"GPRINT:avgrange:%1.1lf km" \
