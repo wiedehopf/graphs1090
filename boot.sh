@@ -6,6 +6,7 @@ mkdir -p /run/graphs1090
 if [ -f /var/lib/collectd/rrd/$1/dump1090-$2/dump1090_messages-messages_978.rrd ]
 then
 	sed -i -e 's/ style="display:none"> <!-- dump978 -->/> <!-- dump978 -->/' /usr/share/graphs1090/html/index.html
+	sed -i -e "/sed -i -e 's\/ style=\"display/d" /usr/share/graphs1090/graphs1090.sh
 else
 	sed -i -e 's/panel-default"> <!-- dump978 -->/panel-default" style="display:none"> <!-- dump978 -->/' /usr/share/graphs1090/html/index.html
 fi
