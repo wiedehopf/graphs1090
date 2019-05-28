@@ -8,8 +8,8 @@ systemctl stop collectd
 
 date=$(date -I)
 
-cp -r -n localhost $date
-mv localhost old
+cp -T -r -n localhost $date
+rm -r localhost
 
 systemctl start collectd
 sleep 60
@@ -33,7 +33,7 @@ do
 	rrdtool create -r $date/$file -t localhost/$file localhost/$file
 done
 
-cp -r -n $date localhost
+cp -T -r -n $date localhost
 systemctl start collectd
 
 for i in 1h 6h 24h 48h 7d 30d 90d 180d 365d;do nice /usr/share/graphs1090/graphs1090.sh $i;done
