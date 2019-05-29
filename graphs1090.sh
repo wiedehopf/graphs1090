@@ -476,6 +476,11 @@ local_rate_graph() {
 	}
 
 local_trailing_rate_graph() {
+	if [[ $max_messages_line == 1 ]]
+	then
+		maxline1="VDEF:peakmessages=messages,MAXIMUM"
+		maxline2="LINE1:peakmessages#0000FF:dashes=2,5"
+	fi
 	if [ -f $2/dump1090_messages-remote_accepted.rrd ]
 	then messages="CDEF:messages=messages1,messages2,ADDNAN"
 	else messages="CDEF:messages=messages1"
@@ -614,6 +619,7 @@ local_trailing_rate_graph() {
 		"AREA:maxarea#FFFF99:Min/Max:STACK" \
 		"LINE1:7dayaverage#00FF00:7 Day Average" \
 		"LINE1:messages#0000FF" \
+		$maxline1 $maxline2\
 		"AREA:strong#FF0000:Messages > -3dBFS\g" \
 		"GPRINT:strong_percent_vdef: (%1.1lf<span font='2'> </span>%% of messages)" \
 		"LINE1:y2positions#00c0FF:Positions/s (RHS)\c" \

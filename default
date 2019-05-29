@@ -10,6 +10,9 @@ graph_size=default
 # font size, default 10.0 (relative to graph size)
 font_size=10.0
 
+# set to 1 to draw a reference line at the maximum message rate
+max_messages_line=0
+
 # if graph_size is set to custom, the following sizes are used:
 
 # large graph dimensions are the actual graph area
