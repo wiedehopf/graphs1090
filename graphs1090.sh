@@ -479,7 +479,7 @@ local_trailing_rate_graph() {
 	if [[ $max_messages_line == 1 ]]
 	then
 		maxline1="VDEF:peakmessages=messages,MAXIMUM"
-		maxline2="LINE1:peakmessages#0000FF:dashes=2,5"
+		maxline2="LINE1:peakmessages#0000FF:dashes=2,8"
 	fi
 	if [ -f $2/dump1090_messages-remote_accepted.rrd ]
 	then messages="CDEF:messages=messages1,messages2,ADDNAN"
