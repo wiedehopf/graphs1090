@@ -609,11 +609,16 @@ local_trailing_rate_graph() {
 		"CDEF:max5=max3,gmax,MAXNAN" \
 		"CDEF:max=max4,max5,MAXNAN" \
 		"CDEF:maxarea=max,min,-" \
+		"CDEF:tqmessages=messages,0.75,*" \
+		"VDEF:peakmessages=messages,MAXIMUM" \
+		"VDEF:tqpeakmessages=tqmessages,MAXIMUM" \
 		"LINE0.01:messages#0000FF:Messages Received" \
 		"LINE1:min#FFFF99" \
 		"AREA:maxarea#FFFF99:Min/Max:STACK" \
 		"LINE1:7dayaverage#00FF00:7 Day Average" \
 		"LINE1:messages#0000FF" \
+		"LINE1:peakmessages#0000FF:dashes=2,5" \
+		"LINE1:tqpeakmessages#0000FF:dashes=2,5" \
 		"AREA:strong#FF0000:Messages > -3dBFS\g" \
 		"GPRINT:strong_percent_vdef: (%1.1lf<span font='2'> </span>%% of messages)" \
 		"LINE1:y2positions#00c0FF:Positions/s (RHS)\c" \
