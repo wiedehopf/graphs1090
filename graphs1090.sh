@@ -76,6 +76,7 @@ aircraft_graph() {
 		--step "$5" \
 		--title "$3 Aircraft Seen / Tracked" \
 		--vertical-label "Aircraft" \
+		--right-axis 1:0 \
 		--lower-limit 0 \
 		--units-exponent 0 \
 		"TEXTALIGN:center" \
@@ -113,7 +114,6 @@ aircraft_message_rate_graph() {
 		--step "$5" \
 		--title "$3 Message Rate / Aircraft" \
 		--vertical-label "Messages/Aircraft/Second" \
-		--right-axis-label "Aircraft" \
 		--lower-limit 0 \
 		--units-exponent 0 \
 		--right-axis 10:0 \
@@ -150,6 +150,7 @@ cpu_graph_dump1090() {
 		--title "$3 CPU Utilization" \
 		--vertical-label "CPU %" \
 		--lower-limit 0 \
+		--right-axis 1:0 \
 		--rigid \
 		"DEF:demod=$(check $2/dump1090_cpu-demod.rrd):value:AVERAGE" \
 		"CDEF:demodp=demod,10,/" \
@@ -176,6 +177,7 @@ tracks_graph() {
 		--title "$3 Tracks Seen" \
 		--vertical-label "Tracks/Hour" \
 		--lower-limit 0 \
+		--right-axis 1:0 \
 		--units-exponent 0 \
 		"DEF:all=$(check $2/dump1090_tracks-all.rrd):value:AVERAGE" \
 		"DEF:single=$(check $2/dump1090_tracks-single_message.rrd):value:AVERAGE" \
@@ -199,6 +201,7 @@ cpu_graph() {
 		--step "$5" \
 		--title "Overall CPU Utilization" \
 		--vertical-label "CPU %" \
+		--right-axis 1:0 \
 		--lower-limit 0 \
 		--rigid \
 		--units-exponent 0 \
@@ -235,7 +238,8 @@ df_root_graph() {
 		$small \
 		--step "$5" \
 		--title "Disk Usage (/)" \
-		--vertical-label "" \
+		--vertical-label "Bytes" \
+		--right-axis 1:0 \
 		--lower-limit 0  \
 		"TEXTALIGN:center" \
 		"DEF:used=$(check $2/df_complex-used.rrd):value:AVERAGE" \
@@ -256,6 +260,7 @@ disk_io_iops_graph() {
 		--step "$5" \
 		--title "Disk I/O - IOPS" \
 		--vertical-label "IOPS" \
+		--right-axis 1:0 \
 		"TEXTALIGN:center" \
 		"DEF:read=$(check $2/disk_ops.rrd):read:AVERAGE" \
 		"DEF:write=$(check $2/disk_ops.rrd):write:AVERAGE" \
@@ -282,6 +287,7 @@ disk_io_octets_graph() {
 		--step "$5" \
 		--title "Disk I/O - Bandwidth" \
 		--vertical-label "Bytes/Sec" \
+		--right-axis 1:0 \
 		"TEXTALIGN:center" \
 		"DEF:read=$(check $2/disk_octets.rrd):read:AVERAGE" \
 		"DEF:write=$(check $2/disk_octets.rrd):write:AVERAGE" \
@@ -308,6 +314,7 @@ eth0_graph() {
 		--step "$5" \
 		--title "Bandwidth Usage (eth0)" \
 		--vertical-label "Bytes/Sec" \
+		--right-axis 1:0 \
 		"TEXTALIGN:center" \
 		"DEF:rx=$(check $2/if_octets.rrd):rx:AVERAGE" \
 		"DEF:tx=$(check $2/if_octets.rrd):tx:AVERAGE" \
@@ -333,7 +340,8 @@ memory_graph() {
 		--step "$5" \
 		--lower-limit 0 \
 		--title "Memory Utilization" \
-		--vertical-label "" \
+		--vertical-label "Bytes" \
+		--right-axis 1:0 \
 		"TEXTALIGN:center" \
 		"DEF:buffered=$(check $2/memory-buffered.rrd):value:AVERAGE" \
 		"DEF:cached=$(check $2/memory-cached.rrd):value:AVERAGE" \
@@ -370,6 +378,7 @@ network_graph() {
 		-Z --step "$5" \
 		--title "Bandwidth Usage (wireless + ethernet)" \
 		--vertical-label "Bytes/Sec" \
+		--right-axis 1:0 \
 		"TEXTALIGN:center" \
 		"${interfaces[@]}" \
 		"CDEF:tx_neg=tx,-1,*" \
@@ -394,6 +403,7 @@ temp_graph_imperial() {
 		--step "$5" \
 		--title "Core Temperature" \
 		--vertical-label "Degrees Fahrenheit" \
+		--right-axis 1:0 \
 		--lower-limit 32 \
 		--upper-limit 212 \
 		--rigid \
@@ -416,6 +426,7 @@ temp_graph_metric() {
 		--step "$5" \
 		--title "Core Temperature" \
 		--vertical-label "Degrees Celcius" \
+		--right-axis 1:0 \
 		--lower-limit 0 \
 		--upper-limit 100 \
 		--rigid \
@@ -436,6 +447,7 @@ wlan0_graph() {
 		--step "$5" \
 		--title "Bandwidth Usage (wlan0)" \
 		--vertical-label "Bytes/Sec" \
+		--right-axis 1:0 \
 		"TEXTALIGN:center" \
 		"DEF:rx=$(check $2/if_octets.rrd):rx:AVERAGE" \
 		"DEF:tx=$(check $2/if_octets.rrd):tx:AVERAGE" \
@@ -463,6 +475,7 @@ local_rate_graph() {
 		--step "$5" \
 		--title "$3 Message Rate" \
 		--vertical-label "Messages/Second" \
+		--right-axis 1:0 \
 		--lower-limit 0  \
 		--units-exponent 0 \
 		--right-axis 360:0 \
@@ -640,7 +653,6 @@ range_graph_imperial_nautical(){
 		--vertical-label "Nautical Miles" \
 		--units-exponent 0 \
 		--right-axis 1.852:0 \
-		--right-axis-label "Kilometres" \
 		"DEF:rangem=$(check $2/dump1090_range-max_range.rrd):value:MAX" \
 		"DEF:rangem_a=$(check $2/dump1090_range-max_range.rrd):value:AVERAGE" \
 		"CDEF:rangekm=rangem,0.001,*" \
@@ -654,7 +666,7 @@ range_graph_imperial_nautical(){
 		"GPRINT:avgrange:%1.1lf NM" \
 		"LINE1:peakrange#FF0000:Peak Range\\:" \
 		"GPRINT:peakrange:%1.1lf NM\c" \
-		"COMMENT: \n" \
+		"COMMENT: RHS\: Kilometres\c" \
 		--watermark "Drawn: $nowlit";
 	}
 
@@ -668,7 +680,6 @@ range_graph_imperial_statute(){
 		--vertical-label "Statute Miles" \
 		--units-exponent 0 \
 		--right-axis 1.609:0 \
-		--right-axis-label "Kilometres" \
 		"DEF:rangem=$(check $2/dump1090_range-max_range.rrd):value:MAX" \
 		"DEF:rangem_a=$(check $2/dump1090_range-max_range.rrd):value:AVERAGE" \
 		"CDEF:rangekm=rangem,0.001,*" \
@@ -682,7 +693,7 @@ range_graph_imperial_statute(){
 		"GPRINT:avgrange:%1.1lf SM" \
 		"LINE1:peakrange#FF0000:Peak Range\\:" \
 		"GPRINT:peakrange:%1.1lf SM\c" \
-		"COMMENT: \n" \
+		"COMMENT: RHS\: Kilometres\c" \
 		--watermark "Drawn: $nowlit";
 	}
 
@@ -696,7 +707,6 @@ range_graph_metric() {
 		--vertical-label "Kilometres" \
 		--units-exponent 0 \
 		--right-axis 0.5399:0 \
-		--right-axis-label "Nautical Miles" \
 		"DEF:rangem=$(check $2/dump1090_range-max_range.rrd):value:MAX" \
 		"DEF:rangem_a=$(check $2/dump1090_range-max_range.rrd):value:AVERAGE" \
 		"CDEF:range=rangem,0.001,*" \
@@ -708,7 +718,7 @@ range_graph_metric() {
 		"GPRINT:avgrange:%1.1lf km" \
 		"LINE1:peakrange#FF0000:Peak Range\\:" \
 		"GPRINT:peakrange:%1.1lf km\c" \
-		"COMMENT: \n" \
+		"COMMENT: RHS\: Nautical Miles\c" \
 		--watermark "Drawn: $nowlit";
 	}
 
@@ -720,6 +730,7 @@ signal_graph() {
 		--step "$5" \
 		--title "$3 Signal Level" \
 		--vertical-label "dBFS" \
+		--right-axis 1:0 \
 		--upper-limit 1    \
 		--lower-limit -45 \
 		--rigid \
@@ -751,6 +762,7 @@ signal_graph() {
 		--step "$5" \
 		--title "UAT Aircraft Seen / Tracked" \
 		--vertical-label "Aircraft" \
+		--right-axis 1:0 \
 		--lower-limit 0 \
 		--units-exponent 0 \
 		"TEXTALIGN:center" \
@@ -781,7 +793,6 @@ signal_graph() {
 		--vertical-label "Nautical Miles" \
 		--units-exponent 0 \
 		--right-axis 1.852:0 \
-		--right-axis-label "Kilometres" \
 		"DEF:rangem=$2/dump1090_range-max_range_978.rrd:value:MAX" \
 		"CDEF:rangekm=rangem,0.001,*" \
 		"CDEF:rangenm=rangekm,0.539956803,*" \
@@ -792,7 +803,7 @@ signal_graph() {
 		"GPRINT:avgrange:%1.1lf NM" \
 		"LINE1:peakrange#FF0000:Peak Range\\:" \
 		"GPRINT:peakrange:%1.1lf NM\c" \
-		"COMMENT: \n" \
+		"COMMENT: RHS\: Kilometres\c" \
 		--watermark "Drawn: $nowlit";
 	}
 
@@ -804,9 +815,9 @@ signal_graph() {
 		--step "$5" \
 		--title "UAT Message Rate" \
 		--vertical-label "Messages/Second" \
+		--right-axis 1:0 \
 		--lower-limit 0  \
 		--units-exponent 0 \
-		--right-axis 1:0 \
 		--right-axis-format "%.1lf" \
 		--left-axis-format "%.1lf" \
 		"DEF:messages1=$2/dump1090_messages-messages_978.rrd:value:AVERAGE" \
