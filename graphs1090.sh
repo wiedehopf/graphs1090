@@ -89,12 +89,12 @@ aircraft_graph() {
 		"CDEF:gps=pos,tisb0,-,mlat,-" \
 		"VDEF:avgac=all,AVERAGE" \
 		"VDEF:maxac=all_max,MAXIMUM" \
-		"AREA:all#00FF00:Aircraft Seen / Tracked,   " \
+		"AREA:all#00DD00:Aircraft Seen / Tracked,   " \
 		"GPRINT:avgac:Average\:%3.0lf     " \
 		"GPRINT:maxac:Maximum\:%3.0lf\c" \
 		"LINE1:gps#0000FF:w/ GPS pos." \
 		"LINE1:mlat#000000:w/ MLAT pos." \
-		"LINE1:tisb#e0bb00:w/ TIS-B pos." \
+		"LINE1:tisb#DD8800:w/ TIS-B pos." \
 		"LINE1:noloc#FF0000:w/o pos." \
 		"LINE1:gps#0000FF:" \
 		--watermark "Drawn: $nowlit";
@@ -162,7 +162,7 @@ cpu_graph_dump1090() {
 		$airspy_graph3 \
 		"AREA:readerp#008000:USB" \
 		"AREA:backgroundp#00C000:Other:STACK" \
-		"AREA:demodp#00FF00:Demodulator\c:STACK" \
+		"AREA:demodp#00CC00:Demodulator\c:STACK" \
 		"COMMENT: \n" \
 		--watermark "Drawn: $nowlit";
 	}
@@ -184,7 +184,7 @@ tracks_graph() {
 		"CDEF:rhall=hall,300,TRENDNAN" \
 		"CDEF:rsingle=hsingle,300,TRENDNAN" \
 		"AREA:rsingle#FF0000:Tracks with single message" \
-		"AREA:rhall#00FF00:Unique tracks\c:STACK" \
+		"AREA:rhall#00DD00:Unique tracks\c:STACK" \
 		"COMMENT: \n" \
 		--watermark "Drawn: $nowlit";
 	}
@@ -341,7 +341,7 @@ memory_graph() {
 		"DEF:used=$(check $2/memory-used.rrd):value:AVERAGE" \
 		"AREA:used#4169E1:Used:STACK" \
 		"AREA:buffered#32C734:Buffered:STACK" \
-		"AREA:cached#00FF00:Cached:STACK" \
+		"AREA:cached#00CC00:Cached:STACK" \
 		"AREA:free#FFFFFF:Free\c:STACK" \
 		"COMMENT: \n" \
 		--watermark "Drawn: $nowlit";
@@ -621,7 +621,7 @@ local_trailing_rate_graph() {
 		"LINE0.01:messages#0000FF:Messages Received" \
 		"LINE1:min#FFFF99" \
 		"AREA:maxarea#FFFF99:Min/Max:STACK" \
-		"LINE1:7dayaverage#00FF00:7 Day Average" \
+		"LINE1:7dayaverage#00CC00:7 Day Average" \
 		"LINE1:messages#0000FF" \
 		$maxline1 $maxline2\
 		"AREA:strong#FF0000:Messages > -3dBFS\g" \
@@ -729,7 +729,7 @@ signal_graph() {
 		"DEF:peak=$(check $2/dump1090_dbfs-peak_signal.rrd):value:AVERAGE" \
 		"DEF:noise=$(check $2/dump1090_dbfs-noise.rrd):value:AVERAGE" \
 		"CDEF:us=signal,UN,-100,signal,IF" \
-		"AREA:-100#00FF00:Mean Level\\:" \
+		"AREA:-100#00CC00:Mean Level\\:" \
 		"AREA:us#FFFFFF" \
 		"GPRINT:signal:AVERAGE:%4.1lf" \
 		"LINE1:peak#0000FF:Peak Level\:" \
@@ -762,11 +762,11 @@ signal_graph() {
 		"CDEF:gps=pos,tisb0,-" \
 		"VDEF:avgac=all,AVERAGE" \
 		"VDEF:maxac=all,MAXIMUM" \
-		"AREA:all#00FF00:Aircraft Seen / Tracked,   " \
+		"AREA:all#00DD00:Aircraft Seen / Tracked,   " \
 		"GPRINT:avgac:Average\:%3.0lf     " \
 		"GPRINT:maxac:Maximum\:%3.0lf\c" \
 		"LINE1:gps#0000FF:w/ GPS pos." \
-		"LINE1:tisb#e0bb00:w/ TIS-B pos." \
+		"LINE1:tisb#DD8800:w/ TIS-B pos." \
 		"LINE1:noloc#FF0000:w/o pos." \
 		"LINE1:gps#0000FF:" \
 		--watermark "Drawn: $nowlit";
