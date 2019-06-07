@@ -329,7 +329,7 @@ def read_aircraft_978(instance_name, host, url):
                host=host,
                type='dump1090_aircraft',
                type_instance='recent_978',
-               time=T(aircraft_data['now']),
+               time=aircraft_data['now'],
                values = [total, with_pos])
 
     V.dispatch(plugin_instance = instance_name,
@@ -343,14 +343,14 @@ def read_aircraft_978(instance_name, host, url):
                host=host,
                type='dump1090_range',
                type_instance='max_range_978',
-               time=T(aircraft_data['now']),
+               time=aircraft_data['now'],
                values = [max_range])
 
     V.dispatch(plugin_instance = instance_name,
                host=host,
                type='dump1090_messages',
                type_instance='messages_978',
-               time=T(aircraft_data['now']),
+               time=aircraft_data['now'],
                values = [aircraft_data['messages']])
 
 collectd.register_config(callback=handle_config, name='dump1090')
