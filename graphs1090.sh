@@ -666,7 +666,7 @@ range_graph_imperial_nautical(){
 		"GPRINT:avgrange:%1.1lf NM" \
 		"LINE1:peakrange#FF0000:Peak Range\\:" \
 		"GPRINT:peakrange:%1.1lf NM\c" \
-		"COMMENT: RHS\: Kilometres\c" \
+		"COMMENT: LHS\: Nautical Miles; RHS\: Kilometres\c" \
 		--watermark "Drawn: $nowlit";
 	}
 
@@ -693,7 +693,7 @@ range_graph_imperial_statute(){
 		"GPRINT:avgrange:%1.1lf SM" \
 		"LINE1:peakrange#FF0000:Peak Range\\:" \
 		"GPRINT:peakrange:%1.1lf SM\c" \
-		"COMMENT: RHS\: Kilometres\c" \
+		"COMMENT: LHS\: Statute Miles; RHS\: Kilometres\c" \
 		--watermark "Drawn: $nowlit";
 	}
 
@@ -718,7 +718,7 @@ range_graph_metric() {
 		"GPRINT:avgrange:%1.1lf km" \
 		"LINE1:peakrange#FF0000:Peak Range\\:" \
 		"GPRINT:peakrange:%1.1lf km\c" \
-		"COMMENT: RHS\: Nautical Miles\c" \
+		"COMMENT: LHS\: Kilometres; RHS\: Nautical Miles\c" \
 		--watermark "Drawn: $nowlit";
 	}
 
@@ -803,7 +803,7 @@ signal_graph() {
 		"GPRINT:avgrange:%1.1lf NM" \
 		"LINE1:peakrange#FF0000:Peak Range\\:" \
 		"GPRINT:peakrange:%1.1lf NM\c" \
-		"COMMENT: RHS\: Kilometres\c" \
+		"COMMENT: LHS\: Nautical Miles; RHS\: Kilometres\c" \
 		--watermark "Drawn: $nowlit";
 	}
 
