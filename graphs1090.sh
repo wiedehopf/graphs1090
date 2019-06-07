@@ -84,18 +84,21 @@ aircraft_graph() {
 		"DEF:pos=$(check $2/dump1090_aircraft-recent.rrd):positions:AVERAGE" \
 		"DEF:mlat=$(check $2/dump1090_mlat-recent.rrd):value:AVERAGE" \
 		"DEF:tisb=$(check $2/dump1090_tisb-recent.rrd):value:AVERAGE" \
+		"CDEF:tisb0=tisb,UN,0,tisb,IF" \
 		"CDEF:noloc=all,pos,-" \
+		"CDEF:gps=pos,tisb0,-,mlat,-" \
 		"VDEF:avgac=all,AVERAGE" \
 		"VDEF:maxac=all_max,MAXIMUM" \
 		"AREA:all#00FF00:Aircraft Seen / Tracked,   " \
 		"GPRINT:avgac:Average\:%3.0lf     " \
 		"GPRINT:maxac:Maximum\:%3.0lf\c" \
-		"LINE1:pos#0000FF:w/ Position" \
-		"LINE1:noloc#FF0000:w/o Position" \
-		"LINE1:mlat#000000:MLAT" \
-		"LINE1:tisb#00c0FF:TIS-B" \
+		"LINE1:gps#0000FF:w/ GPS pos." \
+		"LINE1:mlat#000000:w/ MLAT pos." \
+		"LINE1:tisb#e0bb00:w/ TIS-B pos." \
+		"LINE1:noloc#FF0000:w/o pos." \
 		--watermark "Drawn: $nowlit";
 	}
+
 
 aircraft_message_rate_graph() {
 	if [ -f $2/dump1090_messages-remote_accepted.rrd ]
@@ -754,14 +757,16 @@ signal_graph() {
 		"DEF:pos=$2/dump1090_aircraft-recent_978.rrd:positions:AVERAGE" \
 		"DEF:tisb=$(check $2/dump1090_tisb-recent_978.rrd):value:AVERAGE" \
 		"CDEF:noloc=all,pos,-" \
+		"CDEF:tisb0=tisb,UN,0,tisb,IF" \
+		"CDEF:gps=pos,tisb0,-" \
 		"VDEF:avgac=all,AVERAGE" \
 		"VDEF:maxac=all,MAXIMUM" \
 		"AREA:all#00FF00:Aircraft Seen / Tracked,   " \
 		"GPRINT:avgac:Average\:%3.0lf     " \
 		"GPRINT:maxac:Maximum\:%3.0lf\c" \
-		"LINE1:pos#0000FF:w/ Position" \
-		"LINE1:noloc#FF0000:w/o Position" \
-		"LINE1:tisb#00c0FF:TIS-B" \
+		"LINE1:noloc#FF0000:w/o pos." \
+		"LINE1:tisb#e0bb00:w/ TIS-B pos." \
+		"LINE1:gps#0000FF:w/ GPS pos." \
 		--watermark "Drawn: $nowlit";
 	}
 
