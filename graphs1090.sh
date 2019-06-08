@@ -2,7 +2,7 @@
 
 DOCUMENTROOT=/run/graphs1090
 
-renice -n 5 -p $$
+renice -n 19 -p $$
 
 mult() {
 	echo $1 $2 | awk '{printf "%.3f", $1 * $2}'
@@ -51,7 +51,10 @@ options="$grid $fontsize"
 small="$options -D --width $swidth --height $sheight"
 big="$options --width $lwidth --height $lheight"
 
-pre="sleep 0.3"
+pre="sleep 0.01"
+if [ "$2" == "slow" ]; then
+	pre="sleep 0.9"
+fi
 
 #checks a file name for existence and otherwise uses an "empty" rrd as a source so the graphs can still be printed even if the file is missing
 
