@@ -267,17 +267,21 @@ def read_aircraft(instance_name, host, url):
     mlat = 0
     tisb = 0
     for a in aircraft_data['aircraft']:
-        if a['seen'] < 15: total += 1
-        if a.has_key('seen_pos') and a['seen_pos'] < 15:
+        if a['seen'] < 60: total += 1
+        if a.has_key('seen_pos') and a['seen_pos'] < 60:
             with_pos += 1
             if rlat is not None:
                 distance = greatcircle(rlat, rlon, a['lat'], a['lon'])
-                if 'lat' in a.get('mlat', ()):
-                    mlat += 1
-                elif 'lat' in a.get('tisb', ()):
-                    tisb += 1
-                else:
-                    if distance > max_range: max_range = distance
+            else:
+                distance = 0
+
+            if 'lat' in a.get('mlat', ()):
+                mlat += 1
+            elif 'lat' in a.get('tisb', ()):
+                tisb += 1
+            # GPS position, include in max_range calculation
+            elif distance > max_range:
+                max_range = distance
 
     V.dispatch(plugin_instance = instance_name,
                host=host,
@@ -293,21 +297,19 @@ def read_aircraft(instance_name, host, url):
                time=aircraft_data['now'],
                values = [mlat])
 
-    if tisb > 0:
-        V.dispatch(plugin_instance = instance_name,
-                   host=host,
-                   type='dump1090_tisb',
-                   type_instance='recent',
-                   time=aircraft_data['now'],
-                   values = [tisb])
+    V.dispatch(plugin_instance = instance_name,
+               host=host,
+               type='dump1090_tisb',
+               type_instance='recent',
+               time=aircraft_data['now'],
+               values = [tisb])
 
-    if max_range > 0:
-        V.dispatch(plugin_instance = instance_name,
-                   host=host,
-                   type='dump1090_range',
-                   type_instance='max_range',
-                   time=aircraft_data['now'],
-                   values = [max_range])
+    V.dispatch(plugin_instance = instance_name,
+               host=host,
+               type='dump1090_range',
+               type_instance='max_range',
+               time=aircraft_data['now'],
+               values = [max_range])
 
 def read_aircraft_978(instance_name, host, url):
     try:
@@ -331,44 +333,46 @@ def read_aircraft_978(instance_name, host, url):
     max_range = 0
     tisb = 0
     for a in aircraft_data['aircraft']:
-        if a['seen'] < 15: total += 1
-        if a.has_key('seen_pos') and a['seen_pos'] < 15:
+        if a['seen'] < 60: total += 1
+        if a.has_key('seen_pos') and a['seen_pos'] < 60:
             with_pos += 1
             if rlat is not None:
                 distance = greatcircle(rlat, rlon, a['lat'], a['lon'])
-                if 'lat' in a.get('tisb', ()):
-                    tisb += 1
-                else:
-                    if distance > max_range: max_range = distance
+            else:
+                distance = 0
+
+            if 'lat' in a.get('tisb', ()):
+                tisb += 1
+            # GPS position, include in max_range calculation
+            elif distance > max_range:
+                max_range = distance
 
     V.dispatch(plugin_instance = instance_name,
                host=host,
                type='dump1090_aircraft',
                type_instance='recent_978',
-               time=T(aircraft_data['now']),
+               time=aircraft_data['now'],
                values = [total, with_pos])
 
-    if tisb > 0:
-        V.dispatch(plugin_instance = instance_name,
-                   host=host,
-                   type='dump1090_tisb',
-                   type_instance='recent_978',
-                   time=aircraft_data['now'],
-                   values = [tisb])
+    V.dispatch(plugin_instance = instance_name,
+               host=host,
+               type='dump1090_tisb',
+               type_instance='recent_978',
+               time=aircraft_data['now'],
+               values = [tisb])
 
-    if max_range > 0:
-        V.dispatch(plugin_instance = instance_name,
-                   host=host,
-                   type='dump1090_range',
-                   type_instance='max_range_978',
-                   time=T(aircraft_data['now']),
-                   values = [max_range])
+    V.dispatch(plugin_instance = instance_name,
+               host=host,
+               type='dump1090_range',
+               type_instance='max_range_978',
+               time=aircraft_data['now'],
+               values = [max_range])
 
     V.dispatch(plugin_instance = instance_name,
                host=host,
                type='dump1090_messages',
                type_instance='messages_978',
-               time=T(aircraft_data['now']),
+               time=aircraft_data['now'],
                values = [aircraft_data['messages']])
 
 collectd.register_config(callback=handle_config, name='dump1090')

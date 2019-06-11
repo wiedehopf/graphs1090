@@ -2,7 +2,7 @@
 
 DOCUMENTROOT=/run/graphs1090
 
-renice -n 5 -p $$
+renice -n 19 -p $$
 
 mult() {
 	echo $1 $2 | awk '{printf "%.3f", $1 * $2}'
@@ -51,7 +51,10 @@ options="$grid $fontsize"
 small="$options -D --width $swidth --height $sheight"
 big="$options --width $lwidth --height $lheight"
 
-pre="sleep 0.3"
+pre="sleep 0.01"
+if [ "$2" == "slow" ]; then
+	pre="sleep 0.9"
+fi
 
 #checks a file name for existence and otherwise uses an "empty" rrd as a source so the graphs can still be printed even if the file is missing
 
@@ -76,25 +79,31 @@ aircraft_graph() {
 		--step "$5" \
 		--title "$3 Aircraft Seen / Tracked" \
 		--vertical-label "Aircraft" \
+		--right-axis 1:0 \
 		--lower-limit 0 \
 		--units-exponent 0 \
 		"TEXTALIGN:center" \
 		"DEF:all=$(check $2/dump1090_aircraft-recent.rrd):total:AVERAGE" \
+		"DEF:all_max=$(check $2/dump1090_aircraft-recent.rrd):total:MAX" \
 		"DEF:pos=$(check $2/dump1090_aircraft-recent.rrd):positions:AVERAGE" \
 		"DEF:mlat=$(check $2/dump1090_mlat-recent.rrd):value:AVERAGE" \
 		"DEF:tisb=$(check $2/dump1090_tisb-recent.rrd):value:AVERAGE" \
+		"CDEF:tisb0=tisb,UN,0,tisb,IF" \
 		"CDEF:noloc=all,pos,-" \
+		"CDEF:gps=pos,tisb0,-,mlat,-" \
 		"VDEF:avgac=all,AVERAGE" \
-		"VDEF:maxac=all,MAXIMUM" \
-		"AREA:all#00FF00:Aircraft Seen / Tracked,   " \
+		"VDEF:maxac=all_max,MAXIMUM" \
+		"AREA:all#00DD00:Aircraft Seen / Tracked,   " \
 		"GPRINT:avgac:Average\:%3.0lf     " \
 		"GPRINT:maxac:Maximum\:%3.0lf\c" \
-		"LINE1:pos#0000FF:w/ Position" \
-		"LINE1:noloc#FF0000:w/o Position" \
-		"LINE1:mlat#000000:MLAT" \
-		"LINE1:tisb#00c0FF:TIS-B" \
+		"LINE1:gps#0000FF:w/ GPS pos." \
+		"LINE1:mlat#000000:w/ MLAT pos." \
+		"LINE1:tisb#DD8800:w/ TIS-B pos." \
+		"LINE1:noloc#FF0000:w/o pos." \
+		"LINE1:gps#0000FF:" \
 		--watermark "Drawn: $nowlit";
 	}
+
 
 aircraft_message_rate_graph() {
 	if [ -f $2/dump1090_messages-remote_accepted.rrd ]
@@ -108,7 +117,6 @@ aircraft_message_rate_graph() {
 		--step "$5" \
 		--title "$3 Message Rate / Aircraft" \
 		--vertical-label "Messages/Aircraft/Second" \
-		--right-axis-label "Aircraft" \
 		--lower-limit 0 \
 		--units-exponent 0 \
 		--right-axis 10:0 \
@@ -145,6 +153,7 @@ cpu_graph_dump1090() {
 		--title "$3 CPU Utilization" \
 		--vertical-label "CPU %" \
 		--lower-limit 0 \
+		--right-axis 1:0 \
 		--rigid \
 		"DEF:demod=$(check $2/dump1090_cpu-demod.rrd):value:AVERAGE" \
 		"CDEF:demodp=demod,10,/" \
@@ -157,7 +166,7 @@ cpu_graph_dump1090() {
 		$airspy_graph3 \
 		"AREA:readerp#008000:USB" \
 		"AREA:backgroundp#00C000:Other:STACK" \
-		"AREA:demodp#00FF00:Demodulator\c:STACK" \
+		"AREA:demodp#00CC00:Demodulator\c:STACK" \
 		"COMMENT: \n" \
 		--watermark "Drawn: $nowlit";
 	}
@@ -171,6 +180,7 @@ tracks_graph() {
 		--title "$3 Tracks Seen" \
 		--vertical-label "Tracks/Hour" \
 		--lower-limit 0 \
+		--right-axis 1:0 \
 		--units-exponent 0 \
 		"DEF:all=$(check $2/dump1090_tracks-all.rrd):value:AVERAGE" \
 		"DEF:single=$(check $2/dump1090_tracks-single_message.rrd):value:AVERAGE" \
@@ -179,7 +189,7 @@ tracks_graph() {
 		"CDEF:rhall=hall,300,TRENDNAN" \
 		"CDEF:rsingle=hsingle,300,TRENDNAN" \
 		"AREA:rsingle#FF0000:Tracks with single message" \
-		"AREA:rhall#00FF00:Unique tracks\c:STACK" \
+		"AREA:rhall#00DD00:Unique tracks\c:STACK" \
 		"COMMENT: \n" \
 		--watermark "Drawn: $nowlit";
 	}
@@ -194,6 +204,7 @@ cpu_graph() {
 		--step "$5" \
 		--title "Overall CPU Utilization" \
 		--vertical-label "CPU %" \
+		--right-axis 1:0 \
 		--lower-limit 0 \
 		--rigid \
 		--units-exponent 0 \
@@ -230,7 +241,8 @@ df_root_graph() {
 		$small \
 		--step "$5" \
 		--title "Disk Usage (/)" \
-		--vertical-label "" \
+		--vertical-label "Bytes" \
+		--right-axis 1:0 \
 		--lower-limit 0  \
 		"TEXTALIGN:center" \
 		"DEF:used=$(check $2/df_complex-used.rrd):value:AVERAGE" \
@@ -251,6 +263,7 @@ disk_io_iops_graph() {
 		--step "$5" \
 		--title "Disk I/O - IOPS" \
 		--vertical-label "IOPS" \
+		--right-axis 1:0 \
 		"TEXTALIGN:center" \
 		"DEF:read=$(check $2/disk_ops.rrd):read:AVERAGE" \
 		"DEF:write=$(check $2/disk_ops.rrd):write:AVERAGE" \
@@ -277,6 +290,7 @@ disk_io_octets_graph() {
 		--step "$5" \
 		--title "Disk I/O - Bandwidth" \
 		--vertical-label "Bytes/Sec" \
+		--right-axis 1:0 \
 		"TEXTALIGN:center" \
 		"DEF:read=$(check $2/disk_octets.rrd):read:AVERAGE" \
 		"DEF:write=$(check $2/disk_octets.rrd):write:AVERAGE" \
@@ -303,6 +317,7 @@ eth0_graph() {
 		--step "$5" \
 		--title "Bandwidth Usage (eth0)" \
 		--vertical-label "Bytes/Sec" \
+		--right-axis 1:0 \
 		"TEXTALIGN:center" \
 		"DEF:rx=$(check $2/if_octets.rrd):rx:AVERAGE" \
 		"DEF:tx=$(check $2/if_octets.rrd):tx:AVERAGE" \
@@ -328,7 +343,8 @@ memory_graph() {
 		--step "$5" \
 		--lower-limit 0 \
 		--title "Memory Utilization" \
-		--vertical-label "" \
+		--vertical-label "Bytes" \
+		--right-axis 1:0 \
 		"TEXTALIGN:center" \
 		"DEF:buffered=$(check $2/memory-buffered.rrd):value:AVERAGE" \
 		"DEF:cached=$(check $2/memory-cached.rrd):value:AVERAGE" \
@@ -336,7 +352,7 @@ memory_graph() {
 		"DEF:used=$(check $2/memory-used.rrd):value:AVERAGE" \
 		"AREA:used#4169E1:Used:STACK" \
 		"AREA:buffered#32C734:Buffered:STACK" \
-		"AREA:cached#00FF00:Cached:STACK" \
+		"AREA:cached#00CC00:Cached:STACK" \
 		"AREA:free#FFFFFF:Free\c:STACK" \
 		"COMMENT: \n" \
 		--watermark "Drawn: $nowlit";
@@ -365,6 +381,7 @@ network_graph() {
 		-Z --step "$5" \
 		--title "Bandwidth Usage (wireless + ethernet)" \
 		--vertical-label "Bytes/Sec" \
+		--right-axis 1:0 \
 		"TEXTALIGN:center" \
 		"${interfaces[@]}" \
 		"CDEF:tx_neg=tx,-1,*" \
@@ -389,6 +406,7 @@ temp_graph_imperial() {
 		--step "$5" \
 		--title "Core Temperature" \
 		--vertical-label "Degrees Fahrenheit" \
+		--right-axis 1:0 \
 		--lower-limit 32 \
 		--upper-limit 212 \
 		--rigid \
@@ -411,6 +429,7 @@ temp_graph_metric() {
 		--step "$5" \
 		--title "Core Temperature" \
 		--vertical-label "Degrees Celcius" \
+		--right-axis 1:0 \
 		--lower-limit 0 \
 		--upper-limit 100 \
 		--rigid \
@@ -447,6 +466,7 @@ wlan0_graph() {
 		--step "$5" \
 		--title "Bandwidth Usage (wlan0)" \
 		--vertical-label "Bytes/Sec" \
+		--right-axis 1:0 \
 		"TEXTALIGN:center" \
 		"DEF:rx=$(check $2/if_octets.rrd):rx:AVERAGE" \
 		"DEF:tx=$(check $2/if_octets.rrd):tx:AVERAGE" \
@@ -474,6 +494,7 @@ local_rate_graph() {
 		--step "$5" \
 		--title "$3 Message Rate" \
 		--vertical-label "Messages/Second" \
+		--right-axis 1:0 \
 		--lower-limit 0  \
 		--units-exponent 0 \
 		--right-axis 360:0 \
@@ -491,6 +512,11 @@ local_rate_graph() {
 	}
 
 local_trailing_rate_graph() {
+	if [[ $max_messages_line == 1 ]]
+	then
+		maxline1="VDEF:peakmessages=messages,MAXIMUM"
+		maxline2="LINE1:peakmessages#0000FF:dashes=2,8"
+	fi
 	if [ -f $2/dump1090_messages-remote_accepted.rrd ]
 	then messages="CDEF:messages=messages1,messages2,ADDNAN"
 	else messages="CDEF:messages=messages1"
@@ -627,8 +653,9 @@ local_trailing_rate_graph() {
 		"LINE0.01:messages#0000FF:Messages Received" \
 		"LINE1:min#FFFF99" \
 		"AREA:maxarea#FFFF99:Min/Max:STACK" \
-		"LINE1:7dayaverage#00FF00:7 Day Average" \
+		"LINE1:7dayaverage#00CC00:7 Day Average" \
 		"LINE1:messages#0000FF" \
+		$maxline1 $maxline2\
 		"AREA:strong#FF0000:Messages > -3dBFS\g" \
 		"GPRINT:strong_percent_vdef: (%1.1lf<span font='2'> </span>%% of messages)" \
 		"LINE1:y2positions#00c0FF:Positions/s (RHS)\c" \
@@ -645,18 +672,20 @@ range_graph_imperial_nautical(){
 		--vertical-label "Nautical Miles" \
 		--units-exponent 0 \
 		--right-axis 1.852:0 \
-		--right-axis-label "Kilometres" \
 		"DEF:rangem=$(check $2/dump1090_range-max_range.rrd):value:MAX" \
+		"DEF:rangem_a=$(check $2/dump1090_range-max_range.rrd):value:AVERAGE" \
 		"CDEF:rangekm=rangem,0.001,*" \
 		"CDEF:rangenm=rangekm,0.539956803,*" \
+		"CDEF:rangekm_a=rangem_a,0.001,*" \
+		"CDEF:rangenm_a=rangekm_a,0.539956803,*" \
 		"LINE1:rangenm#0000FF:Max Range" \
-		"VDEF:avgrange=rangenm,AVERAGE" \
+		"VDEF:avgrange=rangenm_a,AVERAGE" \
 		"LINE1:avgrange#666666:Avr Range\\::dashes" \
 		"VDEF:peakrange=rangenm,MAXIMUM" \
 		"GPRINT:avgrange:%1.1lf NM" \
 		"LINE1:peakrange#FF0000:Peak Range\\:" \
 		"GPRINT:peakrange:%1.1lf NM\c" \
-		"COMMENT: \n" \
+		"COMMENT: LHS\: Nautical Miles; RHS\: Kilometres\c" \
 		--watermark "Drawn: $nowlit";
 	}
 
@@ -670,18 +699,20 @@ range_graph_imperial_statute(){
 		--vertical-label "Statute Miles" \
 		--units-exponent 0 \
 		--right-axis 1.609:0 \
-		--right-axis-label "Kilometres" \
 		"DEF:rangem=$(check $2/dump1090_range-max_range.rrd):value:MAX" \
+		"DEF:rangem_a=$(check $2/dump1090_range-max_range.rrd):value:AVERAGE" \
 		"CDEF:rangekm=rangem,0.001,*" \
 		"CDEF:rangesm=rangekm,0.621371,*" \
+		"CDEF:rangekm_a=rangem_a,0.001,*" \
+		"CDEF:rangesm_a=rangekm_a,0.621371,*" \
 		"LINE1:rangesm#0000FF:Max Range" \
-		"VDEF:avgrange=rangesm,AVERAGE" \
+		"VDEF:avgrange=rangesm_a,AVERAGE" \
 		"LINE1:avgrange#666666:Avr Range\\::dashes" \
 		"VDEF:peakrange=rangesm,MAXIMUM" \
 		"GPRINT:avgrange:%1.1lf SM" \
 		"LINE1:peakrange#FF0000:Peak Range\\:" \
 		"GPRINT:peakrange:%1.1lf SM\c" \
-		"COMMENT: \n" \
+		"COMMENT: LHS\: Statute Miles; RHS\: Kilometres\c" \
 		--watermark "Drawn: $nowlit";
 	}
 
@@ -695,17 +726,18 @@ range_graph_metric() {
 		--vertical-label "Kilometres" \
 		--units-exponent 0 \
 		--right-axis 0.5399:0 \
-		--right-axis-label "Nautical Miles" \
 		"DEF:rangem=$(check $2/dump1090_range-max_range.rrd):value:MAX" \
+		"DEF:rangem_a=$(check $2/dump1090_range-max_range.rrd):value:AVERAGE" \
 		"CDEF:range=rangem,0.001,*" \
+		"CDEF:range_a=rangem_a,0.001,*" \
 		"LINE1:range#0000FF:Max Range" \
-		"VDEF:avgrange=range,AVERAGE" \
+		"VDEF:avgrange=range_a,AVERAGE" \
 		"LINE1:avgrange#666666:Avg Range\\::dashes" \
 		"VDEF:peakrange=range,MAXIMUM" \
 		"GPRINT:avgrange:%1.1lf km" \
 		"LINE1:peakrange#FF0000:Peak Range\\:" \
 		"GPRINT:peakrange:%1.1lf km\c" \
-		"COMMENT: \n" \
+		"COMMENT: LHS\: Kilometres; RHS\: Nautical Miles\c" \
 		--watermark "Drawn: $nowlit";
 	}
 
@@ -717,6 +749,7 @@ signal_graph() {
 		--step "$5" \
 		--title "$3 Signal Level" \
 		--vertical-label "dBFS" \
+		--right-axis 1:0 \
 		--upper-limit 1    \
 		--lower-limit -45 \
 		--rigid \
@@ -726,7 +759,7 @@ signal_graph() {
 		"DEF:peak=$(check $2/dump1090_dbfs-peak_signal.rrd):value:AVERAGE" \
 		"DEF:noise=$(check $2/dump1090_dbfs-noise.rrd):value:AVERAGE" \
 		"CDEF:us=signal,UN,-100,signal,IF" \
-		"AREA:-100#00FF00:Mean Level\\:" \
+		"AREA:-100#00CC00:Mean Level\\:" \
 		"AREA:us#FFFFFF" \
 		"GPRINT:signal:AVERAGE:%4.1lf" \
 		"LINE1:peak#0000FF:Peak Level\:" \
@@ -748,6 +781,7 @@ signal_graph() {
 		--step "$5" \
 		--title "UAT Aircraft Seen / Tracked" \
 		--vertical-label "Aircraft" \
+		--right-axis 1:0 \
 		--lower-limit 0 \
 		--units-exponent 0 \
 		"TEXTALIGN:center" \
@@ -755,14 +789,17 @@ signal_graph() {
 		"DEF:pos=$2/dump1090_aircraft-recent_978.rrd:positions:AVERAGE" \
 		"DEF:tisb=$(check $2/dump1090_tisb-recent_978.rrd):value:AVERAGE" \
 		"CDEF:noloc=all,pos,-" \
+		"CDEF:tisb0=tisb,UN,0,tisb,IF" \
+		"CDEF:gps=pos,tisb0,-" \
 		"VDEF:avgac=all,AVERAGE" \
 		"VDEF:maxac=all,MAXIMUM" \
-		"AREA:all#00FF00:Aircraft Seen / Tracked,   " \
+		"AREA:all#00DD00:Aircraft Seen / Tracked,   " \
 		"GPRINT:avgac:Average\:%3.0lf     " \
 		"GPRINT:maxac:Maximum\:%3.0lf\c" \
-		"LINE1:pos#0000FF:w/ Position" \
-		"LINE1:noloc#FF0000:w/o Position" \
-		"LINE1:tisb#00c0FF:TIS-B" \
+		"LINE1:gps#0000FF:w/ GPS pos." \
+		"LINE1:tisb#DD8800:w/ TIS-B pos." \
+		"LINE1:noloc#FF0000:w/o pos." \
+		"LINE1:gps#0000FF:" \
 		--watermark "Drawn: $nowlit";
 	}
 
@@ -775,7 +812,6 @@ signal_graph() {
 		--vertical-label "Nautical Miles" \
 		--units-exponent 0 \
 		--right-axis 1.852:0 \
-		--right-axis-label "Kilometres" \
 		"DEF:rangem=$2/dump1090_range-max_range_978.rrd:value:MAX" \
 		"CDEF:rangekm=rangem,0.001,*" \
 		"CDEF:rangenm=rangekm,0.539956803,*" \
@@ -786,7 +822,7 @@ signal_graph() {
 		"GPRINT:avgrange:%1.1lf NM" \
 		"LINE1:peakrange#FF0000:Peak Range\\:" \
 		"GPRINT:peakrange:%1.1lf NM\c" \
-		"COMMENT: \n" \
+		"COMMENT: LHS\: Nautical Miles; RHS\: Kilometres\c" \
 		--watermark "Drawn: $nowlit";
 	}
 
@@ -798,9 +834,9 @@ signal_graph() {
 		--step "$5" \
 		--title "UAT Message Rate" \
 		--vertical-label "Messages/Second" \
+		--right-axis 1:0 \
 		--lower-limit 0  \
 		--units-exponent 0 \
-		--right-axis 1:0 \
 		--right-axis-format "%.1lf" \
 		--left-axis-format "%.1lf" \
 		"DEF:messages1=$2/dump1090_messages-messages_978.rrd:value:AVERAGE" \
@@ -873,6 +909,7 @@ dump1090_receiver_graphs() {
 	signal_graph ${DOCUMENTROOT}/dump1090-$2-signal-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
 	if [ -f /var/lib/collectd/rrd/$1/dump1090-$2/dump1090_messages-messages_978.rrd ]
 	then
+		sed -i -e 's/ style="display:none"> <!-- dump978 -->/> <!-- dump978 -->/' /usr/share/graphs1090/html/index.html
 		978_range ${DOCUMENTROOT}/dump1090-$2-range_978-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
 		978_aircraft ${DOCUMENTROOT}/dump1090-$2-aircraft_978-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
 		978_messages ${DOCUMENTROOT}/dump1090-$2-messages_978-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"

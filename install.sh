@@ -44,8 +44,6 @@ then
 	cd graphs1090-master
 fi
 
-cp -n /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_dbfs-NaN.rrd /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_tisb-recent.rrd 2>/dev/null
-cp -n /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_dbfs-NaN.rrd /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_tisb-recent_978.rrd 2>/dev/null
 cp graphs1090.sh dump1090.db dump1090.py boot.sh uninstall.sh LICENSE $ipath
 cp -n /etc/collectd/collectd.conf /etc/collectd/collectd.conf.graphs1090 2>/dev/null
 cp collectd.conf /etc/collectd/collectd.conf
@@ -89,6 +87,8 @@ systemctl daemon-reload
 systemctl enable collectd &>/dev/null
 systemctl restart collectd lighttpd
 
+#fix readonly remount logic in fr24feed update script
+sed -i -e 's?$(mount | grep " on / " | grep rw)?{ mount | grep " on / " | grep rw; }?' /usr/lib/fr24/fr24feed_updater.sh &>/dev/null
 
 if [ -f /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_messages-local_accepted.rrd ]
 then

@@ -46,7 +46,7 @@ Don't change this if you handle data on the Raspberry Pi which you don't want to
 
 Increasing this write delay to 10 minutes can be done like this (takes effect after reboot):
 ```
-sudo cat >/etc/sysctl.d/07-dirty.conf <<EOF
+sudo tee /etc/sysctl.d/07-dirty.conf <<EOF
 vm.dirty_ratio = 40
 vm.dirty_background_ratio = 30
 vm.dirty_expire_centisecs = 60000
@@ -55,7 +55,7 @@ EOF
 
 Because i don't mind losing data on my Raspberry Pi when it loses power, i have set this to one hour:
 ```
-sudo cat >/etc/sysctl.d/07-dirty.conf <<EOF
+sudo tee /etc/sysctl.d/07-dirty.conf <<EOF
 vm.dirty_ratio = 40
 vm.dirty_background_ratio = 30
 vm.dirty_expire_centisecs = 360000
