@@ -96,6 +96,33 @@ def read_stats_1min(instance_name, host, url):
                    values = [stats['last1min']['local']['noise']],
                    interval = 60)
 
+        if not stats['last1min']['local'].has_key('signal'):
+            try:
+                with closing(urlopen(url + '/data/aircraft.json', None, 5.0)) as aircraft_file:
+                    aircraft_data = json.load(aircraft_file)
+
+                rssi=0
+                length=0
+
+                for a in aircraft_data['aircraft']:
+                    if a.has_key('rssi'):
+                        rssi += a['rssi']
+                        length += 1
+
+                rssi /= length
+
+                V.dispatch(plugin_instance = instance_name,
+                       host=host,
+                       type='dump1090_dbfs',
+                       type_instance='signal',
+                       time=aircraft_data['now'],
+                       values = [rssi],
+                       interval = 60)
+
+
+            except URLError:
+                collectd.warning(URLError)
+
 
 def read_stats(instance_name, host, url):
     #NaN rrd
