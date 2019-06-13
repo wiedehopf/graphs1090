@@ -101,24 +101,50 @@ def read_stats_1min(instance_name, host, url):
                 with closing(urlopen(url + '/data/aircraft.json', None, 5.0)) as aircraft_file:
                     aircraft_data = json.load(aircraft_file)
 
-                rssi=0
+                avg=0
                 length=0
+                maximum = -51
+                minimum = 2
 
                 for a in aircraft_data['aircraft']:
-                    if a.has_key('rssi'):
-                        if a['rssi'] > -49.4 :
-                            rssi += a['rssi']
+                    if a.has_key('rssi') and a['messages'] > 15 :
+                        rssi = a['rssi']
+                        if rssi > -49.4 :
+                            avg += rssi
                             length += 1
+                            if rssi > maximum :
+                                maximum = rssi
+                            if rssi < minimum :
+                                minimum = rssi
 
-                rssi /= length
+                avg /= length
 
-                V.dispatch(plugin_instance = instance_name,
-                       host=host,
-                       type='dump1090_dbfs',
-                       type_instance='signal',
-                       time=aircraft_data['now'],
-                       values = [rssi],
-                       interval = 60)
+                if length > 0 :
+                    V.dispatch(plugin_instance = instance_name,
+                           host=host,
+                           type='dump1090_dbfs',
+                           type_instance='signal',
+                           time=aircraft_data['now'],
+                           values = [avg],
+                           interval = 60)
+
+                if maximum > -50 :
+                    V.dispatch(plugin_instance = instance_name,
+                           host=host,
+                           type='dump1090_dbfs',
+                           type_instance='peak_signal',
+                           time=aircraft_data['now'],
+                           values = [maximum],
+                           interval = 60)
+
+                if minimum < 1 :
+                    V.dispatch(plugin_instance = instance_name,
+                           host=host,
+                           type='dump1090_dbfs',
+                           type_instance='min_signal',
+                           time=aircraft_data['now'],
+                           values = [minimum],
+                           interval = 60)
 
 
             except URLError:
