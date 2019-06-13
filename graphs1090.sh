@@ -745,8 +745,8 @@ signal_graph() {
 		--units-exponent 0 \
 		"TEXTALIGN:center" \
 		"DEF:signal=$(check $2/dump1090_dbfs-signal.rrd):value:AVERAGE" \
-		"DEF:peak=$(check $2/dump1090_dbfs-peak_signal.rrd):value:AVERAGE" \
-		"DEF:min=$(check $2/dump1090_dbfs-min_signal.rrd):value:AVERAGE" \
+		"DEF:peak=$(check $2/dump1090_dbfs-peak_signal.rrd):value:MAX" \
+		"DEF:min=$(check $2/dump1090_dbfs-min_signal.rrd):value:MIN" \
 		"DEF:noise=$(check $2/dump1090_dbfs-noise.rrd):value:AVERAGE" \
 		"CDEF:us=signal,UN,-100,signal,IF" \
 		"AREA:-100#00CC00:Mean Level\:" \
