@@ -106,8 +106,9 @@ def read_stats_1min(instance_name, host, url):
 
                 for a in aircraft_data['aircraft']:
                     if a.has_key('rssi'):
-                        rssi += a['rssi']
-                        length += 1
+                        if a['rssi'] > -49.4 :
+                            rssi += a['rssi']
+                            length += 1
 
                 rssi /= length
 
