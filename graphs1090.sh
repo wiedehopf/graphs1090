@@ -742,6 +742,11 @@ range_graph_metric() {
 	}
 
 signal_graph() {
+	if [ -f $2/dump1090_dbfs-min_signal.rrd ]
+	then
+		weak1="LINE1:min#0099FF:Weakest\:"
+		weak2="GPRINT:min:MAX:%4.1lf"
+	fi
 	$pre; rrdtool graph \
 		"$1" \
 		--start end-$4 \
@@ -756,10 +761,11 @@ signal_graph() {
 		--units-exponent 0 \
 		"TEXTALIGN:center" \
 		"DEF:signal=$(check $2/dump1090_dbfs-signal.rrd):value:AVERAGE" \
-		"DEF:peak=$(check $2/dump1090_dbfs-peak_signal.rrd):value:AVERAGE" \
+		"DEF:peak=$(check $2/dump1090_dbfs-peak_signal.rrd):value:MAX" \
+		"DEF:min=$(check $2/dump1090_dbfs-min_signal.rrd):value:MIN" \
 		"DEF:noise=$(check $2/dump1090_dbfs-noise.rrd):value:AVERAGE" \
 		"CDEF:us=signal,UN,-100,signal,IF" \
-		"AREA:-100#00CC00:Mean Level\\:" \
+		"AREA:-100#00CC00:Mean Level\:" \
 		"AREA:us#FFFFFF" \
 		"GPRINT:signal:AVERAGE:%4.1lf" \
 		"LINE1:peak#0000FF:Peak Level\:" \
@@ -768,6 +774,8 @@ signal_graph() {
 		"GPRINT:noise:MAX:Max\: %4.1lf" \
 		"GPRINT:noise:MIN:Min\: %4.1lf" \
 		"GPRINT:noise:AVERAGE:Avg\: %4.1lf\c" \
+		$weak1 \
+		$weak2 \
 		"LINE1:0#000000:Zero dBFS" \
 		"LINE1:-3#FF0000:-3 dBFS\c" \
 		--watermark "Drawn: $nowlit";
