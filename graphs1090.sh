@@ -351,7 +351,7 @@ memory_graph() {
 		"DEF:free=$(check $2/memory-free.rrd):value:AVERAGE" \
 		"DEF:used=$(check $2/memory-used.rrd):value:AVERAGE" \
 		"AREA:used#4169E1:Used:STACK" \
-		"AREA:buffered#32C734:Buffered:STACK" \
+		"AREA:buffered#00c0FF:Buffered:STACK" \
 		"AREA:cached#00CC00:Cached:STACK" \
 		"AREA:free#FFFFFF:Free\c:STACK" \
 		"COMMENT: \n" \
