@@ -107,7 +107,7 @@ def read_stats_1min(instance_name, host, url):
                 minimum = 2
 
                 for a in aircraft_data['aircraft']:
-                    if a.has_key('rssi') and a['messages'] > 15 :
+                    if a.has_key('rssi') and a['messages'] > 15 and a['seen'] < 30 :
                         rssi = a['rssi']
                         if rssi > -49.4 :
                             avg += rssi
@@ -299,8 +299,8 @@ def read_aircraft(instance_name, host, url):
     mlat = 0
     tisb = 0
     for a in aircraft_data['aircraft']:
-        if a['seen'] < 60: total += 1
-        if a.has_key('seen_pos') and a['seen_pos'] < 60:
+        if a['seen'] < 30: total += 1
+        if a.has_key('seen_pos') and a['seen_pos'] < 30:
             with_pos += 1
             if rlat is not None:
                 distance = greatcircle(rlat, rlon, a['lat'], a['lon'])
@@ -366,7 +366,7 @@ def read_aircraft_978(instance_name, host, url):
     tisb = 0
     for a in aircraft_data['aircraft']:
         if a['seen'] < 60: total += 1
-        if a.has_key('seen_pos') and a['seen_pos'] < 60:
+        if a.has_key('seen_pos') and a['seen_pos'] < 30:
             with_pos += 1
             if rlat is not None:
                 distance = greatcircle(rlat, rlon, a['lat'], a['lon'])
