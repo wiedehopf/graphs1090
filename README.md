@@ -96,6 +96,12 @@ sudo systemctl restart collectd
 ##### disk graphs with kernel >= 4.19 don't work due to a collectd bug
 https://github.com/collectd/collectd/issues/2951
 
+possible sollution: install new collectd version:
+```
+wget -O /tmp/collectd.deb http://raspbian.raspberrypi.org/raspbian/pool/main/c/collectd/collectd-core_5.8.1-1.3_armhf.deb
+sudo dpkg -i /tmp/collectd.deb
+```
+
 
 ### Deinstallation:
 ```
