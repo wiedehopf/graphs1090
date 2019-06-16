@@ -20,7 +20,7 @@ then
 	echo "Installing required packages: $packages"
 	apt-get update
 	apt-get upgrade -y
-	if ! apt-get install -y $packages
+	if ! apt-get install -y --no-install-suggests $packages
 	then
 		echo "Failed to install required packages: $packages"
 		echo "Exiting ..."
