@@ -729,7 +729,7 @@ signal_graph() {
 	if [ -f $2/dump1090_dbfs-min_signal.rrd ]
 	then
 		weak1="LINE1:min#0099FF:Weakest\:"
-		weak2="GPRINT:min:MAX:%4.1lf"
+		weak2="GPRINT:min:MIN:%4.1lf"
 	fi
 	$pre; rrdtool graph \
 		"$1" \
