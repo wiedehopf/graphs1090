@@ -505,6 +505,7 @@ local_trailing_rate_graph() {
 	then messages="CDEF:messages=messages1,messages2,ADDNAN"
 	else messages="CDEF:messages=messages1"
 	fi
+	r_window=$((86400))
 	$pre; rrdtool graph \
 		"$1" \
 		--start end-$4 \
@@ -519,49 +520,49 @@ local_trailing_rate_graph() {
 		--pango-markup \
 		"TEXTALIGN:center" \
 		"DEF:messages1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE" \
-		"DEF:a1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE:end=now-86400:start=end-86400" \
-		"DEF:b1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE:end=now-172800:start=end-86400" \
-		"DEF:c1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE:end=now-259200:start=end-86400" \
-		"DEF:d1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE:end=now-345600:start=end-86400" \
-		"DEF:e1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE:end=now-432000:start=end-86400" \
-		"DEF:f1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE:end=now-518400:start=end-86400" \
-		"DEF:g1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE:end=now-604800:start=end-86400" \
-		"DEF:amin1=$(check $2/dump1090_messages-local_accepted.rrd):value:MIN:end=now-86400:start=end-86400" \
-		"DEF:bmin1=$(check $2/dump1090_messages-local_accepted.rrd):value:MIN:end=now-172800:start=end-86400" \
-		"DEF:cmin1=$(check $2/dump1090_messages-local_accepted.rrd):value:MIN:end=now-259200:start=end-86400" \
-		"DEF:dmin1=$(check $2/dump1090_messages-local_accepted.rrd):value:MIN:end=now-345600:start=end-86400" \
-		"DEF:emin1=$(check $2/dump1090_messages-local_accepted.rrd):value:MIN:end=now-432000:start=end-86400" \
-		"DEF:fmin1=$(check $2/dump1090_messages-local_accepted.rrd):value:MIN:end=now-518400:start=end-86400" \
-		"DEF:gmin1=$(check $2/dump1090_messages-local_accepted.rrd):value:MIN:end=now-604800:start=end-86400" \
-		"DEF:amax1=$(check $2/dump1090_messages-local_accepted.rrd):value:MAX:end=now-86400:start=end-86400" \
-		"DEF:bmax1=$(check $2/dump1090_messages-local_accepted.rrd):value:MAX:end=now-172800:start=end-86400" \
-		"DEF:cmax1=$(check $2/dump1090_messages-local_accepted.rrd):value:MAX:end=now-259200:start=end-86400" \
-		"DEF:dmax1=$(check $2/dump1090_messages-local_accepted.rrd):value:MAX:end=now-345600:start=end-86400" \
-		"DEF:emax1=$(check $2/dump1090_messages-local_accepted.rrd):value:MAX:end=now-432000:start=end-86400" \
-		"DEF:fmax1=$(check $2/dump1090_messages-local_accepted.rrd):value:MAX:end=now-518400:start=end-86400" \
-		"DEF:gmax1=$(check $2/dump1090_messages-local_accepted.rrd):value:MAX:end=now-604800:start=end-86400" \
+		"DEF:a1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE:end=now-86400:start=end-$r_window" \
+		"DEF:b1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE:end=now-172800:start=end-$r_window" \
+		"DEF:c1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE:end=now-259200:start=end-$r_window" \
+		"DEF:d1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE:end=now-345600:start=end-$r_window" \
+		"DEF:e1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE:end=now-432000:start=end-$r_window" \
+		"DEF:f1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE:end=now-518400:start=end-$r_window" \
+		"DEF:g1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE:end=now-604800:start=end-$r_window" \
+		"DEF:amin1=$(check $2/dump1090_messages-local_accepted.rrd):value:MIN:end=now-86400:start=end-$r_window" \
+		"DEF:bmin1=$(check $2/dump1090_messages-local_accepted.rrd):value:MIN:end=now-172800:start=end-$r_window" \
+		"DEF:cmin1=$(check $2/dump1090_messages-local_accepted.rrd):value:MIN:end=now-259200:start=end-$r_window" \
+		"DEF:dmin1=$(check $2/dump1090_messages-local_accepted.rrd):value:MIN:end=now-345600:start=end-$r_window" \
+		"DEF:emin1=$(check $2/dump1090_messages-local_accepted.rrd):value:MIN:end=now-432000:start=end-$r_window" \
+		"DEF:fmin1=$(check $2/dump1090_messages-local_accepted.rrd):value:MIN:end=now-518400:start=end-$r_window" \
+		"DEF:gmin1=$(check $2/dump1090_messages-local_accepted.rrd):value:MIN:end=now-604800:start=end-$r_window" \
+		"DEF:amax1=$(check $2/dump1090_messages-local_accepted.rrd):value:MAX:end=now-86400:start=end-$r_window" \
+		"DEF:bmax1=$(check $2/dump1090_messages-local_accepted.rrd):value:MAX:end=now-172800:start=end-$r_window" \
+		"DEF:cmax1=$(check $2/dump1090_messages-local_accepted.rrd):value:MAX:end=now-259200:start=end-$r_window" \
+		"DEF:dmax1=$(check $2/dump1090_messages-local_accepted.rrd):value:MAX:end=now-345600:start=end-$r_window" \
+		"DEF:emax1=$(check $2/dump1090_messages-local_accepted.rrd):value:MAX:end=now-432000:start=end-$r_window" \
+		"DEF:fmax1=$(check $2/dump1090_messages-local_accepted.rrd):value:MAX:end=now-518400:start=end-$r_window" \
+		"DEF:gmax1=$(check $2/dump1090_messages-local_accepted.rrd):value:MAX:end=now-604800:start=end-$r_window" \
 		"DEF:messages2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE" \
-		"DEF:a2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE:end=now-86400:start=end-86400" \
-		"DEF:b2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE:end=now-172800:start=end-86400" \
-		"DEF:c2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE:end=now-259200:start=end-86400" \
-		"DEF:d2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE:end=now-345600:start=end-86400" \
-		"DEF:e2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE:end=now-432000:start=end-86400" \
-		"DEF:f2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE:end=now-518400:start=end-86400" \
-		"DEF:g2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE:end=now-604800:start=end-86400" \
-		"DEF:amin2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MIN:end=now-86400:start=end-86400" \
-		"DEF:bmin2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MIN:end=now-172800:start=end-86400" \
-		"DEF:cmin2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MIN:end=now-259200:start=end-86400" \
-		"DEF:dmin2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MIN:end=now-345600:start=end-86400" \
-		"DEF:emin2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MIN:end=now-432000:start=end-86400" \
-		"DEF:fmin2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MIN:end=now-518400:start=end-86400" \
-		"DEF:gmin2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MIN:end=now-604800:start=end-86400" \
-		"DEF:amax2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MAX:end=now-86400:start=end-86400" \
-		"DEF:bmax2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MAX:end=now-172800:start=end-86400" \
-		"DEF:cmax2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MAX:end=now-259200:start=end-86400" \
-		"DEF:dmax2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MAX:end=now-345600:start=end-86400" \
-		"DEF:emax2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MAX:end=now-432000:start=end-86400" \
-		"DEF:fmax2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MAX:end=now-518400:start=end-86400" \
-		"DEF:gmax2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MAX:end=now-604800:start=end-86400" \
+		"DEF:a2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE:end=now-86400:start=end-$r_window" \
+		"DEF:b2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE:end=now-172800:start=end-$r_window" \
+		"DEF:c2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE:end=now-259200:start=end-$r_window" \
+		"DEF:d2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE:end=now-345600:start=end-$r_window" \
+		"DEF:e2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE:end=now-432000:start=end-$r_window" \
+		"DEF:f2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE:end=now-518400:start=end-$r_window" \
+		"DEF:g2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE:end=now-604800:start=end-$r_window" \
+		"DEF:amin2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MIN:end=now-86400:start=end-$r_window" \
+		"DEF:bmin2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MIN:end=now-172800:start=end-$r_window" \
+		"DEF:cmin2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MIN:end=now-259200:start=end-$r_window" \
+		"DEF:dmin2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MIN:end=now-345600:start=end-$r_window" \
+		"DEF:emin2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MIN:end=now-432000:start=end-$r_window" \
+		"DEF:fmin2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MIN:end=now-518400:start=end-$r_window" \
+		"DEF:gmin2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MIN:end=now-604800:start=end-$r_window" \
+		"DEF:amax2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MAX:end=now-86400:start=end-$r_window" \
+		"DEF:bmax2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MAX:end=now-172800:start=end-$r_window" \
+		"DEF:cmax2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MAX:end=now-259200:start=end-$r_window" \
+		"DEF:dmax2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MAX:end=now-345600:start=end-$r_window" \
+		"DEF:emax2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MAX:end=now-432000:start=end-$r_window" \
+		"DEF:fmax2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MAX:end=now-518400:start=end-$r_window" \
+		"DEF:gmax2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MAX:end=now-604800:start=end-$r_window" \
 		$messages \
 		"CDEF:a=a1,a2,ADDNAN" \
 		"CDEF:b=b1,b2,ADDNAN" \
