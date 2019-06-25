@@ -3,10 +3,12 @@
 ipath=/usr/share/graphs1090
 install=0
 
-packages="collectd-core rrdtool lighttpd unzip python"
+packages="lighttpd unzip python "
+packages2="rrdtool collectd-core"
+
 mkdir -p $ipath/installed
 
-for i in $packages
+for i in "$packages $packages2"
 do
 	if ! dpkg -s $i 2>/dev/null | grep 'Status.*installed' &>/dev/null
 	then
@@ -15,23 +17,30 @@ do
 	fi
 done
 
+if ! dpkg -s libpython2.7 2>/dev/null | grep 'Status.*installed' &>/dev/null
+then
+	apt-get update
+	apt-get install -y libpython2.7
+	update_done=yes
+fi
+
 if [ $install == 1 ]
 then
 	echo "Installing required packages: $packages"
-	apt-get update
+	if [[ $update_done != "yes" ]]; then
+		apt-get update
+	fi
 	apt-get upgrade -y
-	if ! apt-get install -y --no-install-suggests $packages
+	if apt-get install -y --no-install-suggests $packages && apt-get install -y --no-install-suggests $packages2
 	then
+		echo "Packages successfully installed!"
+	else
 		echo "Failed to install required packages: $packages"
 		echo "Exiting ..."
 		exit 1
 	fi
 fi
 
-if ! dpkg -s libpython2.7 2>/dev/null | grep 'Status.*installed' &>/dev/null
-then
-	apt-get install -y libpython2.7
-fi
 
 if [ -z $1 ] || [ $1 != "test" ]
 then
