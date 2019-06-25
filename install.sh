@@ -26,20 +26,28 @@ fi
 
 if [ $install == 1 ]
 then
+	echo "------------------"
 	echo "Installing required packages: $packages"
+	echo "------------------"
 	if [[ $update_done != "yes" ]]; then
 		apt-get update
 	fi
 	apt-get upgrade -y
 	if apt-get install -y --no-install-suggests $packages && apt-get install -y --no-install-suggests $packages2
 	then
+		echo "------------------"
 		echo "Packages successfully installed!"
+		echo "------------------"
 	else
+		echo "------------------"
 		echo "Failed to install required packages: $packages"
 		echo "Exiting ..."
 		exit 1
 	fi
 fi
+
+# make sure commands are available if they were just installed
+hash -r
 
 
 if [ -z $1 ] || [ $1 != "test" ]
@@ -47,6 +55,7 @@ then
 	cd /tmp
 	if ! wget --timeout=30 -q -O master.zip https://github.com/wiedehopf/graphs1090/archive/master.zip || ! unzip -q -o master.zip
 	then
+		echo "------------------"
 		echo "Unable to download files, exiting! (Maybe try again?)"
 		exit 1
 	fi
@@ -104,5 +113,6 @@ then
 	$ipath/graphs1090.sh
 fi
 
+echo --------------
 echo --------------
 echo "All done!"
