@@ -476,21 +476,27 @@ local_rate_graph() {
 		--start end-$4 \
 		$small \
 		--step "$5" \
-		--title "$3 Message Rate" \
+		--title "$3 Maximum Graphs" \
 		--vertical-label "Messages/Second" \
 		--right-axis 1:0 \
 		--lower-limit 0  \
 		--units-exponent 0 \
-		--right-axis 360:0 \
-		"DEF:messages1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE" \
-		"DEF:messages2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE" \
-		"DEF:strong=$(check $2/dump1090_messages-strong_signals.rrd):value:AVERAGE" \
-		"DEF:positions=$(check $2/dump1090_messages-positions.rrd):value:AVERAGE" \
+		--right-axis 0.1:0 \
+		"DEF:pos=$(check $2/dump1090_aircraft-recent.rrd):positions:MAX" \
+		"DEF:tisb=$(check $2/dump1090_tisb-recent.rrd):value:MAX" \
+		"DEF:mlat=$(check $2/dump1090_mlat-recent.rrd):value:AVERAGE" \
+		"CDEF:tisb0=tisb,UN,0,tisb,IF" \
+		"CDEF:gps=pos,tisb0,-,mlat,-" \
+		"DEF:messages1=$(check $2/dump1090_messages-local_accepted.rrd):value:MAX" \
+		"DEF:messages2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MAX" \
+		"DEF:positions=$(check $2/dump1090_messages-positions.rrd):value:MAX" \
 		"CDEF:y2positions=positions,10,*" \
-		"LINE1:messages1#0000FF:Local" \
-		"LINE1:messages2#009900:Remote" \
-		"AREA:strong#FF0000:Messages > -3dBFS" \
-		"LINE1:y2positions#00c0FF:Positions / Hr (RHS)\c" \
+		"CDEF:y2gps=gps,10,*" \
+		"LINE1:y2gps#990000" \
+		"LINE1:messages1#0000FF:Local messages" \
+		"LINE1:y2positions#00c0FF:Positions (RHS)\c" \
+		"LINE1:messages2#009900:Remote messages" \
+		"LINE0.0001:y2gps#990000:Aircraft w/ GPS (RHS)\c" \
 		"COMMENT: \n" \
 		--watermark "Drawn: $nowlit";
 	}
