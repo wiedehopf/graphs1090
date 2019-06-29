@@ -76,14 +76,14 @@ cp 88-graphs1090.conf /etc/lighttpd/conf-available
 lighty-enable-mod graphs1090 >/dev/null
 
 
-if wget --timeout=30 http://localhost/dump1090/data/stats.json -O /dev/null -q
-then
+if wget --timeout=30 http://localhost/dump1090-fa/data/stats.json -O /dev/null -q; then
+	true
+elif wget --timeout=30 http://localhost/dump1090/data/stats.json -O /dev/null -q; then
 	sed -i 's?localhost/dump1090-fa?localhost/dump1090?' /etc/collectd/collectd.conf
 	echo --------------
 	echo "dump1090 webaddress automatically set to http://localhost/dump1090/"
 	echo --------------
-elif ! wget --timeout=30 http://localhost/dump1090-fa/data/stats.json -O /dev/null -q
-then
+else
 	echo --------------
 	echo "Non-standard configuration detected, you need to change the data URL in /etc/collectd/collectd.conf!"
 	echo --------------
