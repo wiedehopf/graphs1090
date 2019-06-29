@@ -8,7 +8,7 @@ packages2="rrdtool collectd-core"
 
 mkdir -p $ipath/installed
 
-for i in "$packages $packages2"
+for i in $packages $packages2
 do
 	if ! dpkg -s $i 2>/dev/null | grep 'Status.*installed' &>/dev/null
 	then
@@ -24,7 +24,7 @@ then
 	update_done=yes
 fi
 
-if [ $install == 1 ]
+if [[ $install == "1" ]]
 then
 	echo "------------------"
 	echo "Installing required packages: $packages"
