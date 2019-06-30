@@ -117,9 +117,8 @@ def read_stats_1min(instance_name, host, url):
                             if rssi < minimum :
                                 minimum = rssi
 
-                avg /= length
-
                 if length > 0 :
+                    avg /= length
                     V.dispatch(plugin_instance = instance_name,
                            host=host,
                            type='dump1090_dbfs',
