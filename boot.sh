@@ -2,6 +2,7 @@
 
 mkdir -p /run/graphs1090
 
+source /etc/default/graphs1090
 
 if [ -f /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_messages-messages_978.rrd ]
 then
@@ -9,6 +10,12 @@ then
 	sed -i -e "/sed -i -e 's\/ style=\"display/d" /usr/share/graphs1090/graphs1090.sh
 else
 	sed -i -e 's/panel-default"> <!-- dump978 -->/panel-default" style="display:none"> <!-- dump978 -->/' /usr/share/graphs1090/html/index.html
+fi
+
+if [[ $all_large == "yes" ]]; then
+	sed -i -e 's?flex: 50%; // all_large?flex: 100%; // all_large?' /usr/share/graphs1090/html/portal.css
+else
+	sed -i -e 's?flex: 100%; // all_large?flex: 50%; // all_large?' /usr/share/graphs1090/html/portal.css
 fi
 
 if [[ $1 == "slow" ]]; then

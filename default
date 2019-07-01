@@ -1,3 +1,7 @@
+# after saving this file, run
+# sudo /usr/share/graphs1090/boot.sh
+# to update the graphs and web interface
+
 # set to 1 to enable farenheit instead of celsius
 farenheit=0
 
@@ -6,6 +10,10 @@ range=nautical
 
 # set graph size, possible values: small, default, large, huge, custom
 graph_size=default
+
+# make the small graphs as large as the big ones
+# run "sudo /usr/share/graphs1090/boot.sh" to adjust the web interface
+all_large=no
 
 # font size, default 10.0 (relative to graph size)
 font_size=10.0

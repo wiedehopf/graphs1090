@@ -33,7 +33,7 @@ html, body {
   padding: 10px 10px;
 }
 .column {
-  flex: 50%;
+  flex: 50%; // all_large
   max-width: 100%;
   padding: 10px 10px;
 }

@@ -51,6 +51,10 @@ options="$grid $fontsize"
 small="$options -D --width $swidth --height $sheight"
 big="$options --width $lwidth --height $lheight"
 
+if [[ $all_large == "yes" ]]; then
+	small="$options --width $lwidth --height $lheight"
+fi
+
 pre="sleep 0.01"
 if [ "$2" == "slow" ]; then
 	pre="sleep 0.9"
