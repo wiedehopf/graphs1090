@@ -32,7 +32,7 @@ then
 	if [[ $update_done != "yes" ]]; then
 		apt-get update
 	fi
-	apt-get upgrade -y
+	#apt-get upgrade -y
 	if apt-get install -y --no-install-suggests $packages && apt-get install -y --no-install-suggests $packages2
 	then
 		echo "------------------"
