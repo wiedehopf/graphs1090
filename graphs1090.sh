@@ -414,10 +414,9 @@ temp_graph_imperial() {
 		--title "Maximum Core Temperature" \
 		--vertical-label "Degrees Fahrenheit" \
 		--right-axis 1:0 \
-		--lower-limit 32 \
-		--upper-limit 212 \
-		--rigid \
-		--units-exponent 1 \
+		--lower-limit 77 \
+		--upper-limit 153 \
+		-A \
 		"DEF:traw_max=$(check $2/gauge-cpu_temp.rrd):value:MAX" \
 		"DEF:traw_avg=$(check $2/gauge-cpu_temp.rrd):value:AVERAGE" \
 		"DEF:traw_min=$(check $2/gauge-cpu_temp.rrd):value:MIN" \
@@ -428,7 +427,6 @@ temp_graph_imperial() {
 		"GPRINT:tfin_min:MIN:Min\: %4.1lf F" \
 		"GPRINT:tfin_avg:AVERAGE:Avg\: %4.1lf F" \
 		"GPRINT:tfin_max:MAX:Max\: %4.1lf F\c" \
-		"COMMENT: \n" \
 		"COMMENT: \n" \
 		--watermark "Drawn: $nowlit";
 	}
@@ -442,10 +440,9 @@ temp_graph_metric() {
 		--title "Maximum Core Temperature" \
 		--vertical-label "Degrees Celcius" \
 		--right-axis 1:0 \
-		--lower-limit 0 \
-		--upper-limit 100 \
-		--rigid \
-		--units-exponent 1 \
+		--lower-limit 24 \
+		--upper-limit 66 \
+		-A \
 		"DEF:traw_max=$(check $2/gauge-cpu_temp.rrd):value:MAX" \
 		"DEF:traw_avg=$(check $2/gauge-cpu_temp.rrd):value:AVERAGE" \
 		"DEF:traw_min=$(check $2/gauge-cpu_temp.rrd):value:MIN" \
