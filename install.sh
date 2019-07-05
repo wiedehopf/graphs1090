@@ -62,7 +62,7 @@ then
 	cd graphs1090-master
 fi
 
-cp graphs1090.sh dump1090.db dump1090.py boot.sh uninstall.sh LICENSE $ipath
+cp graphs1090.sh dump1090.db dump1090.py system_stats.py boot.sh uninstall.sh LICENSE $ipath
 chmod u+x $ipath/*.sh
 cp -n /etc/collectd/collectd.conf /etc/collectd/collectd.conf.graphs1090 2>/dev/null
 cp collectd.conf /etc/collectd/collectd.conf
