@@ -56,6 +56,9 @@ def read_stats_1min(instance_name, host, url):
         with closing(urlopen(url + '/data/stats.json', None, 5.0)) as stats_file:
             stats = json.load(stats_file)
     except URLError:
+        collectd.warning(URLError)
+    except:
+        collectd.warning(sys.exc_info()[0])
         return
 
     # Signal measurements - from the 1 min bucket
@@ -148,7 +151,9 @@ def read_stats_1min(instance_name, host, url):
 
             except URLError:
                 collectd.warning(URLError)
-
+            except:
+                collectd.warning(sys.exc_info()[0])
+                return
 
 def read_stats(instance_name, host, url):
     #NaN rrd
@@ -162,6 +167,9 @@ def read_stats(instance_name, host, url):
         with closing(urlopen(url + '/data/stats.json', None, 5.0)) as stats_file:
             stats = json.load(stats_file)
     except URLError:
+        collectd.warning(URLError)
+    except:
+        collectd.warning(sys.exc_info()[0])
         return
 
     # Local message counts
@@ -290,6 +298,9 @@ def read_aircraft(instance_name, host, url):
             aircraft_data = json.load(aircraft_file)
 
     except URLError:
+        collectd.warning(URLError)
+    except:
+        collectd.warning(sys.exc_info()[0])
         return
 
     total = 0
@@ -356,7 +367,10 @@ def read_aircraft_978(instance_name, host, url):
         with closing(urlopen(url + '/data/aircraft.json', None, 5.0)) as aircraft_file:
             aircraft_data = json.load(aircraft_file)
 
-    except URLError as error:
+    except URLError:
+        collectd.warning(URLError)
+    except:
+        collectd.warning(sys.exc_info()[0])
         return
 
     total = 0
