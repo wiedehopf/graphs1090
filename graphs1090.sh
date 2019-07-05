@@ -425,8 +425,8 @@ temp_graph_imperial() {
 		"CDEF:tfin_avg=traw_avg,1000,/,1.8,*,32,+" \
 		"CDEF:tfin_min=traw_min,1000,/,1.8,*,32,+" \
 		"AREA:tfin_max#ffcc00" \
-		"GPRINT:tfin_avg:AVERAGE:Avg\: %4.1lf F" \
 		"GPRINT:tfin_min:MIN:Min\: %4.1lf F" \
+		"GPRINT:tfin_avg:AVERAGE:Avg\: %4.1lf F" \
 		"GPRINT:tfin_max:MAX:Max\: %4.1lf F\c" \
 		"COMMENT: \n" \
 		"COMMENT: \n" \
@@ -453,8 +453,8 @@ temp_graph_metric() {
 		"CDEF:tfin_min=traw_min,1000,/" \
 		"CDEF:tfin_avg=traw_avg,1000,/" \
 		"AREA:tfin_max#ffcc00" \
-		"GPRINT:tfin_avg:AVERAGE:Avg\: %4.1lf C" \
 		"GPRINT:tfin_min:MIN:Min\: %4.1lf C" \
+		"GPRINT:tfin_avg:AVERAGE:Avg\: %4.1lf C" \
 		"GPRINT:tfin_max:MAX:Max\: %4.1lf C\c" \
 		"COMMENT: \n" \
 		--watermark "Drawn: $nowlit";
