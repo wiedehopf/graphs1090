@@ -352,16 +352,21 @@ memory_graph() {
 		--title "Memory Utilization" \
 		--vertical-label "Bytes" \
 		--right-axis 1:0 \
+		-b 1024 \
+		-M \
 		"TEXTALIGN:center" \
-		"DEF:buffered=$(check $2/memory-buffered.rrd):value:AVERAGE" \
+		"DEF:used=$(check $2/memory-used.rrd):value:AVERAGE" \
+		"DEF:buffers=$(check $2/memory-buffers.rrd):value:AVERAGE" \
 		"DEF:cached=$(check $2/memory-cached.rrd):value:AVERAGE" \
 		"DEF:free=$(check $2/memory-free.rrd):value:AVERAGE" \
-		"DEF:used=$(check $2/memory-used.rrd):value:AVERAGE" \
-		"AREA:used#4169E1:Used:STACK" \
-		"AREA:buffered#00c0FF:Buffered:STACK" \
-		"AREA:cached#00CC00:Cached:STACK" \
-		"AREA:free#FFFFFF:Free\c:STACK" \
-		"COMMENT: \n" \
+		"AREA:used#00CC00:Used\::STACK" \
+		"GPRINT:used:LAST:%4.1lf%s" \
+		"AREA:buffers#4169E1:Buffers\::STACK" \
+		"GPRINT:buffers:LAST:%4.1lf%s\c" \
+		"AREA:cached#ffcc00:Cache\::STACK" \
+		"GPRINT:cached:LAST:%4.1lf%s" \
+		"AREA:free#CCCCCC:Unused\::STACK" \
+		"GPRINT:free:LAST:%4.1lf%s\c" \
 		--watermark "Drawn: $nowlit";
 	}
 
@@ -894,7 +899,7 @@ system_graphs() {
 	disk_io_iops_graph ${DOCUMENTROOT}/system-$2-disk_io_iops-$4.png /var/lib/collectd/rrd/$1/$disk "$3" "$4" "$5"
 	disk_io_octets_graph ${DOCUMENTROOT}/system-$2-disk_io_octets-$4.png /var/lib/collectd/rrd/$1/$disk "$3" "$4" "$5"
 	#eth0_graph ${DOCUMENTROOT}/system-$2-eth0_bandwidth-$4.png /var/lib/collectd/rrd/$1/$ether "$3" "$4" "$5"
-	memory_graph ${DOCUMENTROOT}/system-$2-memory-$4.png /var/lib/collectd/rrd/$1/memory "$3" "$4" "$5"
+	memory_graph ${DOCUMENTROOT}/system-$2-memory-$4.png /var/lib/collectd/rrd/$1/system_stats "$3" "$4" "$5"
 	network_graph ${DOCUMENTROOT}/system-$2-network_bandwidth-$4.png /var/lib/collectd/rrd/$1 "$3" "$4" "$5"
 	if [[ $farenheit == 1 ]]
 	then
