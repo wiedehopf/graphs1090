@@ -230,14 +230,15 @@ cpu_graph() {
 		"CDEF:psystem=100,system,*,all,/" \
 		"CDEF:puser=100,user,*,all,/" \
 		"CDEF:pwait=100,wait,*,all,/" \
-		"GPRINT:usage:AVERAGE:Average utilization\: %4.1lf<span font='2'> </span>%%\t\t" \
 		"AREA:pinterrupt#000080:irq" \
 		"AREA:psoftirq#0000C0:softirq:STACK" \
 		"AREA:psteal#0000FF:steal:STACK" \
 		"AREA:pwait#C00000:io:STACK" \
 		"AREA:psystem#FF0000:sys:STACK" \
 		"AREA:puser#40FF40:user:STACK" \
-		"AREA:pnice#008000:nice\c:STACK" \
+		"AREA:pnice#008000:nice\t\t:STACK" \
+		"GPRINT:usage:AVERAGE:Total\:    Avg\: %4.1lf<span font='2'> </span>%%" \
+		"GPRINT:usage:LAST:Current\: %4.1lf<span font='2'> </span>%%\c" \
 		--watermark "Drawn: $nowlit";
 	}
 
@@ -256,8 +257,10 @@ df_root_graph() {
 		"DEF:reserved=$(check $2/df_complex-reserved.rrd):value:AVERAGE" \
 		"DEF:free=$(check $2/df_complex-free.rrd):value:AVERAGE" \
 		"CDEF:totalused=used,reserved,+" \
-		"AREA:totalused#4169E1:Used:STACK" \
-		"AREA:free#32C734:Free\c:STACK" \
+		"AREA:totalused#4169E1:Used\::STACK" \
+		"GPRINT:totalused:LAST:%4.1lf%s\t\t" \
+		"AREA:free#32C734:Free\::STACK" \
+		"GPRINT:free:LAST:%4.1lf%s\c" \
 		"COMMENT: \n" \
 		--watermark "Drawn: $nowlit";
 	}
@@ -428,11 +431,11 @@ temp_graph_imperial() {
 		"CDEF:tfin_max=traw_max,1000,/,1.8,*,32,+" \
 		"CDEF:tfin_avg=traw_avg,1000,/,1.8,*,32,+" \
 		"CDEF:tfin_min=traw_min,1000,/,1.8,*,32,+" \
-		"AREA:tfin_max#ffcc00" \
+		"AREA:tfin_max#ffcc00:Temperature\:" \
+		"GPRINT:tfin_max:LAST:%4.1lf F\c" \
 		"GPRINT:tfin_min:MIN:Min\: %4.1lf F" \
 		"GPRINT:tfin_avg:AVERAGE:Avg\: %4.1lf F" \
 		"GPRINT:tfin_max:MAX:Max\: %4.1lf F\c" \
-		"COMMENT: \n" \
 		--watermark "Drawn: $nowlit";
 	}
 
@@ -454,11 +457,11 @@ temp_graph_metric() {
 		"CDEF:tfin_max=traw_max,1000,/" \
 		"CDEF:tfin_min=traw_min,1000,/" \
 		"CDEF:tfin_avg=traw_avg,1000,/" \
-		"AREA:tfin_max#ffcc00" \
+		"AREA:tfin_max#ffcc00:Temperature\:" \
+		"GPRINT:tfin_max:LAST:%4.1lf C\c" \
 		"GPRINT:tfin_min:MIN:Min\: %4.1lf C" \
 		"GPRINT:tfin_avg:AVERAGE:Avg\: %4.1lf C" \
 		"GPRINT:tfin_max:MAX:Max\: %4.1lf C\c" \
-		"COMMENT: \n" \
 		--watermark "Drawn: $nowlit";
 	}
 
