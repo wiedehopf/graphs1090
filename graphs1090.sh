@@ -212,6 +212,7 @@ cpu_graph() {
 		--lower-limit 0 \
 		--rigid \
 		--units-exponent 0 \
+		--pango-markup \
 		"DEF:idle=$(check $2/cpu-idle.rrd):value:AVERAGE" \
 		"DEF:interrupt=$(check $2/cpu-interrupt.rrd):value:AVERAGE" \
 		"DEF:nice=$(check $2/cpu-nice.rrd):value:AVERAGE" \
@@ -221,6 +222,7 @@ cpu_graph() {
 		"DEF:user=$(check $2/cpu-user.rrd):value:AVERAGE" \
 		"DEF:wait=$(check $2/cpu-wait.rrd):value:AVERAGE" \
 		"CDEF:all=idle,interrupt,nice,softirq,steal,system,user,wait,+,+,+,+,+,+,+" \
+		"CDEF:usage=interrupt,nice,softirq,steal,system,user,wait,+,+,+,+,+,+" \
 		"CDEF:pinterrupt=100,interrupt,*,all,/" \
 		"CDEF:pnice=100,nice,*,all,/" \
 		"CDEF:psoftirq=100,softirq,*,all,/" \
@@ -228,6 +230,7 @@ cpu_graph() {
 		"CDEF:psystem=100,system,*,all,/" \
 		"CDEF:puser=100,user,*,all,/" \
 		"CDEF:pwait=100,wait,*,all,/" \
+		"GPRINT:usage:AVERAGE:Average utilization\: %4.1lf<span font='2'> </span>%%\t\t" \
 		"AREA:pinterrupt#000080:irq" \
 		"AREA:psoftirq#0000C0:softirq:STACK" \
 		"AREA:psteal#0000FF:steal:STACK" \
@@ -408,18 +411,23 @@ temp_graph_imperial() {
 		--start end-$4 \
 		$small \
 		--step "$5" \
-		--title "Core Temperature" \
+		--title "Maximum Core Temperature" \
 		--vertical-label "Degrees Fahrenheit" \
 		--right-axis 1:0 \
 		--lower-limit 32 \
 		--upper-limit 212 \
 		--rigid \
 		--units-exponent 1 \
-		"DEF:traw=$(check $2/gauge-cpu_temp.rrd):value:MAX" \
-		"CDEF:tta=traw,1000,/" \
-		"CDEF:ttb=tta,1.8,*" \
-		"CDEF:ttc=ttb,32,+" \
-		"AREA:ttc#ffcc00" \
+		"DEF:traw_max=$(check $2/gauge-cpu_temp.rrd):value:MAX" \
+		"DEF:traw_avg=$(check $2/gauge-cpu_temp.rrd):value:AVERAGE" \
+		"DEF:traw_min=$(check $2/gauge-cpu_temp.rrd):value:MIN" \
+		"CDEF:tfin_max=traw_max,1000,/,1.8,*,32,+" \
+		"CDEF:tfin_avg=traw_avg,1000,/,1.8,*,32,+" \
+		"CDEF:tfin_min=traw_min,1000,/,1.8,*,32,+" \
+		"AREA:tfin_max#ffcc00" \
+		"GPRINT:tfin_avg:AVERAGE:Avg\: %4.1lf F" \
+		"GPRINT:tfin_min:MIN:Min\: %4.1lf F" \
+		"GPRINT:tfin_max:MAX:Max\: %4.1lf F\c" \
 		"COMMENT: \n" \
 		"COMMENT: \n" \
 		--watermark "Drawn: $nowlit";
@@ -431,17 +439,23 @@ temp_graph_metric() {
 		--start end-$4 \
 		$small \
 		--step "$5" \
-		--title "Core Temperature" \
+		--title "Maximum Core Temperature" \
 		--vertical-label "Degrees Celcius" \
 		--right-axis 1:0 \
 		--lower-limit 0 \
 		--upper-limit 100 \
 		--rigid \
 		--units-exponent 1 \
-		"DEF:traw=$(check $2/gauge-cpu_temp.rrd):value:MAX" \
-		"CDEF:tfin=traw,1000,/" \
-		"AREA:tfin#ffcc00" \
-		"COMMENT: \n" \
+		"DEF:traw_max=$(check $2/gauge-cpu_temp.rrd):value:MAX" \
+		"DEF:traw_avg=$(check $2/gauge-cpu_temp.rrd):value:AVERAGE" \
+		"DEF:traw_min=$(check $2/gauge-cpu_temp.rrd):value:MIN" \
+		"CDEF:tfin_max=traw_max,1000,/" \
+		"CDEF:tfin_min=traw_min,1000,/" \
+		"CDEF:tfin_avg=traw_avg,1000,/" \
+		"AREA:tfin_max#ffcc00" \
+		"GPRINT:tfin_avg:AVERAGE:Avg\: %4.1lf C" \
+		"GPRINT:tfin_min:MIN:Min\: %4.1lf C" \
+		"GPRINT:tfin_max:MAX:Max\: %4.1lf C\c" \
 		"COMMENT: \n" \
 		--watermark "Drawn: $nowlit";
 	}
