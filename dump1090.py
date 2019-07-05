@@ -20,6 +20,7 @@ def handle_config(root):
                     url_978 = ch2.values[0]
             if not url:
                 collectd.warning('No URL found in dump1090 Instance ' + instance_name)
+                return
             else:
                 collectd.register_read(callback=handle_read,
                                        data=(instance_name, urlparse.urlparse(url).hostname, url, url_978),
@@ -31,6 +32,7 @@ def handle_config(root):
 
         else:
             collectd.warning('Ignored config entry: ' + child.key)
+            return
 
 V=collectd.Values(host='', plugin='dump1090', time=0)
 
@@ -55,8 +57,9 @@ def read_stats_1min(instance_name, host, url):
     try:
         with closing(urlopen(url + '/data/stats.json', None, 5.0)) as stats_file:
             stats = json.load(stats_file)
-    except URLError:
-        collectd.warning(URLError)
+    except URLError as error:
+        collectd.warning(str(error))
+        return
     except:
         collectd.warning(sys.exc_info()[0])
         return
@@ -149,8 +152,9 @@ def read_stats_1min(instance_name, host, url):
                            interval = 60)
 
 
-            except URLError:
-                collectd.warning(URLError)
+            except URLError as error:
+                collectd.warning(str(error))
+                return
             except:
                 collectd.warning(sys.exc_info()[0])
                 return
@@ -166,8 +170,9 @@ def read_stats(instance_name, host, url):
     try:
         with closing(urlopen(url + '/data/stats.json', None, 5.0)) as stats_file:
             stats = json.load(stats_file)
-    except URLError:
-        collectd.warning(URLError)
+    except URLError as error:
+        collectd.warning(str(error))
+        return
     except:
         collectd.warning(sys.exc_info()[0])
         return
@@ -297,8 +302,9 @@ def read_aircraft(instance_name, host, url):
         with closing(urlopen(url + '/data/aircraft.json', None, 5.0)) as aircraft_file:
             aircraft_data = json.load(aircraft_file)
 
-    except URLError:
-        collectd.warning(URLError)
+    except URLError as error:
+        collectd.warning(str(error))
+        return
     except:
         collectd.warning(sys.exc_info()[0])
         return
@@ -367,8 +373,9 @@ def read_aircraft_978(instance_name, host, url):
         with closing(urlopen(url + '/data/aircraft.json', None, 5.0)) as aircraft_file:
             aircraft_data = json.load(aircraft_file)
 
-    except URLError:
-        collectd.warning(URLError)
+    except URLError as error:
+        #collectd.warning(str(error))
+        return
     except:
         collectd.warning(sys.exc_info()[0])
         return

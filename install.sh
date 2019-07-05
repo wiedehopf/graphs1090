@@ -104,7 +104,9 @@ mkdir -p /run/graphs1090
 
 systemctl daemon-reload
 systemctl enable collectd &>/dev/null
-systemctl restart collectd lighttpd
+systemctl restart lighttpd
+sleep 1
+systemctl restart collectd
 
 #fix readonly remount logic in fr24feed update script
 sed -i -e 's?$(mount | grep " on / " | grep rw)?{ mount | grep " on / " | grep rw; }?' /usr/lib/fr24/fr24feed_updater.sh &>/dev/null
