@@ -366,9 +366,9 @@ memory_graph() {
 		"GPRINT:used:LAST:%4.1lf%s" \
 		"AREA:buffers#4169E1:Buffers\::STACK" \
 		"GPRINT:buffers:LAST:%4.1lf%s\c" \
-		"AREA:cached#ffcc00:Cache\::STACK" \
+		"AREA:cached#ffdd99:Cache\::STACK" \
 		"GPRINT:cached:LAST:%4.1lf%s" \
-		"AREA:free#CCCCCC:Unused\::STACK" \
+		"AREA:free#dddddd:Unused\::STACK" \
 		"GPRINT:free:LAST:%4.1lf%s\c" \
 		--watermark "Drawn: $nowlit";
 	}
