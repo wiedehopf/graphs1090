@@ -64,12 +64,18 @@ fi
 
 cp graphs1090.sh dump1090.db dump1090.py system_stats.py boot.sh uninstall.sh LICENSE $ipath
 chmod u+x $ipath/*.sh
-cp -n /etc/collectd/collectd.conf /etc/collectd/collectd.conf.graphs1090 2>/dev/null
-cp collectd.conf /etc/collectd/collectd.conf
+if ! grep -e 'system_stats' -qs /etc/collectd/collectd.conf; then
+	cp /etc/collectd/collectd.conf /etc/collectd/collectd.conf.graphs1090 2>/dev/null
+	cp collectd.conf /etc/collectd/collectd.conf
+	echo "------------------"
+	echo "Overwriting /etc/collectd/collectd.conf, the old file has been moved to /etc/collectd/collectd.conf.graphs1090"
+	echo "------------------"
+fi
 cp cron-graphs1090 /etc/cron.d/
 cp -r html $ipath
 cp -n default /etc/default/graphs1090
-cp default $ipath
+cp default $ipath/default-config
+cp collectd.conf $ipath/default-collectd.conf
 
 
 cp 88-graphs1090.conf /etc/lighttpd/conf-available
