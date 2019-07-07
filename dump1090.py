@@ -384,9 +384,15 @@ def read_aircraft_978(instance_name, host, url):
     with_pos = 0
     max_range = 0
     tisb = 0
+
+    avg=0
+    length=0
+    maximum = -51
+    minimum = 2
+
     for a in aircraft_data['aircraft']:
         if a['seen'] < 60: total += 1
-        if a.has_key('seen_pos') and a['seen_pos'] < 30:
+        if a.has_key('seen_pos') and a['seen_pos'] < 60:
             with_pos += 1
             if rlat is not None:
                 distance = greatcircle(rlat, rlon, a['lat'], a['lon'])
@@ -398,6 +404,17 @@ def read_aircraft_978(instance_name, host, url):
             # GPS position, include in max_range calculation
             elif distance > max_range:
                 max_range = distance
+
+        if a.has_key('rssi') and a['messages'] > 2 and a['seen'] < 60 :
+            rssi = a['rssi']
+            if rssi > -49.4 :
+                avg += rssi
+                length += 1
+                if rssi > maximum :
+                    maximum = rssi
+                if rssi < minimum :
+                    minimum = rssi
+
 
     V.dispatch(plugin_instance = instance_name,
                host=host,
@@ -426,5 +443,33 @@ def read_aircraft_978(instance_name, host, url):
                type_instance='messages_978',
                time=aircraft_data['now'],
                values = [aircraft_data['messages']])
+
+    if length > 0 :
+        avg /= length
+        V.dispatch(plugin_instance = instance_name,
+               host=host,
+               type='dump1090_dbfs',
+               type_instance='signal_978',
+               time=aircraft_data['now'],
+               values = [avg],
+               interval = 60)
+
+    if maximum > -50 :
+        V.dispatch(plugin_instance = instance_name,
+               host=host,
+               type='dump1090_dbfs',
+               type_instance='peak_signal_978',
+               time=aircraft_data['now'],
+               values = [maximum],
+               interval = 60)
+
+    if minimum < 1 :
+        V.dispatch(plugin_instance = instance_name,
+               host=host,
+               type='dump1090_dbfs',
+               type_instance='min_signal_978',
+               time=aircraft_data['now'],
+               values = [minimum],
+               interval = 60)
 
 collectd.register_config(callback=handle_config, name='dump1090')

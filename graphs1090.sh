@@ -795,6 +795,46 @@ signal_graph() {
 		--watermark "Drawn: $nowlit";
 	}
 
+978_signal_graph() {
+	if [ -f $2/dump1090_dbfs-min_signal_978.rrd ]
+	then
+		weak1="LINE1:min#0099FF:Weakest\:"
+		weak2="GPRINT:min:MIN:%4.1lf"
+	fi
+	$pre; rrdtool graph \
+		"$1" \
+		--start end-$4 \
+		$small \
+		--step "$5" \
+		--title "UAT Signal Level" \
+		--vertical-label "dBFS" \
+		--right-axis 1:0 \
+		--upper-limit 1    \
+		--lower-limit -45 \
+		--rigid \
+		--units-exponent 0 \
+		"TEXTALIGN:center" \
+		"DEF:signal=$(check $2/dump1090_dbfs-signal_978.rrd):value:AVERAGE" \
+		"DEF:peak=$(check $2/dump1090_dbfs-peak_signal_978.rrd):value:MAX" \
+		"DEF:min=$(check $2/dump1090_dbfs-min_signal_978.rrd):value:MIN" \
+		"DEF:noise=$(check $2/dump1090_dbfs-NaN.rrd):value:AVERAGE" \
+		"CDEF:us=signal,UN,-100,signal,IF" \
+		"AREA:-100#00CC00:Mean Level\:" \
+		"AREA:us#FFFFFF" \
+		"GPRINT:signal:AVERAGE:%4.1lf" \
+		"LINE1:peak#0000FF:Peak Level\:" \
+		"GPRINT:peak:MAX:%4.1lf\c" \
+		"LINE:noise#7F00FF:Noise" \
+		"GPRINT:noise:MAX:Max\: %4.1lf" \
+		"GPRINT:noise:MIN:Min\: %4.1lf" \
+		"GPRINT:noise:AVERAGE:Avg\: %4.1lf\c" \
+		$weak1 \
+		$weak2 \
+		"LINE1:0#000000:Zero dBFS" \
+		"LINE1:-3#FF0000:-3 dBFS\c" \
+		--watermark "Drawn: $nowlit";
+	}
+
 978_aircraft() {
 	$pre; rrdtool graph \
 		"$1" \
@@ -934,6 +974,7 @@ dump1090_receiver_graphs() {
 		978_range ${DOCUMENTROOT}/dump1090-$2-range_978-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
 		978_aircraft ${DOCUMENTROOT}/dump1090-$2-aircraft_978-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
 		978_messages ${DOCUMENTROOT}/dump1090-$2-messages_978-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
+		978_signal_graph ${DOCUMENTROOT}/dump1090-$2-signal_978-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
 	fi
 }
 
