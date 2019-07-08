@@ -7,6 +7,7 @@ packages="lighttpd unzip"
 packages2="rrdtool collectd-core"
 
 mkdir -p $ipath/installed
+mkdir -p /var/lib/graphs1090/scatter
 
 for i in $packages $packages2
 do
@@ -63,7 +64,8 @@ then
 	cd graphs1090-master
 fi
 
-cp graphs1090.sh dump1090.db dump1090.py system_stats.py boot.sh uninstall.sh LICENSE $ipath
+cp dump1090.db dump1090.py system_stats.py LICENSE $ipath
+cp *.sh $ipath
 chmod u+x $ipath/*.sh
 if ! grep -e 'system_stats' -qs /etc/collectd/collectd.conf; then
 	cp /etc/collectd/collectd.conf /etc/collectd/collectd.conf.graphs1090 2>/dev/null
