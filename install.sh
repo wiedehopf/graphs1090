@@ -3,7 +3,7 @@
 ipath=/usr/share/graphs1090
 install=0
 
-packages="lighttpd unzip python "
+packages="lighttpd unzip"
 packages2="rrdtool collectd-core"
 
 mkdir -p $ipath/installed
@@ -20,7 +20,8 @@ done
 if ! dpkg -s libpython2.7 2>/dev/null | grep 'Status.*installed' &>/dev/null
 then
 	apt-get update
-	apt-get install -y libpython2.7
+	apt-get install -y 'libpython2.7'
+	apt-get install -y 'libpython2.?'
 	update_done=yes
 fi
 
@@ -116,6 +117,8 @@ systemctl restart collectd
 
 #fix readonly remount logic in fr24feed update script
 sed -i -e 's?$(mount | grep " on / " | grep rw)?{ mount | grep " on / " | grep rw; }?' /usr/lib/fr24/fr24feed_updater.sh &>/dev/null
+
+$ipath/boot.sh nographs
 
 if [ -f /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_messages-local_accepted.rrd ]
 then

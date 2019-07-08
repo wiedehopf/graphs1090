@@ -18,6 +18,10 @@ else
 	sed -i -e 's?flex: 100%; // all_large?flex: 50%; // all_large?' /usr/share/graphs1090/html/portal.css
 fi
 
+if [[ $1 == "nographs" ]]; then
+	exit 0
+fi
+
 if [[ $1 == "slow" ]]; then
 	sleep 15
 fi
