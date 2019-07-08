@@ -4,12 +4,17 @@
 data_dir=/var/lib/graphs1090/scatter
 
 date=$(date -I --date=yesterday)
+endtime="midnight today"
+if ! [ -z $1 ]; then
+	date=$(date -I --date=-${1}days)
+	endtime="midnight tomorrow -${1}days"
+fi
 
 
-rrdtool fetch /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_messages-local_accepted.rrd AVERAGE -s end-1days -e midnight today -r 3m -a > /tmp/messages_l
-rrdtool fetch /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_messages-remote_accepted.rrd AVERAGE -s end-1days -e midnight today -r 3m -a > /tmp/messages_r
-rrdtool fetch /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_range-max_range.rrd MAX -s end-1days -e midnight today -r 3m -a > /tmp/range
-rrdtool fetch /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_aircraft-recent.rrd AVERAGE -s end-1days -e midnight today -r 3m -a > /tmp/aircraft
+rrdtool fetch /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_messages-local_accepted.rrd AVERAGE -s end-1439m -e "$endtime" -r 3m -a > /tmp/messages_l
+rrdtool fetch /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_messages-remote_accepted.rrd AVERAGE -s end-1439m -e "$endtime" -r 3m -a > /tmp/messages_r
+rrdtool fetch /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_range-max_range.rrd MAX -s end-1439m -e "$endtime" -r 3m -a > /tmp/range
+rrdtool fetch /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_aircraft-recent.rrd AVERAGE -s end-1439m -e "$endtime" -r 3m -a > /tmp/aircraft
 
 
 # Remove headers and extraneous :
