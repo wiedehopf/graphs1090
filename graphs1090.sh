@@ -27,7 +27,7 @@ DGREEN=336600
 BLUE=0011F8
 ABLUE=0022DD
 DBLUE=0033AA
-CYAN=00B7F8
+CYAN=00A0F0
 RED=FF0000
 DRED=990000
 
@@ -768,7 +768,7 @@ signal_graph() {
 	if [ -f $2/dump1090_dbfs-min_signal.rrd ]
 	then
 		weak1="DEF:min=$(check $2/dump1090_dbfs-min_signal.rrd):value:MIN"
-		weak2="LINE1:min#$CYAN:Weakest\:"
+		weak2="LINE1:min#$BLUE:Weakest\:"
 		weak3="GPRINT:min:MIN:%4.1lf"
 	fi
 	$pre; rrdtool graph \
@@ -791,7 +791,7 @@ signal_graph() {
 		"AREA:-100#$GREEN:Mean Level\:" \
 		"AREA:us#FFFFFF" \
 		"GPRINT:signal:AVERAGE:%4.1lf" \
-		"LINE1:peak#$BLUE:Peak Level\:" \
+		"LINE1:peak#$CYAN:Peak Level\:" \
 		"GPRINT:peak:MAX:%4.1lf\c" \
 		"LINE:noise#7F00FF:Noise" \
 		"GPRINT:noise:MAX:Max\: %4.1lf" \
@@ -808,7 +808,7 @@ signal_graph() {
 978_signal_graph() {
 	if [ -f $2/dump1090_dbfs-min_signal_978.rrd ]
 	then
-		weak1="LINE1:min#$CYAN:Weakest\:"
+		weak1="LINE1:min#$BLUE:Weakest\:"
 		weak2="GPRINT:min:MIN:%4.1lf"
 	fi
 	$pre; rrdtool graph \
@@ -832,7 +832,7 @@ signal_graph() {
 		"AREA:-100#$GREEN:Mean Level\:" \
 		"AREA:us#FFFFFF" \
 		"GPRINT:signal:AVERAGE:%4.1lf" \
-		"LINE1:peak#$BLUE:Peak Level\:" \
+		"LINE1:peak#$CYAN:Peak Level\:" \
 		"GPRINT:peak:MAX:%4.1lf\c" \
 		"LINE:noise#7F00FF:Noise" \
 		"GPRINT:noise:MAX:Max\: %4.1lf" \
