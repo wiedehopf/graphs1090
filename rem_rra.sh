@@ -25,6 +25,9 @@ average="dump1090_dbfs-quart1.rrd \
 	dump1090_messages-strong_signals.rrd \
 	dump1090_tracks-all.rrd \
 	dump1090_tracks-single_message.rrd \
+	dump1090_range-median.rrd \
+	dump1090_range-quart1.rrd \
+	dump1090_range-quart3.rrd \
 	"
 
 cd $target/dump1090-localhost

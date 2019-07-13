@@ -346,6 +346,7 @@ def read_aircraft(instance_name, host, url):
     max_range = 0
     mlat = 0
     tisb = 0
+    ranges = []
     for a in aircraft_data['aircraft']:
         if a['seen'] < 30: total += 1
         if a.has_key('seen_pos') and a['seen_pos'] < 30:
@@ -360,8 +361,47 @@ def read_aircraft(instance_name, host, url):
             elif 'lat' in a.get('tisb', ()):
                 tisb += 1
             # GPS position, include in max_range calculation
-            elif distance > max_range:
-                max_range = distance
+            else:
+                ranges.append(distance)
+                if distance > max_range:
+                    max_range = distance
+
+    ranges.sort()
+    length = len(ranges)
+
+    if length > 0:
+        minimum = ranges[0]
+        quart1 = ranges[length/4]
+        median = ranges[length/2]
+        quart3 = ranges[3*length/4]
+
+        V.dispatch(plugin_instance = instance_name,
+                   host=host,
+                   type='dump1090_range',
+                   type_instance='quart1',
+                   time=aircraft_data['now'],
+                   values = [quart1])
+
+        V.dispatch(plugin_instance = instance_name,
+                   host=host,
+                   type='dump1090_range',
+                   type_instance='median',
+                   time=aircraft_data['now'],
+                   values = [median])
+
+        V.dispatch(plugin_instance = instance_name,
+                   host=host,
+                   type='dump1090_range',
+                   type_instance='quart3',
+                   time=aircraft_data['now'],
+                   values = [quart3])
+
+        V.dispatch(plugin_instance = instance_name,
+                   host=host,
+                   type='dump1090_range',
+                   type_instance='minimum',
+                   time=aircraft_data['now'],
+                   values = [minimum])
 
     V.dispatch(plugin_instance = instance_name,
                host=host,

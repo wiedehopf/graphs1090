@@ -691,24 +691,42 @@ range_graph_imperial_nautical(){
 		--start end-$4 \
 		$small \
 		--step "$5" \
-		--title "$3 Max Range" \
+		--title "$3 Range" \
 		--vertical-label "Nautical Miles" \
 		--units-exponent 0 \
 		--right-axis 1.852:0 \
 		"DEF:rangem=$(check $2/dump1090_range-max_range.rrd):value:MAX" \
 		"DEF:rangem_a=$(check $2/dump1090_range-max_range.rrd):value:AVERAGE" \
+		"DEF:dmin=$(check $2/dump1090_range-minimum.rrd):value:MIN" \
+		"CDEF:min=dmin,0.001,*" \
+		"CDEF:nmin=min,0.539956803,*" \
+		"DEF:dquart1=$(check $2/dump1090_range-quart1.rrd):value:AVERAGE" \
+		"CDEF:quart1=dquart1,0.001,*" \
+		"CDEF:nquart1=quart1,0.539956803,*" \
+		"DEF:dquart3=$(check $2/dump1090_range-quart3.rrd):value:AVERAGE" \
+		"CDEF:quart3=dquart3,0.001,*" \
+		"CDEF:nquart3=quart3,0.539956803,*" \
+		"DEF:dmedian=$(check $2/dump1090_range-median.rrd):value:AVERAGE" \
+		"CDEF:median=dmedian,0.001,*" \
+		"CDEF:nmedian=median,0.539956803,*" \
+		"AREA:nquart3#$GREEN:1st to 3rd Quartile" \
+		"AREA:nquart1#FFFFFF" \
+		"LINE1:nmedian#$BLUE:Median Distance\:" \
+		"GPRINT:nmedian:AVERAGE:%4.1lf (avg)\c" \
 		"CDEF:rangekm=rangem,0.001,*" \
 		"CDEF:rangenm=rangekm,0.539956803,*" \
 		"CDEF:rangekm_a=rangem_a,0.001,*" \
 		"CDEF:rangenm_a=rangekm_a,0.539956803,*" \
-		"LINE1:rangenm#$BLUE:Max Range" \
+		"LINE1:rangenm#$DRED:Max Range" \
 		"VDEF:avgrange=rangenm_a,AVERAGE" \
-		"LINE1:avgrange#666666:Avr Range\\::dashes" \
+		"LINE1:avgrange#666666:Avg Max Range\\::dashes" \
 		"VDEF:peakrange=rangenm,MAXIMUM" \
 		"GPRINT:avgrange:%1.1lf NM" \
 		"LINE1:peakrange#$RED:Peak Range\\:" \
 		"GPRINT:peakrange:%1.1lf NM\c" \
-		"COMMENT: LHS\: Nautical Miles; RHS\: Kilometres\c" \
+		"COMMENT: LHS\: Nautical Miles; RHS\: Kilometres" \
+		"LINE1:nmin#$CYAN:Closest\:" \
+		"GPRINT:nmin:MIN:%4.1lf\c" \
 		--watermark "Drawn: $nowlit";
 	}
 
