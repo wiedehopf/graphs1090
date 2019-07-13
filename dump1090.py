@@ -422,6 +422,8 @@ def read_aircraft_978(instance_name, host, url):
     maximum = -51
     minimum = 2
 
+    signals = []
+
     for a in aircraft_data['aircraft']:
         if a['seen'] < 60: total += 1
         if a.has_key('seen_pos') and a['seen_pos'] < 60:
@@ -439,13 +441,10 @@ def read_aircraft_978(instance_name, host, url):
 
         if a.has_key('rssi') and a['messages'] > 2 and a['seen'] < 60 :
             rssi = a['rssi']
-            if rssi > -49.4 :
+            if rssi > -49.4 and not 'lat' in a.get('tisb', ()):
+                signals.append(rssi)
                 avg += rssi
                 length += 1
-                if rssi > maximum :
-                    maximum = rssi
-                if rssi < minimum :
-                    minimum = rssi
 
 
     V.dispatch(plugin_instance = instance_name,
@@ -476,14 +475,37 @@ def read_aircraft_978(instance_name, host, url):
                time=aircraft_data['now'],
                values = [aircraft_data['messages']])
 
+    signals.sort()
+
     if length > 0 :
-        avg /= length
+        minimum = signals[0]
+        quart1 = signals[length/4]
+        median = signals[length/2]
+        quart3 = signals[3*length/4]
+        maximum = signals[-1]
+
         V.dispatch(plugin_instance = instance_name,
                host=host,
                type='dump1090_dbfs',
-               type_instance='signal_978',
+               type_instance='quart1_978',
                time=aircraft_data['now'],
-               values = [avg],
+               values = [quart1],
+               interval = 60)
+
+        V.dispatch(plugin_instance = instance_name,
+               host=host,
+               type='dump1090_dbfs',
+               type_instance='median_978',
+               time=aircraft_data['now'],
+               values = [median],
+               interval = 60)
+
+        V.dispatch(plugin_instance = instance_name,
+               host=host,
+               type='dump1090_dbfs',
+               type_instance='quart3_978',
+               time=aircraft_data['now'],
+               values = [quart3],
                interval = 60)
 
     if maximum > -50 :
