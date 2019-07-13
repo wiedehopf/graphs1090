@@ -784,16 +784,11 @@ signal_graph() {
 		"DEF:quart3=$(check $2/dump1090_dbfs-quart3.rrd):value:AVERAGE" \
 		"DEF:median=$(check $2/dump1090_dbfs-median.rrd):value:AVERAGE" \
 		"DEF:peak=$(check $2/dump1090_dbfs-peak_signal.rrd):value:MAX" \
-		"DEF:noise=$(check $2/dump1090_dbfs-noise.rrd):value:AVERAGE" \
 		"CDEF:mes=median,UN,signal,median,IF" \
 		"AREA:quart1#$GREEN:1st to 3rd Quartile" \
 		"AREA:quart3#FFFFFF" \
 		"LINE1:mes#$BLUE:Mean Median Level\:" \
 		"GPRINT:mes:AVERAGE:%4.1lf\c" \
-		"LINE:noise#7F00FF:Noise" \
-		"GPRINT:noise:MAX:Max\: %4.1lf" \
-		"GPRINT:noise:MIN:Min\: %4.1lf" \
-		"GPRINT:noise:AVERAGE:Avg\: %4.1lf\c" \
 		"LINE1:min#$CYAN:Weakest\:" \
 		"GPRINT:min:MIN:%4.1lf" \
 		"LINE1:peak#$RED:Peak Level\:" \

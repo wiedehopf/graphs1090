@@ -75,7 +75,7 @@ def read_stats_1min(instance_name, host, url):
                    values = [stats['last1min']['local']['signal']],
                    interval = 60)
 
-        if stats['last1min']['local'].has_key('peak_signal'):
+        if False and stats['last1min']['local'].has_key('peak_signal'):
           V.dispatch(plugin_instance = instance_name,
                    host=host,
                    type='dump1090_dbfs',
@@ -84,7 +84,7 @@ def read_stats_1min(instance_name, host, url):
                    values = [stats['last1min']['local']['peak_signal']],
                    interval = 60)
 
-        if stats['last1min']['local'].has_key('min_signal'):
+        if False and stats['last1min']['local'].has_key('min_signal'):
           V.dispatch(plugin_instance = instance_name,
                    host=host,
                    type='dump1090_dbfs',
@@ -165,7 +165,7 @@ def read_stats_1min(instance_name, host, url):
                        values = [avg],
                        interval = 60)
 
-            if maximum > -50 and not stats['last1min']['local'].has_key('peak_signal'):
+            if maximum > -50 :
                 V.dispatch(plugin_instance = instance_name,
                        host=host,
                        type='dump1090_dbfs',
@@ -174,7 +174,7 @@ def read_stats_1min(instance_name, host, url):
                        values = [maximum],
                        interval = 60)
 
-            if minimum < 1 and not stats['last1min']['local'].has_key('min_signal'):
+            if minimum < 1 :
                 V.dispatch(plugin_instance = instance_name,
                        host=host,
                        type='dump1090_dbfs',
