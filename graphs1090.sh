@@ -765,12 +765,6 @@ range_graph_metric() {
 	}
 
 signal_graph() {
-	if [ -f $2/dump1090_dbfs-min_signal.rrd ]
-	then
-		weak1="DEF:min=$(check $2/dump1090_dbfs-min_signal.rrd):value:MIN"
-		weak2="LINE1:min#$BLUE:Weakest\:"
-		weak3="GPRINT:min:MIN:%4.1lf"
-	fi
 	$pre; rrdtool graph \
 		"$1" \
 		--start end-$4 \
@@ -785,23 +779,25 @@ signal_graph() {
 		--units-exponent 0 \
 		"TEXTALIGN:center" \
 		"DEF:signal=$(check $2/dump1090_dbfs-signal.rrd):value:AVERAGE" \
+		"DEF:min=$(check $2/dump1090_dbfs-min_signal.rrd):value:MIN" \
+		"DEF:quart1=$(check $2/dump1090_dbfs-quart1.rrd):value:AVERAGE" \
+		"DEF:quart3=$(check $2/dump1090_dbfs-quart3.rrd):value:AVERAGE" \
+		"DEF:median=$(check $2/dump1090_dbfs-median.rrd):value:AVERAGE" \
 		"DEF:peak=$(check $2/dump1090_dbfs-peak_signal.rrd):value:MAX" \
 		"DEF:noise=$(check $2/dump1090_dbfs-noise.rrd):value:AVERAGE" \
-		"CDEF:us=signal,UN,-100,signal,IF" \
-		"AREA:-100#$GREEN:Mean Level\:" \
-		"AREA:us#FFFFFF" \
-		"GPRINT:signal:AVERAGE:%4.1lf" \
-		"LINE1:peak#$CYAN:Peak Level\:" \
-		"GPRINT:peak:MAX:%4.1lf\c" \
+		"CDEF:mes=median,UN,signal,median,IF" \
+		"AREA:quart1#$GREEN:1st to 3rd Quartile" \
+		"AREA:quart3#FFFFFF" \
+		"LINE1:mes#$BLUE:Mean Median Level\:" \
+		"GPRINT:mes:AVERAGE:%4.1lf\c" \
 		"LINE:noise#7F00FF:Noise" \
 		"GPRINT:noise:MAX:Max\: %4.1lf" \
 		"GPRINT:noise:MIN:Min\: %4.1lf" \
 		"GPRINT:noise:AVERAGE:Avg\: %4.1lf\c" \
-		$weak1 \
-		$weak2 \
-		$weak3 \
-		"LINE1:0#000000:Zero dBFS" \
-		"LINE1:-3#$RED:-3 dBFS\c" \
+		"LINE1:min#$CYAN:Weakest\:" \
+		"GPRINT:min:MIN:%4.1lf" \
+		"LINE1:peak#$RED:Peak Level\:" \
+		"GPRINT:peak:MAX:%4.1lf\c" \
 		--watermark "Drawn: $nowlit";
 	}
 

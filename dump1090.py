@@ -102,62 +102,94 @@ def read_stats_1min(instance_name, host, url):
                    values = [stats['last1min']['local']['noise']],
                    interval = 60)
 
-        if not stats['last1min']['local'].has_key('signal'):
-            try:
-                with closing(urlopen(url + '/data/aircraft.json', None, 5.0)) as aircraft_file:
-                    aircraft_data = json.load(aircraft_file)
+        try:
+            with closing(urlopen(url + '/data/aircraft.json', None, 5.0)) as aircraft_file:
+                aircraft_data = json.load(aircraft_file)
 
-                avg=0
-                length=0
-                maximum = -51
-                minimum = 2
+            avg=0
+            length=0
+            maximum = -51
+            minimum = 2
 
-                for a in aircraft_data['aircraft']:
-                    if a.has_key('rssi') and a['messages'] > 15 and a['seen'] < 30 :
-                        rssi = a['rssi']
-                        if rssi > -49.4 :
-                            avg += rssi
-                            length += 1
-                            if rssi > maximum :
-                                maximum = rssi
-                            if rssi < minimum :
-                                minimum = rssi
+            signals = []
 
-                if length > 0 :
-                    avg /= length
-                    V.dispatch(plugin_instance = instance_name,
-                           host=host,
-                           type='dump1090_dbfs',
-                           type_instance='signal',
-                           time=aircraft_data['now'],
-                           values = [avg],
-                           interval = 60)
+            for a in aircraft_data['aircraft']:
+                if a.has_key('rssi') and a['messages'] > 15 and a['seen'] < 30 :
+                    rssi = a['rssi']
+                    if rssi > -49.4 and not 'lat' in a.get('tisb', ()):
+                        signals.append(rssi)
+                        avg += rssi
+                        length += 1
 
-                if maximum > -50 :
-                    V.dispatch(plugin_instance = instance_name,
-                           host=host,
-                           type='dump1090_dbfs',
-                           type_instance='peak_signal',
-                           time=aircraft_data['now'],
-                           values = [maximum],
-                           interval = 60)
+            signals.sort()
 
-                if minimum < 1 :
-                    V.dispatch(plugin_instance = instance_name,
-                           host=host,
-                           type='dump1090_dbfs',
-                           type_instance='min_signal',
-                           time=aircraft_data['now'],
-                           values = [minimum],
-                           interval = 60)
+            if length > 0 :
+                minimum = signals[0]
+                quart1 = signals[length/4]
+                median = signals[length/2]
+                quart3 = signals[3*length/4]
+                maximum = signals[-1]
+
+                V.dispatch(plugin_instance = instance_name,
+                       host=host,
+                       type='dump1090_dbfs',
+                       type_instance='quart1',
+                       time=aircraft_data['now'],
+                       values = [quart1],
+                       interval = 60)
+
+                V.dispatch(plugin_instance = instance_name,
+                       host=host,
+                       type='dump1090_dbfs',
+                       type_instance='median',
+                       time=aircraft_data['now'],
+                       values = [median],
+                       interval = 60)
+
+                V.dispatch(plugin_instance = instance_name,
+                       host=host,
+                       type='dump1090_dbfs',
+                       type_instance='quart3',
+                       time=aircraft_data['now'],
+                       values = [quart3],
+                       interval = 60)
 
 
-            except URLError as error:
-                collectd.warning(str(error))
-                return
-            except:
-                collectd.warning(sys.exc_info()[0])
-                return
+            if length > 0 and not stats['last1min']['local'].has_key('signal'):
+                avg /= length
+                V.dispatch(plugin_instance = instance_name,
+                       host=host,
+                       type='dump1090_dbfs',
+                       type_instance='signal',
+                       time=aircraft_data['now'],
+                       values = [avg],
+                       interval = 60)
+
+            if maximum > -50 and not stats['last1min']['local'].has_key('peak_signal'):
+                V.dispatch(plugin_instance = instance_name,
+                       host=host,
+                       type='dump1090_dbfs',
+                       type_instance='peak_signal',
+                       time=aircraft_data['now'],
+                       values = [maximum],
+                       interval = 60)
+
+            if minimum < 1 and not stats['last1min']['local'].has_key('min_signal'):
+                V.dispatch(plugin_instance = instance_name,
+                       host=host,
+                       type='dump1090_dbfs',
+                       type_instance='min_signal',
+                       time=aircraft_data['now'],
+                       values = [minimum],
+                       interval = 60)
+
+
+        except URLError as error:
+            collectd.warning(str(error))
+            return
+        except:
+            collectd.warning(sys.exc_info()[0])
+            return
 
 def read_stats(instance_name, host, url):
     #NaN rrd
