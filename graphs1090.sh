@@ -92,7 +92,6 @@ aircraft_graph() {
 		"$1" \
 		--start end-$4 \
 		$small \
-		--step "$5" \
 		--title "$3 Aircraft Seen / Tracked" \
 		--vertical-label "Aircraft" \
 		--right-axis 1:0 \
@@ -130,7 +129,6 @@ aircraft_message_rate_graph() {
 		"$1" \
 		--start end-$4 \
 		$small \
-		--step "$5" \
 		--title "$3 Message Rate / Aircraft" \
 		--vertical-label "Messages/Aircraft/Second" \
 		--lower-limit 0 \
@@ -165,7 +163,6 @@ cpu_graph_dump1090() {
 		"$1" \
 		--start end-$4 \
 		$small \
-		--step "$5" \
 		--title "$3 CPU Utilization" \
 		--vertical-label "CPU %" \
 		--lower-limit 0 \
@@ -192,7 +189,6 @@ tracks_graph() {
 		"$1" \
 		--start end-$4 \
 		$small \
-		--step "$5" \
 		--title "$3 Tracks Seen" \
 		--vertical-label "Tracks/Hour" \
 		--lower-limit 0 \
@@ -217,7 +213,6 @@ cpu_graph() {
 		"$1" \
 		--start end-$4 \
 		$big \
-		--step "$5" \
 		--title "Overall CPU Utilization" \
 		--vertical-label "CPU %" \
 		--right-axis 1:0 \
@@ -259,11 +254,11 @@ df_root_graph() {
 		"$1" \
 		--start end-$4 \
 		$small \
-		--step "$5" \
 		--title "Disk Usage (/)" \
 		--vertical-label "Bytes" \
 		--right-axis 1:0 \
 		--lower-limit 0  \
+		-M \
 		"TEXTALIGN:center" \
 		"DEF:used=$(check $2/df_complex-used.rrd):value:AVERAGE" \
 		"DEF:reserved=$(check $2/df_complex-reserved.rrd):value:AVERAGE" \
@@ -282,10 +277,10 @@ disk_io_iops_graph() {
 		"$1" \
 		--start end-$4 \
 		$small \
-		--step "$5" \
 		--title "Disk I/O - IOPS" \
 		--vertical-label "IOPS" \
 		--right-axis 1:0 \
+		-A \
 		"TEXTALIGN:center" \
 		"DEF:read=$(check $2/disk_ops.rrd):read:AVERAGE" \
 		"DEF:write=$(check $2/disk_ops.rrd):write:AVERAGE" \
@@ -309,10 +304,12 @@ disk_io_octets_graph() {
 		"$1" \
 		--start end-$4 \
 		$small \
-		--step "$5" \
 		--title "Disk I/O - Bandwidth" \
 		--vertical-label "Bytes/Sec" \
 		--right-axis 1:0 \
+		--upper-limit 10000 \
+		--lower-limit -10000 \
+		-A \
 		"TEXTALIGN:center" \
 		"DEF:read=$(check $2/disk_octets.rrd):read:AVERAGE" \
 		"DEF:write=$(check $2/disk_octets.rrd):write:AVERAGE" \
@@ -336,7 +333,6 @@ eth0_graph() {
 		"$1" \
 		--start end-$4 \
 		$small \
-		--step "$5" \
 		--title "Bandwidth Usage (eth0)" \
 		--vertical-label "Bytes/Sec" \
 		--right-axis 1:0 \
@@ -362,7 +358,6 @@ memory_graph() {
 		"$1" \
 		--start end-$4 \
 		$small \
-		--step "$5" \
 		--lower-limit 0 \
 		--title "Memory Utilization" \
 		--vertical-label "Bytes" \
@@ -405,10 +400,12 @@ network_graph() {
 		"$1" \
 		--start end-$4 \
 		$small \
-		-Z --step "$5" \
 		--title "Bandwidth Usage (wireless + ethernet)" \
 		--vertical-label "Bytes/Sec" \
 		--right-axis 1:0 \
+		--upper-limit 10000 \
+		--lower-limit -10000 \
+		-A \
 		"TEXTALIGN:center" \
 		"${interfaces[@]}" \
 		"CDEF:tx_neg=tx,-1,*" \
@@ -430,7 +427,6 @@ temp_graph_imperial() {
 		"$1" \
 		--start end-$4 \
 		$small \
-		--step "$5" \
 		--title "Maximum Core Temperature" \
 		--vertical-label "Degrees Fahrenheit" \
 		--right-axis 1:0 \
@@ -456,7 +452,6 @@ temp_graph_metric() {
 		"$1" \
 		--start end-$4 \
 		$small \
-		--step "$5" \
 		--title "Maximum Core Temperature" \
 		--vertical-label "Degrees Celcius" \
 		--right-axis 1:0 \
@@ -482,7 +477,6 @@ wlan0_graph() {
 		"$1" \
 		--start end-$4 \
 		$small \
-		--step "$5" \
 		--title "Bandwidth Usage (wlan0)" \
 		--vertical-label "Bytes/Sec" \
 		--right-axis 1:0 \
@@ -510,7 +504,6 @@ local_rate_graph() {
 		"$1" \
 		--start end-$4 \
 		$small \
-		--step "$5" \
 		--title "$3 Maximum Graphs" \
 		--vertical-label "Messages/Second" \
 		--right-axis 1:0 \
@@ -551,7 +544,6 @@ local_trailing_rate_graph() {
 		--start end-$4 \
 		$big \
 		--slope-mode \
-		--step "$5" \
 		--title "$3 Message Rate" \
 		--vertical-label "Messages/Second" \
 		--lower-limit 0  \
@@ -707,22 +699,39 @@ range_graph(){
 	if [[ $range2 == "nautical" ]]; then
 		raxis=$(div 0.000539956803 $unitconv)
 	fi
+	if [[ $3 == "UAT" ]]; then
+		defines=( \
+			"-y 20:1" \
+			"DEF:drange=$(check $2/dump1090_range-max_range_978.rrd):value:MAX" \
+			"DEF:drange_a=$(check $2/dump1090_range-max_range_978.rrd):value:AVERAGE" \
+			"DEF:dmin=$(check $2/dump1090_range-minimum_978.rrd):value:MIN" \
+			"DEF:dquart1=$(check $2/dump1090_range-quart1_978.rrd):value:AVERAGE" \
+			"DEF:dquart3=$(check $2/dump1090_range-quart3_978.rrd):value:AVERAGE" \
+			"DEF:dmedian=$(check $2/dump1090_range-median_978.rrd):value:AVERAGE" \
+		)
+	else
+		defines=( \
+			"-y 40:1" \
+			"DEF:drange=$(check $2/dump1090_range-max_range.rrd):value:MAX" \
+			"DEF:drange_a=$(check $2/dump1090_range-max_range.rrd):value:AVERAGE" \
+			"DEF:dmin=$(check $2/dump1090_range-minimum.rrd):value:MIN" \
+			"DEF:dquart1=$(check $2/dump1090_range-quart1.rrd):value:AVERAGE" \
+			"DEF:dquart3=$(check $2/dump1090_range-quart3.rrd):value:AVERAGE" \
+			"DEF:dmedian=$(check $2/dump1090_range-median.rrd):value:AVERAGE" \
+			)
+	fi
 
 	$pre; rrdtool graph \
 		"$1" \
 		--start end-$4 \
 		$small \
-		--step "$5" \
 		--title "$3 Range" \
 		--vertical-label "Nautical Miles" \
 		--units-exponent 0 \
+		-M \
+		--lower-limit 0 \
 		--right-axis $raxis:0 \
-		"DEF:drange=$(check $2/dump1090_range-max_range.rrd):value:MAX" \
-		"DEF:drange_a=$(check $2/dump1090_range-max_range.rrd):value:AVERAGE" \
-		"DEF:dmin=$(check $2/dump1090_range-minimum.rrd):value:MIN" \
-		"DEF:dquart1=$(check $2/dump1090_range-quart1.rrd):value:AVERAGE" \
-		"DEF:dquart3=$(check $2/dump1090_range-quart3.rrd):value:AVERAGE" \
-		"DEF:dmedian=$(check $2/dump1090_range-median.rrd):value:AVERAGE" \
+		${defines[*]} \
 		"CDEF:range=drange,$unitconv,*" \
 		"CDEF:range_a=drange_a,$unitconv,*" \
 		"CDEF:min=dmin,$unitconv,*" \
@@ -745,78 +754,43 @@ range_graph(){
 		--watermark "Drawn: $nowlit";
 	}
 
-range_graph_imperial_statute(){
-	$pre; rrdtool graph \
-		"$1" \
-		--start end-$4 \
-		$small \
-		--step "$5" \
-		--title "$3 Max Range" \
-		--vertical-label "Statute Miles" \
-		--units-exponent 0 \
-		--right-axis 1.609:0 \
-		"DEF:rangem=$(check $2/dump1090_range-max_range.rrd):value:MAX" \
-		"DEF:rangem_a=$(check $2/dump1090_range-max_range.rrd):value:AVERAGE" \
-		"CDEF:rangekm=rangem,0.001,*" \
-		"CDEF:rangesm=rangekm,0.621371,*" \
-		"CDEF:rangekm_a=rangem_a,0.001,*" \
-		"CDEF:rangesm_a=rangekm_a,0.621371,*" \
-		"LINE1:rangesm#$BLUE:Max Range" \
-		"VDEF:avgrange=rangesm_a,AVERAGE" \
-		"LINE1:avgrange#666666:Avr Range\\::dashes" \
-		"VDEF:peakrange=rangesm,MAXIMUM" \
-		"GPRINT:avgrange:%1.1lf SM" \
-		"LINE1:peakrange#$RED:Peak Range\\:" \
-		"GPRINT:peakrange:%1.1lf SM\c" \
-		"COMMENT: LHS\: Statute Miles; RHS\: Kilometres\c" \
-		--watermark "Drawn: $nowlit";
-	}
-
-range_graph_metric() {
-	$pre; rrdtool graph \
-		"$1" \
-		--start end-$4 \
-		$small \
-		--step "$5" \
-		--title "$3 Max Range" \
-		--vertical-label "Kilometres" \
-		--units-exponent 0 \
-		--right-axis 0.5399:0 \
-		"DEF:rangem=$(check $2/dump1090_range-max_range.rrd):value:MAX" \
-		"DEF:rangem_a=$(check $2/dump1090_range-max_range.rrd):value:AVERAGE" \
-		"CDEF:range=rangem,0.001,*" \
-		"CDEF:range_a=rangem_a,0.001,*" \
-		"LINE1:range#$BLUE:Max Range" \
-		"VDEF:avgrange=range_a,AVERAGE" \
-		"LINE1:avgrange#666666:Avg Range\\::dashes" \
-		"VDEF:peakrange=range,MAXIMUM" \
-		"GPRINT:avgrange:%1.1lf km" \
-		"LINE1:peakrange#$RED:Peak Range\\:" \
-		"GPRINT:peakrange:%1.1lf km\c" \
-		"COMMENT: LHS\: Kilometres; RHS\: Nautical Miles\c" \
-		--watermark "Drawn: $nowlit";
-	}
 
 signal_graph() {
-	$pre; rrdtool graph \
-		"$1" \
-		--start end-$4 \
-		$small \
-		--step "$5" \
-		--title "$3 Signal Level" \
-		--vertical-label "dBFS" \
-		--right-axis 1:0 \
-		--upper-limit 1    \
-		--lower-limit -45 \
-		--rigid \
-		--units-exponent 0 \
-		"TEXTALIGN:center" \
+	if [[ $3 == "UAT" ]]; then
+		defines=( \
+		"DEF:signal=$(check $2/dump1090_dbfs-signal_978.rrd):value:AVERAGE" \
+		"DEF:min=$(check $2/dump1090_dbfs-min_signal_978.rrd):value:MIN" \
+		"DEF:quart1=$(check $2/dump1090_dbfs-quart1_978.rrd):value:AVERAGE" \
+		"DEF:quart3=$(check $2/dump1090_dbfs-quart3_978.rrd):value:AVERAGE" \
+		"DEF:median=$(check $2/dump1090_dbfs-median_978.rrd):value:AVERAGE" \
+		"DEF:peak=$(check $2/dump1090_dbfs-peak_signal_978.rrd):value:MAX" \
+		)
+	else
+		defines=( \
 		"DEF:signal=$(check $2/dump1090_dbfs-signal.rrd):value:AVERAGE" \
 		"DEF:min=$(check $2/dump1090_dbfs-min_signal.rrd):value:MIN" \
 		"DEF:quart1=$(check $2/dump1090_dbfs-quart1.rrd):value:AVERAGE" \
 		"DEF:quart3=$(check $2/dump1090_dbfs-quart3.rrd):value:AVERAGE" \
 		"DEF:median=$(check $2/dump1090_dbfs-median.rrd):value:AVERAGE" \
 		"DEF:peak=$(check $2/dump1090_dbfs-peak_signal.rrd):value:MAX" \
+		)
+	fi
+	$pre; rrdtool graph \
+		"$1" \
+		--start end-$4 \
+		$small \
+		--title "$3 Signal Level" \
+		--vertical-label "dBFS" \
+		--right-axis 1:0 \
+		-y 6:1 \
+		--left-axis-format "%.0lf" \
+		--right-axis-format "%.0lf" \
+		--upper-limit 1    \
+		--lower-limit -45 \
+		--rigid \
+		--units-exponent 0 \
+		${defines[*]} \
+		"TEXTALIGN:center" \
 		"CDEF:mes=median,UN,signal,median,IF" \
 		"AREA:quart1#$GREEN:1st to 3rd Quartile" \
 		"AREA:quart3#FFFFFF" \
@@ -829,49 +803,18 @@ signal_graph() {
 		--watermark "Drawn: $nowlit";
 	}
 
-978_signal_graph() {
-	$pre; rrdtool graph \
-		"$1" \
-		--start end-$4 \
-		$small \
-		--step "$5" \
-		--title "UAT Signal Level" \
-		--vertical-label "dBFS" \
-		--right-axis 1:0 \
-		--upper-limit 1    \
-		--lower-limit -45 \
-		--rigid \
-		--units-exponent 0 \
-		"TEXTALIGN:center" \
-		"DEF:signal=$(check $2/dump1090_dbfs-signal_978.rrd):value:AVERAGE" \
-		"DEF:min=$(check $2/dump1090_dbfs-min_signal_978.rrd):value:MIN" \
-		"DEF:quart1=$(check $2/dump1090_dbfs-quart1_978.rrd):value:AVERAGE" \
-		"DEF:quart3=$(check $2/dump1090_dbfs-quart3_978.rrd):value:AVERAGE" \
-		"DEF:median=$(check $2/dump1090_dbfs-median_978.rrd):value:AVERAGE" \
-		"DEF:peak=$(check $2/dump1090_dbfs-peak_signal_978.rrd):value:MAX" \
-		"CDEF:mes=median,UN,signal,median,IF" \
-		"AREA:quart1#$GREEN:1st to 3rd Quartile" \
-		"AREA:quart3#FFFFFF" \
-		"LINE1:mes#$BLUE:Mean Median Level\:" \
-		"GPRINT:mes:AVERAGE:%4.1lf\c" \
-		"LINE1:min#$CYAN:Weakest\:" \
-		"GPRINT:min:MIN:%4.1lf" \
-		"LINE1:peak#$RED:Peak Level\:" \
-		"GPRINT:peak:MAX:%4.1lf\c" \
-		--watermark "Drawn: $nowlit";
-	}
 
 978_aircraft() {
 	$pre; rrdtool graph \
 		"$1" \
 		--start end-$4 \
 		$small \
-		--step "$5" \
 		--title "UAT Aircraft Seen / Tracked" \
 		--vertical-label "Aircraft" \
 		--right-axis 1:0 \
 		--lower-limit 0 \
-		--units-exponent 0 \
+		--right-axis-format "%.1lf" \
+		--left-axis-format "%.1lf" \
 		"TEXTALIGN:center" \
 		"DEF:all=$2/dump1090_aircraft-recent_978.rrd:total:AVERAGE" \
 		"DEF:pos=$2/dump1090_aircraft-recent_978.rrd:positions:AVERAGE" \
@@ -891,100 +834,21 @@ signal_graph() {
 		--watermark "Drawn: $nowlit";
 	}
 
-978_range(){
-	unitconv=0.000539956803
-	if [[ $range == "statute" ]]; then
-		unitconv=0.000621371
-		label="Statute Miles"
-	fi
-	if [[ $range == "metric" ]]; then
-		unitconv=0.001
-		label="Kilometers"
-	fi
-	raxis=1
-	if [[ $range2 == "metric" ]]; then
-		raxis=$(div 0.001 $unitconv)
-	fi
-	if [[ $range2 == "statute" ]]; then
-		raxis=$(div 0.000621371 $unitconv)
-	fi
-	if [[ $range2 == "nautical" ]]; then
-		raxis=$(div 0.000539956803 $unitconv)
-	fi
-	$pre; rrdtool graph \
-		"$1" \
-		--start end-$4 \
-		$small \
-		--step "$5" \
-		--title "UAT Range" \
-		--vertical-label "Nautical Miles" \
-		--units-exponent 0 \
-		--right-axis $raxis:0 \
-		"DEF:drange=$(check $2/dump1090_range-max_range_978.rrd):value:MAX" \
-		"DEF:drange_a=$(check $2/dump1090_range-max_range_978.rrd):value:AVERAGE" \
-		"DEF:dmin=$(check $2/dump1090_range-minimum_978.rrd):value:MIN" \
-		"DEF:dquart1=$(check $2/dump1090_range-quart1_978.rrd):value:AVERAGE" \
-		"DEF:dquart3=$(check $2/dump1090_range-quart3_978.rrd):value:AVERAGE" \
-		"DEF:dmedian=$(check $2/dump1090_range-median_978.rrd):value:AVERAGE" \
-		"CDEF:range=drange,$unitconv,*" \
-		"CDEF:range_a=drange_a,$unitconv,*" \
-		"CDEF:min=dmin,$unitconv,*" \
-		"CDEF:quart1=dquart1,$unitconv,*" \
-		"CDEF:quart3=dquart3,$unitconv,*" \
-		"CDEF:median=dmedian,$unitconv,*" \
-		"AREA:quart3#$GREEN:1st to 3rd Quartile" \
-		"AREA:quart1#FFFFFF" \
-		"LINE1:range#$BLUE:Max Range" \
-		"VDEF:avgrange=range_a,AVERAGE" \
-		"LINE1:avgrange#666666:Avg Max Range\\::dashes" \
-		"VDEF:peakrange=range,MAXIMUM" \
-		"GPRINT:avgrange:%1.1lf\c" \
-		"LINE1:min#$CYAN:Closest\:" \
-		"GPRINT:min:MIN:%4.1lf" \
-		"LINE1:median#444444:Median Distance\:" \
-		"GPRINT:median:AVERAGE:%4.1lf (avg)" \
-		"LINE1:peakrange#$BLUE:Peak Range\\:" \
-		"GPRINT:peakrange:%1.1lf\c" \
-		--watermark "Drawn: $nowlit";
-	}
 
 978_messages() {
 	$pre; rrdtool graph \
 		"$1" \
 		--start end-$4 \
 		$small \
-		--step "$5" \
 		--title "UAT Message Rate" \
 		--vertical-label "Messages/Second" \
 		--right-axis 1:0 \
 		--lower-limit 0  \
-		--units-exponent 0 \
 		--right-axis-format "%.1lf" \
 		--left-axis-format "%.1lf" \
 		"DEF:messages1=$2/dump1090_messages-messages_978.rrd:value:AVERAGE" \
 		"LINE1:messages1#$BLUE:Messages\c" \
 		"COMMENT: \n" \
-		--watermark "Drawn: $nowlit";
-	}
-
-## HUB GRAPHS
-
-remote_rate_graph() {
-	$pre; rrdtool graph \
-		"$1" \
-		--start end-$4 \
-		$small \
-		--step "$5" \
-		--title "$3 Message Rate" \
-		--vertical-label "messages/second" \
-		--lower-limit 0  \
-		--units-exponent 0 \
-		--right-axis 360:0 \
-		"DEF:messages=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE" \
-		"DEF:positions=$(check $2/dump1090_messages-positions.rrd):value:AVERAGE" \
-		"CDEF:y2positions=positions,10,*" \
-		"LINE1:messages#$BLUE:messages received" \
-		"LINE1:y2positions#$CYAN:position / hr (RHS)" \
 		--watermark "Drawn: $nowlit";
 	}
 
@@ -994,28 +858,6 @@ dump1090_graphs() {
 	aircraft_message_rate_graph ${DOCUMENTROOT}/dump1090-$2-aircraft_message_rate-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
 	cpu_graph_dump1090 ${DOCUMENTROOT}/dump1090-$2-cpu-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
 	tracks_graph ${DOCUMENTROOT}/dump1090-$2-tracks-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5" 
-}
-
-system_graphs() {
-	cpu_graph ${DOCUMENTROOT}/system-$2-cpu-$4.png /var/lib/collectd/rrd/$1/aggregation-cpu-average "$3" "$4" "$5"
-	df_root_graph ${DOCUMENTROOT}/system-$2-df_root-$4.png /var/lib/collectd/rrd/$1/df-root "$3" "$4" "$5"
-	disk_io_iops_graph ${DOCUMENTROOT}/system-$2-disk_io_iops-$4.png /var/lib/collectd/rrd/$1/$disk "$3" "$4" "$5"
-	disk_io_octets_graph ${DOCUMENTROOT}/system-$2-disk_io_octets-$4.png /var/lib/collectd/rrd/$1/$disk "$3" "$4" "$5"
-	#eth0_graph ${DOCUMENTROOT}/system-$2-eth0_bandwidth-$4.png /var/lib/collectd/rrd/$1/$ether "$3" "$4" "$5"
-	memory_graph ${DOCUMENTROOT}/system-$2-memory-$4.png /var/lib/collectd/rrd/$1/system_stats "$3" "$4" "$5"
-	network_graph ${DOCUMENTROOT}/system-$2-network_bandwidth-$4.png /var/lib/collectd/rrd/$1 "$3" "$4" "$5"
-	if [[ $farenheit == 1 ]]
-	then
-		temp_graph_imperial ${DOCUMENTROOT}/system-$2-temperature-$4.png /var/lib/collectd/rrd/$1/table-$2 "$3" "$4" "$5"
-	else
-		temp_graph_metric ${DOCUMENTROOT}/system-$2-temperature-$4.png /var/lib/collectd/rrd/$1/table-$2 "$3" "$4" "$5"
-	fi
-	#wlan0_graph ${DOCUMENTROOT}/system-$2-wlan0_bandwidth-$4.png /var/lib/collectd/rrd/$1/$wifi "$3" "$4" "$5"
-}
-
-dump1090_receiver_graphs() {
-	dump1090_graphs "$1" "$2" "$3" "$4" "$5"
-	system_graphs "$1" "$2" "$3" "$4" "$5"
 	local_rate_graph ${DOCUMENTROOT}/dump1090-$2-local_rate-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
 	local_trailing_rate_graph ${DOCUMENTROOT}/dump1090-$2-local_trailing_rate-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
 
@@ -1025,21 +867,38 @@ dump1090_receiver_graphs() {
 	if [ -f /var/lib/collectd/rrd/$1/dump1090-$2/dump1090_messages-messages_978.rrd ]
 	then
 		sed -i -e 's/ style="display:none"> <!-- dump978 -->/> <!-- dump978 -->/' /usr/share/graphs1090/html/index.html
-		978_range ${DOCUMENTROOT}/dump1090-$2-range_978-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
-		978_aircraft ${DOCUMENTROOT}/dump1090-$2-aircraft_978-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
-		978_messages ${DOCUMENTROOT}/dump1090-$2-messages_978-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
-		978_signal_graph ${DOCUMENTROOT}/dump1090-$2-signal_978-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
+		range_graph ${DOCUMENTROOT}/dump1090-$2-range_978-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "UAT" "$4" "$5"
+		978_aircraft ${DOCUMENTROOT}/dump1090-$2-aircraft_978-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "UAT" "$4" "$5"
+		978_messages ${DOCUMENTROOT}/dump1090-$2-messages_978-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "UAT" "$4" "$5"
+		signal_graph ${DOCUMENTROOT}/dump1090-$2-signal_978-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "UAT" "$4" "$5"
 	fi
 }
 
-dump1090_hub_graphs() {
-	dump1090_graphs "$1" "$2" "$3" "$4" "$5"
-	system_graphs "$1" "$2" "$3" "$4" "$5"
-	remote_rate_graph ${DOCUMENTROOT}/dump1090-$2-remote_rate-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
+system_graphs() {
+	cpu_graph ${DOCUMENTROOT}/system-$2-cpu-$4.png /var/lib/collectd/rrd/$1/aggregation-cpu-average "$3" "$4" "$5"
+	df_root_graph ${DOCUMENTROOT}/system-$2-df_root-$4.png /var/lib/collectd/rrd/$1/df-root "$3" "$4" "$5"
+	disk_io_iops_graph ${DOCUMENTROOT}/system-$2-disk_io_iops-$4.png /var/lib/collectd/rrd/$1/$disk "$3" "$4" "$5"
+	disk_io_octets_graph ${DOCUMENTROOT}/system-$2-disk_io_octets-$4.png /var/lib/collectd/rrd/$1/$disk "$3" "$4" "$5"
+	memory_graph ${DOCUMENTROOT}/system-$2-memory-$4.png /var/lib/collectd/rrd/$1/system_stats "$3" "$4" "$5"
+	network_graph ${DOCUMENTROOT}/system-$2-network_bandwidth-$4.png /var/lib/collectd/rrd/$1 "$3" "$4" "$5"
+	if [[ $farenheit == 1 ]]
+	then
+		temp_graph_imperial ${DOCUMENTROOT}/system-$2-temperature-$4.png /var/lib/collectd/rrd/$1/table-$2 "$3" "$4" "$5"
+	else
+		temp_graph_metric ${DOCUMENTROOT}/system-$2-temperature-$4.png /var/lib/collectd/rrd/$1/table-$2 "$3" "$4" "$5"
+	fi
+	#eth0_graph ${DOCUMENTROOT}/system-$2-eth0_bandwidth-$4.png /var/lib/collectd/rrd/$1/$ether "$3" "$4" "$5"
+	#wlan0_graph ${DOCUMENTROOT}/system-$2-wlan0_bandwidth-$4.png /var/lib/collectd/rrd/$1/$wifi "$3" "$4" "$5"
 }
 
+dump1090_receiver_graphs() {
+	dump1090_graphs "$1" "$2" "$3" "$4" "$5"
+	system_graphs "$1" "$2" "$3" "$4" "$5"
+}
+
+
 period="$1"
-step="$2"
+step="$3"
 nowlit=`date '+%Y-%m-%d %H:%M %Z'`;
 
 # Changing the following two variables means you need to change the names in html/graph.js as well so that the graphs are correctly displayed
@@ -1052,4 +911,3 @@ then
 else
 	dump1090_receiver_graphs $collectd_hostname $dump1090_instance "ADS-B" "$period" "$step"
 fi
-#hub_graphs localhost rpi "ADS-B" "$period" "$step"
