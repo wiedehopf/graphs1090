@@ -41,6 +41,17 @@ def T(provisional):
     if provisional <= now + 60: return provisional
     else: return now
 
+def perc(p, values):
+    l = len(values)
+    x = p * (l-1)
+    d = x - int(x)
+    x = int(x)
+    if x+1 < l:
+        res = values[x] + d * (values[x+1] - values[x])
+    else:
+        res = values[x]
+    return res
+
 def handle_read(data):
     instance_name,host,url,url_978 = data
 
@@ -125,9 +136,9 @@ def read_stats_1min(instance_name, host, url):
 
             if length > 0 :
                 minimum = signals[0]
-                quart1 = signals[length/4]
-                median = signals[length/2]
-                quart3 = signals[3*length/4]
+                quart1 = perc(0.25, signals)
+                median = perc(0.50, signals)
+                quart3 = perc(0.75, signals)
                 maximum = signals[-1]
 
                 V.dispatch(plugin_instance = instance_name,
@@ -371,9 +382,9 @@ def read_aircraft(instance_name, host, url):
 
     if length > 0:
         minimum = ranges[0]
-        quart1 = ranges[length/4]
-        median = ranges[length/2]
-        quart3 = ranges[3*length/4]
+        quart1 = perc(0.25, ranges)
+        median = perc(0.50, ranges)
+        quart3 = perc(0.75, ranges)
 
         V.dispatch(plugin_instance = instance_name,
                    host=host,
@@ -519,9 +530,9 @@ def read_aircraft_978(instance_name, host, url):
 
     if length > 0 :
         minimum = signals[0]
-        quart1 = signals[length/4]
-        median = signals[length/2]
-        quart3 = signals[3*length/4]
+        quart1 = perc(0.25, signals)
+        median = perc(0.50, signals)
+        quart3 = perc(0.75, signals)
         maximum = signals[-1]
 
         V.dispatch(plugin_instance = instance_name,
