@@ -1,9 +1,11 @@
 #!/bin/bash
-target=$1
 if [ -z $1 ]
 then
 	exit 1
 fi
+target=/tmp/rra
+
+cp -r -T $1 /tmp/rra
 
 if ! pgrep collectd; then
 	exit 1
@@ -35,12 +37,39 @@ average=" \
 	dump1090_dbfs-quart1_978.rrd \
 	dump1090_dbfs-median_978.rrd \
 	dump1090_dbfs-quart3_978.rrd \
+	dump1090_tisb-recent.rrd \
+	dump1090_tisb-recent_978.rrd \
+	dump1090_mlat-recent.rrd \
+	dump1090_dbfs-signal_978.rrd \
+	dump1090_dbfs-signal.rrd \
+	"
+
+minimum=" \
+	dump1090_dbfs-min_signal.rrd \
+	dump1090_dbfs-min_signal_978.rrd \
+	dump1090_range-minimum.rrd \
+	dump1090_range-minimum_978.rrd \
+	"
+maximum=" \
+	dump1090_dbfs-peak_signal_978.rrd \
+	dump1090_dbfs-peak_signal.rrd \
 	"
 
 cd $target/dump1090-localhost
+
 for i in $average
 do
 	rrdtool tune $i $(rrdtool info $i | tac | grep 'MIN\|MAX' | tr -c -d '[:digit:]\n' | sed 's/^/DELRRA:/')
+done
+
+for i in $minimum
+do
+	rrdtool tune $i $(rrdtool info $i | tac | grep 'AVERAGE\|MAX' | tr -c -d '[:digit:]\n' | sed 's/^/DELRRA:/')
+done
+
+for i in $maximum
+do
+	rrdtool tune $i $(rrdtool info $i | tac | grep 'AVERAGE\|MIN' | tr -c -d '[:digit:]\n' | sed 's/^/DELRRA:/')
 done
 
 cd $target
@@ -70,6 +99,11 @@ do
 	rrdtool tune $i $(rrdtool info $i | tac | grep 'MIN\|MAX' | tr -c -d '[:digit:]\n' | sed 's/^/DELRRA:/')
 done
 
+
+for file in $(cd /var/lib/collectd/rrd/localhost/;find | grep '\.rrd')
+do
+	rrdtool create -r $1/$file -t /tmp/rra/$file $1/$file
+done
 
 systemctl restart collectd
 exit 0

@@ -26,9 +26,9 @@ if [[ $1 == "slow" ]]; then
 	sleep 15
 fi
 
-if rrdtool info /var/lib/collectd/rrd/localhost/aggregation-cpu-average/cpu-user.rrd | grep -qs 'MIN\|MAX'; then
-	#cp -T -r -n /var/lib/collectd/rrd/localhost /var/lib/collectd/rrd/$(date -I)
-	#/usr/share/graphs1090/rem_rra.sh /var/lib/collectd/rrd/localhost/
+if rrdtool info /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_range-median.rrd  | grep -qs 'MIN'; then
+	cp -T -r -n /var/lib/collectd/rrd/localhost /var/lib/collectd/rrd/rme_rra_backup
+	/usr/share/graphs1090/rem_rra.sh /var/lib/collectd/rrd/localhost/
 fi
 
 for i in 1h 6h 24h 48h 7d 14d 30d 90d 180d 365d 730d 1095d
