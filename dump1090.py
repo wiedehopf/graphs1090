@@ -82,7 +82,7 @@ def read_stats_1min(instance_name, host, url):
                    host=host,
                    type='dump1090_dbfs',
                    type_instance='signal',
-                   time=T(stats['last1min']['end']),
+                   time=stats['last1min']['end'],
                    values = [stats['last1min']['local']['signal']],
                    interval = 60)
 
@@ -91,7 +91,7 @@ def read_stats_1min(instance_name, host, url):
                    host=host,
                    type='dump1090_dbfs',
                    type_instance='peak_signal',
-                   time=T(stats['last1min']['end']),
+                   time=stats['last1min']['end'],
                    values = [stats['last1min']['local']['peak_signal']],
                    interval = 60)
 
@@ -100,7 +100,7 @@ def read_stats_1min(instance_name, host, url):
                    host=host,
                    type='dump1090_dbfs',
                    type_instance='min_signal',
-                   time=T(stats['last1min']['end']),
+                   time=stats['last1min']['end'],
                    values = [stats['last1min']['local']['min_signal']],
                    interval = 60)
 
@@ -109,7 +109,7 @@ def read_stats_1min(instance_name, host, url):
                    host=host,
                    type='dump1090_dbfs',
                    type_instance='noise',
-                   time=T(stats['last1min']['end']),
+                   time=stats['last1min']['end'],
                    values = [stats['last1min']['local']['noise']],
                    interval = 60)
 
@@ -225,14 +225,14 @@ def read_stats(instance_name, host, url):
                    host=host,
                    type='dump1090_messages',
                    type_instance='local_accepted',
-                   time=T(stats['total']['end']),
+                   time=stats['total']['end'],
                    values = [sum(counts)])
         for i in xrange(len(counts)):
             V.dispatch(plugin_instance = instance_name,
                        host=host,
                        type='dump1090_messages',
                        type_instance='local_accepted_%d' % i,
-                       time=T(stats['total']['end']),
+                       time=stats['total']['end'],
                        values = [counts[i]])
 
         if stats['total']['local'].has_key('strong_signals'):
@@ -240,7 +240,7 @@ def read_stats(instance_name, host, url):
                        host=host,
                        type='dump1090_messages',
                        type_instance='strong_signals',
-                       time=T(stats['total']['end']),
+                       time=stats['total']['end'],
                        values = [stats['total']['local']['strong_signals']],
                        interval = 60)
 
@@ -251,14 +251,14 @@ def read_stats(instance_name, host, url):
                    host=host,
                    type='dump1090_messages',
                    type_instance='remote_accepted',
-                   time=T(stats['total']['end']),
+                   time=stats['total']['end'],
                    values = [sum(counts)])
         for i in xrange(len(counts)):
             V.dispatch(plugin_instance = instance_name,
                        host=host,
                        type='dump1090_messages',
                        type_instance='remote_accepted_%d' % i,
-                       time=T(stats['total']['end']),
+                       time=stats['total']['end'],
                        values = [counts[i]])
 
     # Position counts
@@ -266,7 +266,7 @@ def read_stats(instance_name, host, url):
                host=host,
                type='dump1090_messages',
                type_instance='positions',
-               time=T(stats['total']['end']),
+               time=stats['total']['end'],
                values = [stats['total']['cpr']['global_ok'] + stats['total']['cpr']['local_ok']])
 
     # Tracks
@@ -274,13 +274,13 @@ def read_stats(instance_name, host, url):
                host=host,
                type='dump1090_tracks',
                type_instance='all',
-               time=T(stats['total']['end']),
+               time=stats['total']['end'],
                values = [stats['total']['tracks']['all']])
     V.dispatch(plugin_instance = instance_name,
                host=host,
                type='dump1090_tracks',
                type_instance='single_message',
-               time=T(stats['total']['end']),
+               time=stats['total']['end'],
                values = [stats['total']['tracks']['single_message']])
 
     # CPU
@@ -289,7 +289,7 @@ def read_stats(instance_name, host, url):
                    host=host,
                    type='dump1090_cpu',
                    type_instance=k,
-                   time=T(stats['total']['end']),
+                   time=stats['total']['end'],
                    values = [stats['total']['cpu'][k]])
 
     #airspy cpu usage
