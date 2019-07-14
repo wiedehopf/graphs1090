@@ -118,7 +118,6 @@ def read_stats_1min(instance_name, host, url):
                 aircraft_data = json.load(aircraft_file)
 
             avg=0
-            length=0
             maximum = -51
             minimum = 2
 
@@ -130,11 +129,10 @@ def read_stats_1min(instance_name, host, url):
                     if rssi > -49.4 and not 'lat' in a.get('tisb', ()):
                         signals.append(rssi)
                         avg += rssi
-                        length += 1
 
             signals.sort()
 
-            if length > 0 :
+            if len(signals) > 0 :
                 minimum = signals[0]
                 quart1 = perc(0.25, signals)
                 median = perc(0.50, signals)
@@ -166,8 +164,8 @@ def read_stats_1min(instance_name, host, url):
                        interval = 60)
 
 
-            if length > 0 and not stats['last1min']['local'].has_key('signal'):
-                avg /= length
+            if len(signals) > 0 and not stats['last1min']['local'].has_key('signal'):
+                avg /= len(signals)
                 V.dispatch(plugin_instance = instance_name,
                        host=host,
                        type='dump1090_dbfs',
@@ -378,9 +376,8 @@ def read_aircraft(instance_name, host, url):
                     max_range = distance
 
     ranges.sort()
-    length = len(ranges)
 
-    if length > 0:
+    if len(ranges) > 0:
         minimum = ranges[0]
         quart1 = perc(0.25, ranges)
         median = perc(0.50, ranges)
@@ -469,11 +466,11 @@ def read_aircraft_978(instance_name, host, url):
     tisb = 0
 
     avg=0
-    length=0
     maximum = -51
     minimum = 2
 
     signals = []
+    ranges = []
 
     for a in aircraft_data['aircraft']:
         if a['seen'] < 60: total += 1
@@ -487,15 +484,16 @@ def read_aircraft_978(instance_name, host, url):
             if 'lat' in a.get('tisb', ()):
                 tisb += 1
             # GPS position, include in max_range calculation
-            elif distance > max_range:
-                max_range = distance
+            else:
+                ranges.append(distance)
+                if distance > max_range:
+                    max_range = distance
 
         if a.has_key('rssi') and a['messages'] > 2 and a['seen'] < 60 :
             rssi = a['rssi']
             if rssi > -49.4 and not 'lat' in a.get('tisb', ()):
                 signals.append(rssi)
                 avg += rssi
-                length += 1
 
 
     V.dispatch(plugin_instance = instance_name,
@@ -526,9 +524,44 @@ def read_aircraft_978(instance_name, host, url):
                time=aircraft_data['now'],
                values = [aircraft_data['messages']])
 
+    ranges.sort()
+
+    if len(ranges) > 0:
+        minimum = ranges[0]
+        quart1 = perc(0.25, ranges)
+        median = perc(0.50, ranges)
+        quart3 = perc(0.75, ranges)
+
+        V.dispatch(plugin_instance = instance_name,
+                   host=host,
+                   type='dump1090_range',
+                   type_instance='quart1_978',
+                   time=aircraft_data['now'],
+                   values = [quart1])
+
+        V.dispatch(plugin_instance = instance_name,
+                   host=host,
+                   type='dump1090_range',
+                   type_instance='median_978',
+                   time=aircraft_data['now'],
+                   values = [median])
+
+        V.dispatch(plugin_instance = instance_name,
+                   host=host,
+                   type='dump1090_range',
+                   type_instance='quart3_978',
+                   time=aircraft_data['now'],
+                   values = [quart3])
+
+        V.dispatch(plugin_instance = instance_name,
+                   host=host,
+                   type='dump1090_range',
+                   type_instance='minimum_978',
+                   time=aircraft_data['now'],
+                   values = [minimum])
     signals.sort()
 
-    if length > 0 :
+    if len(signals) > 0 :
         minimum = signals[0]
         quart1 = perc(0.25, signals)
         median = perc(0.50, signals)

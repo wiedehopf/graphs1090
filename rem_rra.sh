@@ -10,7 +10,8 @@ if ! pgrep collectd; then
 fi
 systemctl stop collectd
 
-average="dump1090_dbfs-quart1.rrd \
+average=" \
+	dump1090_dbfs-quart1.rrd \
 	dump1090_dbfs-median.rrd \
 	dump1090_dbfs-quart3.rrd \
 	dump1090_dbfs-noise.rrd \
@@ -28,6 +29,12 @@ average="dump1090_dbfs-quart1.rrd \
 	dump1090_range-median.rrd \
 	dump1090_range-quart1.rrd \
 	dump1090_range-quart3.rrd \
+	dump1090_range-median_978.rrd \
+	dump1090_range-quart1_978.rrd \
+	dump1090_range-quart3_978.rrd \
+	dump1090_dbfs-quart1_978.rrd \
+	dump1090_dbfs-median_978.rrd \
+	dump1090_dbfs-quart3_978.rrd \
 	"
 
 cd $target/dump1090-localhost

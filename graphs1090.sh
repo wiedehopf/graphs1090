@@ -877,26 +877,50 @@ signal_graph() {
 		--watermark "Drawn: $nowlit";
 	}
 
-978_range(){ $pre; rrdtool graph \
+978_range(){
+	unitconv=0.000539956803
+	if [[ $range == "statute" ]]; then
+		unitconv=0.000621371
+		label="Statute Miles"
+	fi
+	if [[ $range == "metric" ]]; then
+		unitconf=0.001
+		label="Kilometers"
+	fi
+	$pre; rrdtool graph \
 		"$1" \
 		--start end-$4 \
 		$small \
 		--step "$5" \
-		--title "UAT Max Range" \
+		--title "UAT Range" \
 		--vertical-label "Nautical Miles" \
 		--units-exponent 0 \
-		--right-axis 1.852:0 \
-		"DEF:rangem=$2/dump1090_range-max_range_978.rrd:value:MAX" \
-		"CDEF:rangekm=rangem,0.001,*" \
-		"CDEF:rangenm=rangekm,0.539956803,*" \
-		"LINE1:rangenm#$BLUE:Max Range" \
-		"VDEF:avgrange=rangenm,AVERAGE" \
-		"LINE1:avgrange#666666:Avr Range\\::dashes" \
-		"VDEF:peakrange=rangenm,MAXIMUM" \
-		"GPRINT:avgrange:%1.1lf NM" \
-		"LINE1:peakrange#$RED:Peak Range\\:" \
-		"GPRINT:peakrange:%1.1lf NM\c" \
-		"COMMENT: LHS\: Nautical Miles; RHS\: Kilometres\c" \
+		--right-axis 1:0 \
+		"DEF:drange=$(check $2/dump1090_range-max_range_978.rrd):value:MAX" \
+		"DEF:drange_a=$(check $2/dump1090_range-max_range_978.rrd):value:AVERAGE" \
+		"DEF:dmin=$(check $2/dump1090_range-minimum_978.rrd):value:MIN" \
+		"DEF:dquart1=$(check $2/dump1090_range-quart1_978.rrd):value:AVERAGE" \
+		"DEF:dquart3=$(check $2/dump1090_range-quart3_978.rrd):value:AVERAGE" \
+		"DEF:dmedian=$(check $2/dump1090_range-median_978.rrd):value:AVERAGE" \
+		"CDEF:range=drange,$unitconv,*" \
+		"CDEF:range_a=drange_a,$unitconv,*" \
+		"CDEF:min=dmin,$unitconv,*" \
+		"CDEF:quart1=dquart1,$unitconv,*" \
+		"CDEF:quart3=dquart3,$unitconv,*" \
+		"CDEF:median=dmedian,$unitconv,*" \
+		"AREA:quart3#$GREEN:1st to 3rd Quartile" \
+		"AREA:quart1#FFFFFF" \
+		"LINE1:range#$BLUE:Max Range" \
+		"VDEF:avgrange=range_a,AVERAGE" \
+		"LINE1:avgrange#666666:Avg Max Range\\::dashes" \
+		"VDEF:peakrange=range,MAXIMUM" \
+		"GPRINT:avgrange:%1.1lf\c" \
+		"LINE1:min#$CYAN:Closest\:" \
+		"GPRINT:min:MIN:%4.1lf" \
+		"LINE1:median#444444:Median Distance\:" \
+		"GPRINT:median:AVERAGE:%4.1lf (avg)" \
+		"LINE1:peakrange#$BLUE:Peak Range\\:" \
+		"GPRINT:peakrange:%1.1lf\c" \
 		--watermark "Drawn: $nowlit";
 	}
 
