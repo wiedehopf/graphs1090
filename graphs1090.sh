@@ -898,8 +898,18 @@ signal_graph() {
 		label="Statute Miles"
 	fi
 	if [[ $range == "metric" ]]; then
-		unitconf=0.001
+		unitconv=0.001
 		label="Kilometers"
+	fi
+	raxis=1
+	if [[ $range2 == "metric" ]]; then
+		raxis=$(div 0.001 $unitconv)
+	fi
+	if [[ $range2 == "statute" ]]; then
+		raxis=$(div 0.000621371 $unitconv)
+	fi
+	if [[ $range2 == "nautical" ]]; then
+		raxis=$(div 0.000539956803 $unitconv)
 	fi
 	$pre; rrdtool graph \
 		"$1" \
@@ -909,7 +919,7 @@ signal_graph() {
 		--title "UAT Range" \
 		--vertical-label "Nautical Miles" \
 		--units-exponent 0 \
-		--right-axis 1:0 \
+		--right-axis $raxis:0 \
 		"DEF:drange=$(check $2/dump1090_range-max_range_978.rrd):value:MAX" \
 		"DEF:drange_a=$(check $2/dump1090_range-max_range_978.rrd):value:AVERAGE" \
 		"DEF:dmin=$(check $2/dump1090_range-minimum_978.rrd):value:MIN" \
