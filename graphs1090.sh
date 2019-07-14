@@ -68,8 +68,8 @@ if [[ $all_large == "yes" ]]; then
 fi
 
 pre="sleep 0.01"
-if [ "$2" == "slow" ]; then
-	pre="sleep 0.9"
+if ! [ -z "$2" ]; then
+	pre="sleep $2"
 fi
 
 #checks a file name for existence and otherwise uses an "empty" rrd as a source so the graphs can still be printed even if the file is missing
@@ -88,8 +88,9 @@ check() {
 ## DUMP1090 GRAPHS
 
 aircraft_graph() {
-	$pre; rrdtool graph \
-		"$1" \
+	$pre
+	rrdtool graph \
+		"$1.tmp" \
 		--start end-$4 \
 		$small \
 		--title "$3 Aircraft Seen / Tracked" \
@@ -117,6 +118,7 @@ aircraft_graph() {
 		"LINE1:noloc#$RED:w/o pos." \
 		"LINE1:gps#$BLUE:" \
 		--watermark "Drawn: $nowlit";
+	mv "$1.tmp" "$1"
 	}
 
 
@@ -125,8 +127,9 @@ aircraft_message_rate_graph() {
 	then messages="CDEF:messages=messages1,messages2,ADDNAN"
 	else messages="CDEF:messages=messages1"
 	fi
-	$pre; rrdtool graph \
-		"$1" \
+	$pre
+	rrdtool graph \
+		"$1.tmp" \
 		--start end-$4 \
 		$small \
 		--title "$3 Message Rate / Aircraft" \
@@ -151,6 +154,7 @@ aircraft_message_rate_graph() {
 		"GPRINT:maxrate:%3.1lf\c" \
 		"LINE1:aircrafts10#$DRED:Aircraft Seen / Tracked (RHS) \c" \
 		--watermark "Drawn: $nowlit";
+	mv "$1.tmp" "$1"
 	}
 
 cpu_graph_dump1090() {
@@ -159,8 +163,9 @@ cpu_graph_dump1090() {
 		airspy_graph2="CDEF:airspyp=airspy,10,/"
 		airspy_graph3="AREA:airspyp#$ABLUE:Airspy"
 	fi
-	$pre; rrdtool graph \
-		"$1" \
+	$pre
+	rrdtool graph \
+		"$1.tmp" \
 		--start end-$4 \
 		$small \
 		--title "$3 CPU Utilization" \
@@ -182,11 +187,13 @@ cpu_graph_dump1090() {
 		"AREA:demodp#$GREEN:Demodulator\c:STACK" \
 		"COMMENT: \n" \
 		--watermark "Drawn: $nowlit";
+	mv "$1.tmp" "$1"
 	}
 
 tracks_graph() {
-	$pre; rrdtool graph \
-		"$1" \
+	$pre
+	rrdtool graph \
+		"$1.tmp" \
 		--start end-$4 \
 		$small \
 		--title "$3 Tracks Seen" \
@@ -204,13 +211,15 @@ tracks_graph() {
 		"AREA:rhall#$GREEN:Unique tracks\c:STACK" \
 		"COMMENT: \n" \
 		--watermark "Drawn: $nowlit";
+	mv "$1.tmp" "$1"
 	}
 
 ## SYSTEM GRAPHS
 
 cpu_graph() {
-	$pre; rrdtool graph \
-		"$1" \
+	$pre
+	rrdtool graph \
+		"$1.tmp" \
 		--start end-$4 \
 		$big \
 		--title "Overall CPU Utilization" \
@@ -247,11 +256,13 @@ cpu_graph() {
 		"GPRINT:usage:AVERAGE:Total\:    Avg\: %4.1lf<span font='2'> </span>%%" \
 		"GPRINT:usage:LAST:Current\: %4.1lf<span font='2'> </span>%%\c" \
 		--watermark "Drawn: $nowlit";
+	mv "$1.tmp" "$1"
 	}
 
 df_root_graph() {
-	$pre; rrdtool graph \
-		"$1" \
+	$pre
+	rrdtool graph \
+		"$1.tmp" \
 		--start end-$4 \
 		$small \
 		--title "Disk Usage (/)" \
@@ -270,11 +281,13 @@ df_root_graph() {
 		"GPRINT:free:LAST:%4.1lf%s\c" \
 		"COMMENT: \n" \
 		--watermark "Drawn: $nowlit";
+	mv "$1.tmp" "$1"
 	}
 
 disk_io_iops_graph() {
-	$pre; rrdtool graph \
-		"$1" \
+	$pre
+	rrdtool graph \
+		"$1.tmp" \
 		--start end-$4 \
 		$small \
 		--title "Disk I/O - IOPS" \
@@ -297,11 +310,13 @@ disk_io_iops_graph() {
 		"GPRINT:write:AVERAGE:Avg\:%4.1lf iops" \
 		"GPRINT:write:LAST:Current\:%4.1lf iops\c" \
 		--watermark "Drawn: $nowlit";
+	mv "$1.tmp" "$1"
 	}
 
 disk_io_octets_graph() {
-	$pre; rrdtool graph \
-		"$1" \
+	$pre
+	rrdtool graph \
+		"$1.tmp" \
 		--start end-$4 \
 		$small \
 		--title "Disk I/O - Bandwidth" \
@@ -326,11 +341,13 @@ disk_io_octets_graph() {
 		"GPRINT:write:AVERAGE:Avg\: %4.1lf %SB/sec" \
 		"GPRINT:write:LAST:Current\: %4.1lf %SB/sec\c" \
 		--watermark "Drawn: $nowlit";
+	mv "$1.tmp" "$1"
 	}
 
 eth0_graph() {
-	$pre; rrdtool graph \
-		"$1" \
+	$pre
+	rrdtool graph \
+		"$1.tmp" \
 		--start end-$4 \
 		$small \
 		--title "Bandwidth Usage (eth0)" \
@@ -351,11 +368,13 @@ eth0_graph() {
 		"GPRINT:tx:AVERAGE:Avg\:%8.1lf %S" \
 		"GPRINT:tx:LAST:Current\:%8.1lf %Sbytes/sec\c" \
 		--watermark "Drawn: $nowlit";
+	mv "$1.tmp" "$1"
 	}
 
 memory_graph() {
-	$pre; rrdtool graph \
-		"$1" \
+	$pre
+	rrdtool graph \
+		"$1.tmp" \
 		--start end-$4 \
 		$small \
 		--lower-limit 0 \
@@ -378,6 +397,7 @@ memory_graph() {
 		"AREA:free#dddddd:Unused\::STACK" \
 		"GPRINT:free:LAST:%4.1lf%s\c" \
 		--watermark "Drawn: $nowlit";
+	mv "$1.tmp" "$1"
 	}
 
 
@@ -396,8 +416,9 @@ network_graph() {
 			"CDEF:rx=rx1,rx2,ADDNAN" \
 			"CDEF:tx=tx1,tx2,ADDNAN")
 	fi
-	$pre; rrdtool graph \
-		"$1" \
+	$pre
+	rrdtool graph \
+		"$1.tmp" \
 		--start end-$4 \
 		$small \
 		--title "Bandwidth Usage (wireless + ethernet)" \
@@ -420,11 +441,13 @@ network_graph() {
 		"GPRINT:tx:AVERAGE:Avg\:%8.1lf %S" \
 		"GPRINT:tx:LAST:Current\:%8.1lf %Sbytes/sec\c" \
 		--watermark "Drawn: $nowlit";
+	mv "$1.tmp" "$1"
 	}
 
 temp_graph_imperial() {
-	$pre; rrdtool graph \
-		"$1" \
+	$pre
+	rrdtool graph \
+		"$1.tmp" \
 		--start end-$4 \
 		$small \
 		--title "Maximum Core Temperature" \
@@ -445,11 +468,13 @@ temp_graph_imperial() {
 		"GPRINT:tfin_avg:AVERAGE:Avg\: %4.1lf F" \
 		"GPRINT:tfin_max:MAX:Max\: %4.1lf F\c" \
 		--watermark "Drawn: $nowlit";
+	mv "$1.tmp" "$1"
 	}
 
 temp_graph_metric() {
-	$pre; rrdtool graph \
-		"$1" \
+	$pre
+	rrdtool graph \
+		"$1.tmp" \
 		--start end-$4 \
 		$small \
 		--title "Maximum Core Temperature" \
@@ -470,11 +495,13 @@ temp_graph_metric() {
 		"GPRINT:tfin_avg:AVERAGE:Avg\: %4.1lf C" \
 		"GPRINT:tfin_max:MAX:Max\: %4.1lf C\c" \
 		--watermark "Drawn: $nowlit";
+	mv "$1.tmp" "$1"
 	}
 
 wlan0_graph() {
-	$pre; rrdtool graph \
-		"$1" \
+	$pre
+	rrdtool graph \
+		"$1.tmp" \
 		--start end-$4 \
 		$small \
 		--title "Bandwidth Usage (wlan0)" \
@@ -495,13 +522,15 @@ wlan0_graph() {
 		"GPRINT:tx:AVERAGE:Avg\:%8.1lf %S" \
 		"GPRINT:tx:LAST:Current\:%8.1lf %Sbytes/sec\c" \
 		--watermark "Drawn: $nowlit";
+	mv "$1.tmp" "$1"
 	}
 
 ## RECEIVER GRAPHS
 
 local_rate_graph() {
-	$pre; rrdtool graph \
-		"$1" \
+	$pre
+	rrdtool graph \
+		"$1.tmp" \
 		--start end-$4 \
 		$small \
 		--title "$3 Maximum Graphs" \
@@ -526,6 +555,7 @@ local_rate_graph() {
 		"LINE1:messages2#$DGREEN:Remote messages" \
 		"LINE0.0001:y2gps#$DRED:Aircraft w/ GPS (RHS)\c" \
 		--watermark "Drawn: $nowlit";
+	mv "$1.tmp" "$1"
 	}
 
 local_trailing_rate_graph() {
@@ -539,8 +569,9 @@ local_trailing_rate_graph() {
 	else messages="CDEF:messages=messages1"
 	fi
 	r_window=$((86400))
-	$pre; rrdtool graph \
-		"$1" \
+	$pre
+	rrdtool graph \
+		"$1.tmp" \
 		--start end-$4 \
 		$big \
 		--slope-mode \
@@ -677,6 +708,7 @@ local_trailing_rate_graph() {
 		"GPRINT:strong_percent_vdef: (%1.1lf<span font='2'> </span>%% of messages)" \
 		"LINE1:y2positions#$CYAN:Positions/s (RHS)\c" \
 		--watermark "Drawn: $nowlit";
+	mv "$1.tmp" "$1"
 	}
 
 range_graph(){
@@ -721,8 +753,9 @@ range_graph(){
 			)
 	fi
 
-	$pre; rrdtool graph \
-		"$1" \
+	$pre
+	rrdtool graph \
+		"$1.tmp" \
 		--start end-$4 \
 		$small \
 		--title "$3 Range" \
@@ -752,6 +785,7 @@ range_graph(){
 		"LINE1:peakrange#$BLUE:Peak Range\\:" \
 		"GPRINT:peakrange:%1.1lf\c" \
 		--watermark "Drawn: $nowlit";
+	mv "$1.tmp" "$1"
 	}
 
 
@@ -775,8 +809,9 @@ signal_graph() {
 		"DEF:peak=$(check $2/dump1090_dbfs-peak_signal.rrd):value:MAX" \
 		)
 	fi
-	$pre; rrdtool graph \
-		"$1" \
+	$pre
+	rrdtool graph \
+		"$1.tmp" \
 		--start end-$4 \
 		$small \
 		--title "$3 Signal Level" \
@@ -801,12 +836,14 @@ signal_graph() {
 		"LINE1:peak#$BLUE:Peak Level\:" \
 		"GPRINT:peak:MAX:%4.1lf\c" \
 		--watermark "Drawn: $nowlit";
+	mv "$1.tmp" "$1"
 	}
 
 
 978_aircraft() {
-	$pre; rrdtool graph \
-		"$1" \
+	$pre
+	rrdtool graph \
+		"$1.tmp" \
 		--start end-$4 \
 		$small \
 		--title "UAT Aircraft Seen / Tracked" \
@@ -832,12 +869,14 @@ signal_graph() {
 		"LINE1:noloc#$RED:w/o pos." \
 		"LINE1:gps#$BLUE:" \
 		--watermark "Drawn: $nowlit";
+	mv "$1.tmp" "$1"
 	}
 
 
 978_messages() {
-	$pre; rrdtool graph \
-		"$1" \
+	$pre
+	rrdtool graph \
+		"$1.tmp" \
 		--start end-$4 \
 		$small \
 		--title "UAT Message Rate" \
@@ -850,6 +889,7 @@ signal_graph() {
 		"LINE1:messages1#$BLUE:Messages\c" \
 		"COMMENT: \n" \
 		--watermark "Drawn: $nowlit";
+	mv "$1.tmp" "$1"
 	}
 
 

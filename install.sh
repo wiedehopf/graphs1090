@@ -74,11 +74,12 @@ if ! grep -e 'system_stats' -qs /etc/collectd/collectd.conf; then
 	echo "Overwriting /etc/collectd/collectd.conf, the old file has been moved to /etc/collectd/collectd.conf.graphs1090"
 	echo "------------------"
 fi
-cp cron-graphs1090 /etc/cron.d/
+rm -f /etc/cron.d/cron-graphs1090
 cp -r html $ipath
 cp -n default /etc/default/graphs1090
 cp default $ipath/default-config
 cp collectd.conf $ipath/default-collectd.conf
+cp service.service /lib/systemd/system/graphs1090.service
 
 
 cp 88-graphs1090.conf /etc/lighttpd/conf-available
@@ -109,23 +110,17 @@ fi
 
 mkdir -p /var/lib/collectd/rrd/localhost/dump1090-localhost
 
-mkdir -p /run/graphs1090
 
 systemctl daemon-reload
 systemctl enable collectd &>/dev/null
 systemctl restart lighttpd
 sleep 3
 systemctl restart collectd
+systemctl enable graphs1090
+systemctl restart graphs1090
 
 #fix readonly remount logic in fr24feed update script
 sed -i -e 's?$(mount | grep " on / " | grep rw)?{ mount | grep " on / " | grep rw; }?' /usr/lib/fr24/fr24feed_updater.sh &>/dev/null
-
-$ipath/boot.sh nographs
-
-if [ -f /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_messages-local_accepted.rrd ]
-then
-	$ipath/graphs1090.sh
-fi
 
 echo --------------
 echo --------------

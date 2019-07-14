@@ -1,0 +1,18 @@
+
+[Unit]
+Description=graphs1090 graph generation
+
+[Service]
+ExecStart=/usr/share/graphs1090/service-graphs1090.sh
+SyslogIdentifier=graphs1090
+StandardOutput=null
+StandardError=null
+RuntimeDirectory=graphs1090
+RuntimeDirectoryMode=0755
+Type=simple
+Restart=always
+RestartSec=30
+Nice=19
+
+[Install]
+WantedBy=default.target
