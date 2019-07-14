@@ -529,7 +529,6 @@ local_rate_graph() {
 		"LINE1:y2positions#$CYAN:Positions (RHS)\c" \
 		"LINE1:messages2#$DGREEN:Remote messages" \
 		"LINE0.0001:y2gps#$DRED:Aircraft w/ GPS (RHS)\c" \
-		"COMMENT: \n" \
 		--watermark "Drawn: $nowlit";
 	}
 
@@ -685,7 +684,16 @@ local_trailing_rate_graph() {
 		--watermark "Drawn: $nowlit";
 	}
 
-range_graph_imperial_nautical(){
+range_graph(){
+	unitconv=0.000539956803
+	if [[ $range == "statute" ]]; then
+		unitconv=0.000621371
+		label="Statute Miles"
+	fi
+	if [[ $range == "metric" ]]; then
+		unitconf=0.001
+		label="Kilometers"
+	fi
 	$pre; rrdtool graph \
 		"$1" \
 		--start end-$4 \
@@ -694,39 +702,32 @@ range_graph_imperial_nautical(){
 		--title "$3 Range" \
 		--vertical-label "Nautical Miles" \
 		--units-exponent 0 \
-		--right-axis 1.852:0 \
-		"DEF:rangem=$(check $2/dump1090_range-max_range.rrd):value:MAX" \
-		"DEF:rangem_a=$(check $2/dump1090_range-max_range.rrd):value:AVERAGE" \
+		--right-axis 1:0 \
+		"DEF:drange=$(check $2/dump1090_range-max_range.rrd):value:MAX" \
+		"DEF:drange_a=$(check $2/dump1090_range-max_range.rrd):value:AVERAGE" \
 		"DEF:dmin=$(check $2/dump1090_range-minimum.rrd):value:MIN" \
-		"CDEF:min=dmin,0.001,*" \
-		"CDEF:nmin=min,0.539956803,*" \
 		"DEF:dquart1=$(check $2/dump1090_range-quart1.rrd):value:AVERAGE" \
-		"CDEF:quart1=dquart1,0.001,*" \
-		"CDEF:nquart1=quart1,0.539956803,*" \
 		"DEF:dquart3=$(check $2/dump1090_range-quart3.rrd):value:AVERAGE" \
-		"CDEF:quart3=dquart3,0.001,*" \
-		"CDEF:nquart3=quart3,0.539956803,*" \
 		"DEF:dmedian=$(check $2/dump1090_range-median.rrd):value:AVERAGE" \
-		"CDEF:median=dmedian,0.001,*" \
-		"CDEF:nmedian=median,0.539956803,*" \
-		"AREA:nquart3#$GREEN:1st to 3rd Quartile" \
-		"AREA:nquart1#FFFFFF" \
-		"LINE1:nmedian#$BLUE:Median Distance\:" \
-		"GPRINT:nmedian:AVERAGE:%4.1lf (avg)\c" \
-		"CDEF:rangekm=rangem,0.001,*" \
-		"CDEF:rangenm=rangekm,0.539956803,*" \
-		"CDEF:rangekm_a=rangem_a,0.001,*" \
-		"CDEF:rangenm_a=rangekm_a,0.539956803,*" \
-		"LINE1:rangenm#$DRED:Max Range" \
-		"VDEF:avgrange=rangenm_a,AVERAGE" \
+		"CDEF:range=drange,$unitconv,*" \
+		"CDEF:range_a=drange_a,$unitconv,*" \
+		"CDEF:min=dmin,$unitconv,*" \
+		"CDEF:quart1=dquart1,$unitconv,*" \
+		"CDEF:quart3=dquart3,$unitconv,*" \
+		"CDEF:median=dmedian,$unitconv,*" \
+		"AREA:quart3#$GREEN:1st to 3rd Quartile" \
+		"AREA:quart1#FFFFFF" \
+		"LINE1:range#$BLUE:Max Range" \
+		"VDEF:avgrange=range_a,AVERAGE" \
 		"LINE1:avgrange#666666:Avg Max Range\\::dashes" \
-		"VDEF:peakrange=rangenm,MAXIMUM" \
-		"GPRINT:avgrange:%1.1lf NM" \
-		"LINE1:peakrange#$RED:Peak Range\\:" \
-		"GPRINT:peakrange:%1.1lf NM\c" \
-		"COMMENT: LHS\: Nautical Miles; RHS\: Kilometres" \
-		"LINE1:nmin#$CYAN:Closest\:" \
-		"GPRINT:nmin:MIN:%4.1lf\c" \
+		"VDEF:peakrange=range,MAXIMUM" \
+		"GPRINT:avgrange:%1.1lf\c" \
+		"LINE1:min#$CYAN:Closest\:" \
+		"GPRINT:min:MIN:%4.1lf" \
+		"LINE1:median#444444:Median Distance\:" \
+		"GPRINT:median:AVERAGE:%4.1lf (avg)" \
+		"LINE1:peakrange#$BLUE:Peak Range\\:" \
+		"GPRINT:peakrange:%1.1lf\c" \
 		--watermark "Drawn: $nowlit";
 	}
 
@@ -805,11 +806,11 @@ signal_graph() {
 		"CDEF:mes=median,UN,signal,median,IF" \
 		"AREA:quart1#$GREEN:1st to 3rd Quartile" \
 		"AREA:quart3#FFFFFF" \
-		"LINE1:mes#$BLUE:Mean Median Level\:" \
+		"LINE1:mes#444444:Mean Median Level\:" \
 		"GPRINT:mes:AVERAGE:%4.1lf\c" \
 		"LINE1:min#$CYAN:Weakest\:" \
 		"GPRINT:min:MIN:%4.1lf" \
-		"LINE1:peak#$RED:Peak Level\:" \
+		"LINE1:peak#$BLUE:Peak Level\:" \
 		"GPRINT:peak:MAX:%4.1lf\c" \
 		--watermark "Drawn: $nowlit";
 	}
@@ -969,15 +970,9 @@ dump1090_receiver_graphs() {
 	system_graphs "$1" "$2" "$3" "$4" "$5"
 	local_rate_graph ${DOCUMENTROOT}/dump1090-$2-local_rate-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
 	local_trailing_rate_graph ${DOCUMENTROOT}/dump1090-$2-local_trailing_rate-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
-	if [[ $range == "statute" ]]
-	then
-		range_graph_imperial_statute ${DOCUMENTROOT}/dump1090-$2-range-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
-	elif [[ $range == "metric" ]]
-	then
-		range_graph_metric ${DOCUMENTROOT}/dump1090-$2-range-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
-	else
-		range_graph_imperial_nautical ${DOCUMENTROOT}/dump1090-$2-range-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
-	fi
+
+	range_graph ${DOCUMENTROOT}/dump1090-$2-range-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
+
 	signal_graph ${DOCUMENTROOT}/dump1090-$2-signal-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
 	if [ -f /var/lib/collectd/rrd/$1/dump1090-$2/dump1090_messages-messages_978.rrd ]
 	then
