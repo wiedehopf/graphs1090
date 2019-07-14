@@ -33,34 +33,34 @@ average="dump1090_dbfs-quart1.rrd \
 cd $target/dump1090-localhost
 for i in $average
 do
-	rrdtool tune $i $(rrdtool info $i | grep 'MIN\|MAX' | tr -c -d '[:digit:]\n' | sed 's/^/DELRRA:/')
+	rrdtool tune $i $(rrdtool info $i | tac | grep 'MIN\|MAX' | tr -c -d '[:digit:]\n' | sed 's/^/DELRRA:/')
 done
 
 cd $target
 average=$(find system_stats | tail -n+2)
 for i in $average
 do
-	rrdtool tune $i $(rrdtool info $i | grep 'MIN\|MAX' | tr -c -d '[:digit:]\n' | sed 's/^/DELRRA:/')
+	rrdtool tune $i $(rrdtool info $i | tac | grep 'MIN\|MAX' | tr -c -d '[:digit:]\n' | sed 's/^/DELRRA:/')
 done
 average=$(find aggregation-cpu-average | tail -n+2)
 for i in $average
 do
-	rrdtool tune $i $(rrdtool info $i | grep 'MIN\|MAX' | tr -c -d '[:digit:]\n' | sed 's/^/DELRRA:/')
+	rrdtool tune $i $(rrdtool info $i | tac | grep 'MIN\|MAX' | tr -c -d '[:digit:]\n' | sed 's/^/DELRRA:/')
 done
 average=$(find interface* | tail -n+2)
 for i in $average
 do
-	rrdtool tune $i $(rrdtool info $i | grep 'MIN\|MAX' | tr -c -d '[:digit:]\n' | sed 's/^/DELRRA:/')
+	rrdtool tune $i $(rrdtool info $i | tac | grep 'MIN\|MAX' | tr -c -d '[:digit:]\n' | sed 's/^/DELRRA:/')
 done
 average=$(find disk* | tail -n+2)
 for i in $average
 do
-	rrdtool tune $i $(rrdtool info $i | grep 'MIN\|MAX' | tr -c -d '[:digit:]\n' | sed 's/^/DELRRA:/')
+	rrdtool tune $i $(rrdtool info $i | tac | grep 'MIN\|MAX' | tr -c -d '[:digit:]\n' | sed 's/^/DELRRA:/')
 done
 average=$(find df-root | tail -n+2)
 for i in $average
 do
-	rrdtool tune $i $(rrdtool info $i | grep 'MIN\|MAX' | tr -c -d '[:digit:]\n' | sed 's/^/DELRRA:/')
+	rrdtool tune $i $(rrdtool info $i | tac | grep 'MIN\|MAX' | tr -c -d '[:digit:]\n' | sed 's/^/DELRRA:/')
 done
 
 
