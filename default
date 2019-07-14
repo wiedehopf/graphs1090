@@ -7,6 +7,8 @@ farenheit=0
 
 # set range graph to either nautical, statute, or metric
 range=nautical
+# set the right axis unit: (leftaxis, nautical, statute, metric)
+range2=leftaxis
 
 # set graph size, possible values: small, default, large, huge, custom
 graph_size=default
