@@ -20,7 +20,7 @@ if [[ $1 == "nographs" ]]; then
 	exit 0
 fi
 
-if rrdtool info /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_range-median.rrd  | grep -qs 'MIN'; then
+if rrdtool info /var/lib/collectd/rrd/localhost/system_stats/memory-used.rrd | grep -qs 'MIN'; then
 	cp -T -r -n /var/lib/collectd/rrd/localhost /var/lib/collectd/rrd/rme_rra_backup
 	/usr/share/graphs1090/rem_rra.sh /var/lib/collectd/rrd/localhost/
 fi

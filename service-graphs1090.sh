@@ -45,6 +45,4 @@ while sleep 10; do
 			/usr/share/graphs1090/scatter.sh
 		fi
 	fi
-	echo -n "Nothing to do at:"
-	date -Is
 done
