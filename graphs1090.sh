@@ -712,6 +712,7 @@ local_trailing_rate_graph() {
 	}
 
 range_graph(){
+	label="Nautical Miles"
 	unitconv=0.000539956803
 	if [[ $range == "statute" ]]; then
 		unitconv=0.000621371
@@ -759,7 +760,7 @@ range_graph(){
 		--start end-$4 \
 		$small \
 		--title "$3 Range" \
-		--vertical-label "Nautical Miles" \
+		--vertical-label "$label" \
 		--units-exponent 0 \
 		-M \
 		--lower-limit 0 \
