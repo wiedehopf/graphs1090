@@ -1,4 +1,4 @@
-import collectd
+import collectd, sys
 import json, math
 from contextlib import closing
 from urllib2 import urlopen, URLError
@@ -72,7 +72,7 @@ def read_stats_1min(instance_name, host, url):
         collectd.warning(str(error))
         return
     except:
-        collectd.warning(sys.exc_info()[0])
+        collectd.warning(str(sys.exc_info()[0]))
         return
 
     # Signal measurements - from the 1 min bucket
@@ -197,7 +197,7 @@ def read_stats_1min(instance_name, host, url):
             collectd.warning(str(error))
             return
         except:
-            collectd.warning(sys.exc_info()[0])
+            collectd.warning(str(sys.exc_info()[0]))
             return
 
 def read_stats(instance_name, host, url):
@@ -215,7 +215,7 @@ def read_stats(instance_name, host, url):
         collectd.warning(str(error))
         return
     except:
-        collectd.warning(sys.exc_info()[0])
+        collectd.warning(str(sys.exc_info()[0]))
         return
 
     # Local message counts
@@ -347,7 +347,7 @@ def read_aircraft(instance_name, host, url):
         collectd.warning(str(error))
         return
     except:
-        collectd.warning(sys.exc_info()[0])
+        collectd.warning(str(sys.exc_info()[0]))
         return
 
     total = 0
@@ -457,7 +457,7 @@ def read_aircraft_978(instance_name, host, url):
         #collectd.warning(str(error))
         return
     except:
-        collectd.warning(sys.exc_info()[0])
+        collectd.warning(str(sys.exc_info()[0]))
         return
 
     total = 0
