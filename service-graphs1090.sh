@@ -1,15 +1,17 @@
 #!/bin/bash
 
-/usr/share/graphs1090/boot.sh 0.4
+echo "Generating all graphs"
+/usr/share/graphs1090/boot.sh 0.4 &>/dev/null
 
 graphs() {
-	/usr/share/graphs1090/graphs1090.sh $1 0.9
+	echo "Generating $1 graphs"
+	/usr/share/graphs1090/graphs1090.sh $1 0.9 &>/dev/null
 }
 
 while sleep 10; do
 	if [ $(date +%S) -gt 10 ]; then continue; fi
 
-	m=$(date +%M)
+	m=$(date +%M | sed 's/0\([0-9]\)/\1/')
 	h=$(date +%H)
 
 	if [[ $(($m%4)) == 1 ]]; then
@@ -31,12 +33,18 @@ while sleep 10; do
 	elif [[ $m == 56 ]]; then
 		graphs 180d
 	elif [[ $m == 0 ]]; then
-		if [[ $h == 1 ]]; then
+		if [[ $h == 01 ]]; then
 			graphs 365d
-		elif [[ $h == 2 ]]; then
+		elif [[ $h == 02 ]]; then
 			graphs 730d
-		elif [[ $h == 3 ]]; then
+		elif [[ $h == 03 ]]; then
 			graphs 1095d
 		fi
+	elif [[ $m == 8 ]]; then
+		if [[ $h == 00 ]]; then
+			/usr/share/graphs1090/scatter.sh
+		fi
 	fi
+	echo -n "Nothing to do at:"
+	date -Is
 done
