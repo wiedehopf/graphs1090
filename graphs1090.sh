@@ -114,7 +114,7 @@ aircraft_graph() {
 		"AREA:all#$GREEN:Aircraft Seen / Tracked,   " \
 		"GPRINT:avgac:Average\:%3.0lf     " \
 		"GPRINT:maxac:Maximum\:%3.0lf\c" \
-		"LINE1:gps#$BLUE:w/ GPS pos." \
+		"LINE1:gps#$BLUE:w/ ADS-B pos." \
 		"LINE1:mlat#000000:w/ MLAT pos." \
 		"LINE1:tisb#DD8800:w/ TIS-B pos." \
 		"LINE1:noloc#$RED:w/o pos." \
@@ -869,7 +869,7 @@ signal_graph() {
 		"AREA:all#$GREEN:Aircraft Seen / Tracked,   " \
 		"GPRINT:avgac:Average\:%3.0lf     " \
 		"GPRINT:maxac:Maximum\:%3.0lf\c" \
-		"LINE1:gps#$BLUE:w/ GPS pos." \
+		"LINE1:gps#$BLUE:w/ ADS-B pos." \
 		"LINE1:tisb#DD8800:w/ TIS-B pos." \
 		"LINE1:noloc#$RED:w/o pos." \
 		"LINE1:gps#$BLUE:" \
