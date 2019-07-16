@@ -22,14 +22,16 @@ def handle_config(root):
             if url:
                 collectd.register_read(callback=read_1090,
                                        data=(instance_name, 'localhost', url),
-                                       name='dump1090.' + instance_name)
+                                       name='dump1090.' + instance_name,
+                                       interval=60)
             else:
                 collectd.warning('No dump1090 URL defined in /etc/collectd/collectd.conf for ' + instance_name)
 
             if url_978:
                 collectd.register_read(callback=read_978,
                                        data=(instance_name, 'localhost', url_978),
-                                       name='dump978.' + instance_name)
+                                       name='dump978.' + instance_name,
+                                       interval=60)
             else:
                 collectd.warning('No skyview978 URL defined in /etc/collectd/collectd.conf for ' + instance_name)
 

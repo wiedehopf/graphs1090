@@ -787,6 +787,7 @@ range_graph(){
 		"GPRINT:median:AVERAGE:%4.1lf (avg)" \
 		"LINE1:peakrange#$BLUE:Peak Range\\:" \
 		"GPRINT:peakrange:%1.1lf\c" \
+		"LINE1:range#$BLUE" \
 		--watermark "Drawn: $nowlit";
 	mv "$1.tmp" "$1"
 	}
