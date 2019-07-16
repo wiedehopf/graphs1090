@@ -278,6 +278,7 @@ def read_1090(data):
     max_range = 0
     mlat = 0
     tisb = 0
+    gps = 0
 
     ranges = []
 
@@ -296,6 +297,7 @@ def read_1090(data):
                 tisb += 1
             # GPS position, include in range statistics
             else:
+                gps += 1
                 ranges.append(distance)
 
     ranges.sort()
@@ -366,6 +368,13 @@ def read_1090(data):
                time=aircraft_data['now'],
                values = [tisb])
 
+    V.dispatch(plugin_instance = instance_name,
+               host=host,
+               type='dump1090_gps',
+               type_instance='recent',
+               time=aircraft_data['now'],
+               values = [gps])
+
 def read_978(data):
     instance_name,host,url = data
     try:
@@ -392,6 +401,7 @@ def read_978(data):
     with_pos = 0
     max_range = 0
     tisb = 0
+    gps = 0
 
     ranges = []
 
@@ -408,6 +418,7 @@ def read_978(data):
                 tisb += 1
             # GPS position, include in range statistics
             else:
+                gps += 1
                 ranges.append(distance)
 
     # Aircraft numbers
@@ -427,10 +438,10 @@ def read_978(data):
 
     V.dispatch(plugin_instance = instance_name,
                host=host,
-               type='dump1090_range',
-               type_instance='max_range_978',
+               type='dump1090_gps',
+               type_instance='recent_978',
                time=aircraft_data['now'],
-               values = [max_range])
+               values = [gps])
 
     V.dispatch(plugin_instance = instance_name,
                host=host,
@@ -476,6 +487,13 @@ def read_978(data):
                    type_instance='minimum_978',
                    time=aircraft_data['now'],
                    values = [minimum])
+
+    V.dispatch(plugin_instance = instance_name,
+               host=host,
+               type='dump1090_range',
+               type_instance='max_range_978',
+               time=aircraft_data['now'],
+               values = [max_range])
 
     # Signal Statistics
 

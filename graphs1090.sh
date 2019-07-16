@@ -104,9 +104,11 @@ aircraft_graph() {
 		"DEF:pos=$(check $2/dump1090_aircraft-recent.rrd):positions:AVERAGE" \
 		"DEF:mlat=$(check $2/dump1090_mlat-recent.rrd):value:AVERAGE" \
 		"DEF:tisb=$(check $2/dump1090_tisb-recent.rrd):value:AVERAGE" \
+		"DEF:rgps=$(check $2/dump1090_gps-recent.rrd):value:AVERAGE" \
 		"CDEF:tisb0=tisb,UN,0,tisb,IF" \
 		"CDEF:noloc=all,pos,-" \
-		"CDEF:gps=pos,tisb0,-,mlat,-" \
+		"CDEF:cgps=pos,tisb0,-,mlat,-" \
+		"CDEF:gps=rgps,UN,cgps,rgps,IF" \
 		"VDEF:avgac=all,AVERAGE" \
 		"VDEF:maxac=all_max,MAXIMUM" \
 		"AREA:all#$GREEN:Aircraft Seen / Tracked,   " \
@@ -857,9 +859,11 @@ signal_graph() {
 		"DEF:all=$2/dump1090_aircraft-recent_978.rrd:total:AVERAGE" \
 		"DEF:pos=$2/dump1090_aircraft-recent_978.rrd:positions:AVERAGE" \
 		"DEF:tisb=$(check $2/dump1090_tisb-recent_978.rrd):value:AVERAGE" \
+		"DEF:rgps=$(check $2/dump1090_gps-recent_978.rrd):value:AVERAGE" \
 		"CDEF:noloc=all,pos,-" \
 		"CDEF:tisb0=tisb,UN,0,tisb,IF" \
-		"CDEF:gps=pos,tisb0,-" \
+		"CDEF:cgps=pos,tisb0,-" \
+		"CDEF:gps=rgps,UN,cgps,rgps,IF" \
 		"VDEF:avgac=all,AVERAGE" \
 		"VDEF:maxac=all,MAXIMUM" \
 		"AREA:all#$GREEN:Aircraft Seen / Tracked,   " \

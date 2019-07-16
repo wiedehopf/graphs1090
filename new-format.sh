@@ -36,7 +36,7 @@ done
 cp -T -r -n $date localhost
 systemctl start collectd
 
-for i in 1h 6h 24h 48h 7d 30d 90d 180d 365d;do nice /usr/share/graphs1090/graphs1090.sh $i;done
+systemctl restart graphs1090
 
 echo
 echo

@@ -39,6 +39,8 @@ average=" \
 	dump1090_dbfs-quart3_978.rrd \
 	dump1090_tisb-recent.rrd \
 	dump1090_tisb-recent_978.rrd \
+	dump1090_gps-recent.rrd \
+	dump1090_gps-recent_978.rrd \
 	dump1090_mlat-recent.rrd \
 	dump1090_dbfs-signal_978.rrd \
 	dump1090_dbfs-signal.rrd \
