@@ -17,6 +17,7 @@ average=" \
 	dump1090_dbfs-median.rrd \
 	dump1090_dbfs-quart3.rrd \
 	dump1090_dbfs-noise.rrd \
+	dump1090_dbfs-signal.rrd \
 	dump1090_cpu-airspy.rrd \
 	dump1090_cpu-background.rrd \
 	dump1090_cpu-demod.rrd \
@@ -37,11 +38,7 @@ average=" \
 	dump1090_dbfs-quart1_978.rrd \
 	dump1090_dbfs-median_978.rrd \
 	dump1090_dbfs-quart3_978.rrd \
-	dump1090_tisb-recent.rrd \
-	dump1090_tisb-recent_978.rrd \
-	dump1090_mlat-recent.rrd \
 	dump1090_dbfs-signal_978.rrd \
-	dump1090_dbfs-signal.rrd \
 	"
 
 minimum=" \
@@ -54,6 +51,16 @@ maximum=" \
 	dump1090_dbfs-peak_signal_978.rrd \
 	dump1090_dbfs-peak_signal.rrd \
 	"
+rem_min="
+	dump1090_aircraft-recent.rrd \
+	dump1090_aircraft-recent_978.rrd \
+	dump1090_gps-recent.rrd \
+	dump1090_gps-recent_978.rrd \
+	dump1090_mlat-recent.rrd \
+	dump1090_tisb-recent.rrd \
+	dump1090_tisb-recent_978.rrd \
+	"
+
 
 cd $target/dump1090-localhost
 
@@ -70,6 +77,11 @@ done
 for i in $maximum
 do
 	rrdtool tune $i $(rrdtool info $i | tac | grep 'AVERAGE\|MIN' | tr -c -d '[:digit:]\n' | sed 's/^/DELRRA:/')
+done
+
+for i in $rem_min
+do
+	rrdtool tune $i $(rrdtool info $i | tac | grep 'MIN' | tr -c -d '[:digit:]\n' | sed 's/^/DELRRA:/')
 done
 
 cd $target

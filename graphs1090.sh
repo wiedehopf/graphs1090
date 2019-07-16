@@ -541,21 +541,21 @@ local_rate_graph() {
 		--lower-limit 0  \
 		--units-exponent 0 \
 		--right-axis 0.1:0 \
-		"DEF:pos=$(check $2/dump1090_aircraft-recent.rrd):positions:MAX" \
-		"DEF:tisb=$(check $2/dump1090_tisb-recent.rrd):value:MAX" \
-		"DEF:mlat=$(check $2/dump1090_mlat-recent.rrd):value:AVERAGE" \
-		"CDEF:tisb0=tisb,UN,0,tisb,IF" \
-		"CDEF:gps=pos,tisb0,-,mlat,-" \
+		"DEF:gps=$(check $2/dump1090_gps-recent.rrd):value:MAX" \
+		"DEF:mlat=$(check $2/dump1090_mlat-recent.rrd):value:MAX" \
 		"DEF:messages1=$(check $2/dump1090_messages-local_accepted.rrd):value:MAX" \
 		"DEF:messages2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MAX" \
 		"DEF:positions=$(check $2/dump1090_messages-positions.rrd):value:MAX" \
 		"CDEF:y2positions=positions,10,*" \
 		"CDEF:y2gps=gps,10,*" \
+		"CDEF:y2mlat=mlat,10,*" \
 		"LINE1:y2gps#$DRED" \
+		"LINE1:y2mlat#000000" \
 		"LINE1:messages1#$BLUE:Local messages" \
+		"LINE0.0001:y2gps#000000:Aircraft MLAT (RHS)" \
 		"LINE1:y2positions#$CYAN:Positions (RHS)\c" \
 		"LINE1:messages2#$DGREEN:Remote messages" \
-		"LINE0.0001:y2gps#$DRED:Aircraft w/ GPS (RHS)\c" \
+		"LINE0.0001:y2gps#$DRED:Aircraft ADS-B (RHS)\c" \
 		--watermark "Drawn: $nowlit";
 	mv "$1.tmp" "$1"
 	}
