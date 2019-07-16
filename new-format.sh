@@ -7,8 +7,11 @@ cd /var/lib/collectd/rrd
 systemctl stop collectd
 
 date=$(date -I)
+tmp=/tmp/rrd-tmp
+
 
 cp -T -r -n localhost $date
+cp -T -r localhost $tmp
 rm -r localhost
 
 systemctl start collectd
@@ -30,10 +33,10 @@ systemctl stop collectd
 
 for file in $(cd /var/lib/collectd/rrd/localhost/;find | grep '\.rrd')
 do
-	rrdtool create -r $date/$file -t localhost/$file localhost/$file
+	rrdtool create -r $tmp/$file -t localhost/$file localhost/$file
 done
 
-cp -T -r -n $date localhost
+cp -T -r -n $tmp localhost
 systemctl start collectd
 
 systemctl restart graphs1090
