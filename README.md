@@ -90,6 +90,18 @@ After changing the URL, restart collectd:
 sudo systemctl restart collectd
 ```
 
+### Resetting the database format
+
+This might be a good idea if you changed from the adsb receiver project graphs and kept the data.
+Also if you upgraded at a somewhen July 15th to July 16th 2019. Had a bad setting removing maximum data keeping for some part of the data.
+
+```
+sudo bash -c "$(wget -q -O - https://raw.githubusercontent.com/wiedehopf/graphs1090/master/install.sh)"
+sudo apt update
+sudo apt install -y screen
+sudo screen /usr/share/graphs1090/new-format.sh
+```
+
 
 ### Known bugs:
 
