@@ -74,6 +74,7 @@ if ! grep -e 'system_stats' -qs /etc/collectd/collectd.conf; then
 	echo "Overwriting /etc/collectd/collectd.conf, the old file has been moved to /etc/collectd/collectd.conf.graphs1090"
 	echo "------------------"
 fi
+sed -i -e 's/XFF 0.4/XFF 0.3/' /etc/collectd/collectd.conf
 rm -f /etc/cron.d/cron-graphs1090
 cp -r html $ipath
 cp -n default /etc/default/graphs1090

@@ -891,8 +891,8 @@ signal_graph() {
 		--lower-limit 0  \
 		--right-axis-format "%.1lf" \
 		--left-axis-format "%.1lf" \
-		"DEF:messages1=$2/dump1090_messages-messages_978.rrd:value:AVERAGE" \
-		"LINE1:messages1#$BLUE:Messages\c" \
+		"DEF:messages=$2/dump1090_messages-messages_978.rrd:value:AVERAGE" \
+		"LINE1:messages#$BLUE:Messages\c" \
 		"COMMENT: \n" \
 		--watermark "Drawn: $nowlit";
 	mv "$1.tmp" "$1"
