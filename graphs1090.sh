@@ -535,10 +535,11 @@ local_rate_graph() {
 		"$1.tmp" \
 		--start end-$4 \
 		$small \
-		--title "$3 Maximum Graphs" \
+		--title "$3 Maxima" \
 		--vertical-label "Messages/Second" \
 		--right-axis 1:0 \
 		--lower-limit 0  \
+		-M \
 		--units-exponent 0 \
 		--right-axis 0.1:0 \
 		"DEF:gps=$(check $2/dump1090_gps-recent.rrd):value:MAX" \
@@ -549,13 +550,20 @@ local_rate_graph() {
 		"CDEF:y2positions=positions,10,*" \
 		"CDEF:y2gps=gps,10,*" \
 		"CDEF:y2mlat=mlat,10,*" \
-		"LINE1:y2gps#$DRED" \
-		"LINE1:y2mlat#000000" \
-		"LINE1:messages1#$BLUE:Local messages" \
-		"LINE0.0001:y2gps#000000:Aircraft MLAT (RHS)" \
-		"LINE1:y2positions#$CYAN:Positions (RHS)\c" \
-		"LINE1:messages2#$DGREEN:Remote messages" \
-		"LINE0.0001:y2gps#$DRED:Aircraft ADS-B (RHS)\c" \
+		"COMMENT:Messages per second\:\t" \
+		"LINE1:messages1#$BLUE:Local\:\g" \
+		"GPRINT:messages1:MAX: %.0lf\t" \
+		"LINE1:messages2#$DGREEN:Remote\:\g" \
+		"GPRINT:messages2:MAX: %.0lf\c" \
+		"COMMENT:Aircraft seen (RHS)\:\t" \
+		"LINE1:y2mlat#000000:MLAT\:\g" \
+		"GPRINT:mlat:MAX: %.0lf\t" \
+		"LINE1:y2gps#$DRED:ADS-B\:\g" \
+		"GPRINT:gps:MAX: %.0lf\c" \
+		"LINE1:y2positions#$CYAN:Positions/s (RHS)\:\g" \
+		"GPRINT:positions:MAX: %.0lf\c" \
+		"LINE1:messages2#$DGREEN" \
+		"LINE1:messages1#$BLUE" \
 		--watermark "Drawn: $nowlit";
 	mv "$1.tmp" "$1"
 	}
