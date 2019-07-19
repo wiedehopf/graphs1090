@@ -59,7 +59,7 @@ esac
 
 fontsize="-n TITLE:$(mult 1.1 $font_size):. -n AXIS:$(mult 0.8 $font_size):. -n UNIT:$(mult 0.9 $font_size):. -n LEGEND:$(mult 0.9 $font_size):."
 grid="-c GRID#FFFFFF --grid-dash 2:1"
-options="$grid $fontsize"
+options="$grid $fontsize -e $(date -d -1min +%H:%M)"
 small="$options -D --width $swidth --height $sheight"
 big="$options --width $lwidth --height $lheight"
 
