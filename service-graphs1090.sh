@@ -5,11 +5,12 @@ echo "Generating all graphs"
 
 graphs() {
 	echo "Generating $1 graphs"
-	/usr/share/graphs1090/graphs1090.sh $1 0.9 &>/dev/null
+	/usr/share/graphs1090/graphs1090.sh $1 0.7 &>/dev/null
 }
 
 while sleep 10; do
-	if [ $(date +%S) -gt 10 ]; then continue; fi
+	sec=$(date +%S)
+	if [ $sec -lt 30 ] || [ $sec -gt 40 ]; then continue; fi
 
 	m=$(date +%M | sed 's/0\([0-9]\)/\1/')
 	h=$(date +%H)
