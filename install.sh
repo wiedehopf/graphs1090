@@ -106,6 +106,7 @@ then
 	echo "Some features are not available on jessie!"
 	echo --------------
 	sed -i -e 's/ADDNAN/+/' -e 's/TRENDNAN/TREND/' -e 's/MAXNAN/MAX/' -e 's/MINNAN/MIN/' $ipath/graphs1090.sh
+	sed -i -e '/axis-format/d' $ipath/graphs1090.sh
 fi
 
 
