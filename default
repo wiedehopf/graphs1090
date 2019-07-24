@@ -36,3 +36,14 @@ lheight=235
 swidth=619
 # height, default 324
 sheight=324
+
+
+# set custom y-axis upper limits for the individual graphs
+# for automatic upper limits leave them blank
+ul_message_rate=
+ul_aircraft=
+ul_tracks=
+ul_range=
+ul_maxima=
+ul_rate_per_aircraft=
+ul_adsb_cpu=

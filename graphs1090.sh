@@ -89,6 +89,7 @@ check() {
 
 aircraft_graph() {
 	$pre
+	if [ $ul_aircraft ]; then upper="--rigid --upper-limit $ul_aircraft"; fi
 	rrdtool graph \
 		"$1.tmp" \
 		--start end-$4 \
@@ -97,6 +98,7 @@ aircraft_graph() {
 		--vertical-label "Aircraft" \
 		--right-axis 1:0 \
 		--lower-limit 0 \
+		$upper \
 		--units-exponent 0 \
 		"TEXTALIGN:center" \
 		"DEF:all=$(check $2/dump1090_aircraft-recent.rrd):total:AVERAGE" \
@@ -125,6 +127,7 @@ aircraft_graph() {
 
 
 aircraft_message_rate_graph() {
+	if [ $ul_rate_per_aircraft ]; then upper="--rigid --upper-limit $ul_rate_per_aircraft"; fi
 	if [ -f $2/dump1090_messages-remote_accepted.rrd ]
 	then messages="CDEF:messages=messages1,messages2,ADDNAN"
 	else messages="CDEF:messages=messages1"
@@ -137,6 +140,7 @@ aircraft_message_rate_graph() {
 		--title "$3 Message Rate / Aircraft" \
 		--vertical-label "Messages/Aircraft/Second" \
 		--lower-limit 0 \
+		$upper \
 		--units-exponent 0 \
 		--right-axis 10:0 \
 		"TEXTALIGN:center" \
@@ -160,6 +164,7 @@ aircraft_message_rate_graph() {
 	}
 
 cpu_graph_dump1090() {
+	if [ $ul_adsb_cpu ]; then upper="--rigid --upper-limit $ul_adsb_cpu"; fi
 	if [ -f $2/dump1090_cpu-airspy.rrd ]; then
 		airspy_graph1="DEF:airspy=$2/dump1090_cpu-airspy.rrd:value:AVERAGE"
 		airspy_graph2="CDEF:airspyp=airspy,10,/"
@@ -173,6 +178,7 @@ cpu_graph_dump1090() {
 		--title "$3 CPU Utilization" \
 		--vertical-label "CPU %" \
 		--lower-limit 0 \
+		$upper \
 		--right-axis 1:0 \
 		--rigid \
 		"DEF:demod=$(check $2/dump1090_cpu-demod.rrd):value:AVERAGE" \
@@ -193,6 +199,7 @@ cpu_graph_dump1090() {
 	}
 
 tracks_graph() {
+	if [ $ul_tracks ]; then upper="--rigid --upper-limit $ul_tracks"; fi
 	$pre
 	rrdtool graph \
 		"$1.tmp" \
@@ -201,6 +208,7 @@ tracks_graph() {
 		--title "$3 Tracks Seen" \
 		--vertical-label "Tracks/Hour" \
 		--lower-limit 0 \
+		$upper \
 		--right-axis 1:0 \
 		--units-exponent 0 \
 		"DEF:all=$(check $2/dump1090_tracks-all.rrd):value:AVERAGE" \
@@ -530,6 +538,7 @@ wlan0_graph() {
 ## RECEIVER GRAPHS
 
 local_rate_graph() {
+	if [ $ul_maxima ]; then upper="--rigid --upper-limit $ul_maxima"; fi
 	$pre
 	rrdtool graph \
 		"$1.tmp" \
@@ -540,6 +549,7 @@ local_rate_graph() {
 		--right-axis 1:0 \
 		--lower-limit 0  \
 		-M \
+		$upper \
 		--units-exponent 0 \
 		--right-axis 0.1:0 \
 		"DEF:gps=$(check $2/dump1090_gps-recent.rrd):value:MAX" \
@@ -569,6 +579,7 @@ local_rate_graph() {
 	}
 
 local_trailing_rate_graph() {
+	if [ $ul_message_rate ]; then upper="--rigid --upper-limit $ul_message_rate"; fi
 	if [[ $max_messages_line == 1 ]]
 	then
 		maxline1="VDEF:peakmessages=messages,MAXIMUM"
@@ -588,6 +599,7 @@ local_trailing_rate_graph() {
 		--title "$3 Message Rate" \
 		--vertical-label "Messages/Second" \
 		--lower-limit 0  \
+		$upper \
 		--units-exponent 0 \
 		--right-axis 0.1:0 \
 		--pango-markup \
@@ -722,6 +734,7 @@ local_trailing_rate_graph() {
 	}
 
 range_graph(){
+	if [ $ul_range ]; then upper="--rigid --upper-limit $ul_range"; fi
 	label="Nautical Miles"
 	unitconv=0.000539956803
 	if [[ $range == "statute" ]]; then
@@ -774,6 +787,7 @@ range_graph(){
 		--units-exponent 0 \
 		-M \
 		--lower-limit 0 \
+		$upper \
 		--right-axis $raxis:0 \
 		${defines[*]} \
 		"CDEF:range=drange,$unitconv,*" \
