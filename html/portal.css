@@ -22,7 +22,7 @@ html, body {
     height: 15px;
 }
 .row {
-  display: flex;
+  display: flex; // all_large2
   flex-wrap: wrap;
   padding: 0 0px;
   margin-right: 0px;
