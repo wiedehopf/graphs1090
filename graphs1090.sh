@@ -215,8 +215,8 @@ tracks_graph() {
 		"DEF:single=$(check $2/dump1090_tracks-single_message.rrd):value:AVERAGE" \
 		"CDEF:hall=all,3600,*" \
 		"CDEF:hsingle=single,3600,*" \
-		"CDEF:rhall=hall,300,TRENDNAN" \
-		"CDEF:rsingle=hsingle,300,TRENDNAN" \
+		"CDEF:rhall=hall,120,TRENDNAN" \
+		"CDEF:rsingle=hsingle,120,TRENDNAN" \
 		"AREA:rsingle#$RED:Tracks with single message" \
 		"AREA:rhall#$GREEN:Unique tracks\c:STACK" \
 		"COMMENT: \n" \
