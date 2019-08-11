@@ -7,7 +7,7 @@ Graphs for dump1090-fa (based on dump1090-tools by mutability)
 
 Also works for other dump1090 variants supplying stats.json
 
-## Installation:
+## Installation / Update to current version:
 ```
 sudo bash -c "$(wget -q -O - https://raw.githubusercontent.com/wiedehopf/graphs1090/master/install.sh)"
 ```
