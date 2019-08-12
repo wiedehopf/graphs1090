@@ -818,7 +818,7 @@ range_graph(){
 signal_graph() {
 	if [[ $3 == "UAT" ]]; then
 		defines=( \
-		"DEF:signal=$(check $2/dump1090_dbfs-signal_978.rrd):value:AVERAGE" \
+		"DEF:signal=$(check $2/dump1090_dbfs-median_978.rrd):value:AVERAGE" \
 		"DEF:min=$(check $2/dump1090_dbfs-min_signal_978.rrd):value:MIN" \
 		"DEF:quart1=$(check $2/dump1090_dbfs-quart1_978.rrd):value:AVERAGE" \
 		"DEF:quart3=$(check $2/dump1090_dbfs-quart3_978.rrd):value:AVERAGE" \
