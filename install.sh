@@ -82,6 +82,8 @@ cp default $ipath/default-config
 cp collectd.conf $ipath/default-collectd.conf
 cp service.service /lib/systemd/system/graphs1090.service
 
+# bust cache for all css and js files
+sed -i -e "s/__cache_version__/$(date +%s | tail -c5)/g" $ipath/html/index.html
 
 cp 88-graphs1090.conf /etc/lighttpd/conf-available
 lighty-enable-mod graphs1090 >/dev/null
