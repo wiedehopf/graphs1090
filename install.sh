@@ -129,5 +129,5 @@ sed -i -e 's?$(mount | grep " on / " | grep rw)?{ mount | grep " on / " | grep r
 
 echo --------------
 echo --------------
-echo "All done! Graphs available at $(ip route | grep -m1 -o -P 'src \K[0-9,.]*')/graphs1090"
+echo "All done! Graphs available at http://$(ip route | grep -m1 -o -P 'src \K[0-9,.]*')/graphs1090"
 echo "It may take up to 10 minutes until the first data is displayed"
