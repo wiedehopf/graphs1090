@@ -89,7 +89,7 @@ check() {
 
 aircraft_graph() {
 	$pre
-	if [ $ul_aircraft ]; then upper="--rigid --upper-limit $ul_aircraft"; fi
+	if [ $ul_aircraft ]; then upper="--rigid --upper-limit $ul_aircraft"; else upper=""; fi
 	rrdtool graph \
 		"$1.tmp" \
 		--start end-$4 \
@@ -127,7 +127,7 @@ aircraft_graph() {
 
 
 aircraft_message_rate_graph() {
-	if [ $ul_rate_per_aircraft ]; then upper="--rigid --upper-limit $ul_rate_per_aircraft"; fi
+	if [ $ul_rate_per_aircraft ]; then upper="--rigid --upper-limit $ul_rate_per_aircraft"; else upper=""; fi
 	if [ -f $2/dump1090_messages-remote_accepted.rrd ]
 	then messages="CDEF:messages=messages1,messages2,ADDNAN"
 	else messages="CDEF:messages=messages1"
@@ -164,7 +164,7 @@ aircraft_message_rate_graph() {
 	}
 
 cpu_graph_dump1090() {
-	if [ $ul_adsb_cpu ]; then upper="--rigid --upper-limit $ul_adsb_cpu"; fi
+	if [ $ul_adsb_cpu ]; then upper="--rigid --upper-limit $ul_adsb_cpu"; else upper=""; fi
 	if [ -f $2/dump1090_cpu-airspy.rrd ]; then
 		airspy_graph1="DEF:airspy=$2/dump1090_cpu-airspy.rrd:value:AVERAGE"
 		airspy_graph2="CDEF:airspyp=airspy,10,/"
@@ -199,7 +199,7 @@ cpu_graph_dump1090() {
 	}
 
 tracks_graph() {
-	if [ $ul_tracks ]; then upper="--rigid --upper-limit $ul_tracks"; fi
+	if [ $ul_tracks ]; then upper="--rigid --upper-limit $ul_tracks"; else upper=""; fi
 	$pre
 	rrdtool graph \
 		"$1.tmp" \
@@ -538,7 +538,7 @@ wlan0_graph() {
 ## RECEIVER GRAPHS
 
 local_rate_graph() {
-	if [ $ul_maxima ]; then upper="--rigid --upper-limit $ul_maxima"; fi
+	if [ $ul_maxima ]; then upper="--rigid --upper-limit $ul_maxima"; else upper=""; fi
 	$pre
 	rrdtool graph \
 		"$1.tmp" \
@@ -579,7 +579,7 @@ local_rate_graph() {
 	}
 
 local_trailing_rate_graph() {
-	if [ $ul_message_rate ]; then upper="--rigid --upper-limit $ul_message_rate"; fi
+	if [ $ul_message_rate ]; then upper="--rigid --upper-limit $ul_message_rate"; else upper=""; fi
 	if [[ $max_messages_line == 1 ]]
 	then
 		maxline1="VDEF:peakmessages=messages,MAXIMUM"
@@ -734,7 +734,6 @@ local_trailing_rate_graph() {
 	}
 
 range_graph(){
-	if [ $ul_range ]; then upper="--rigid --upper-limit $ul_range"; fi
 	label="Nautical Miles"
 	unitconv=0.000539956803
 	if [[ $range == "statute" ]]; then
@@ -756,6 +755,7 @@ range_graph(){
 		raxis=$(div 0.000539956803 $unitconv)
 	fi
 	if [[ $3 == "UAT" ]]; then
+		if [ $ul_range_uat ]; then upper="--rigid --upper-limit $ul_range_uat"; else upper=""; fi
 		defines=( \
 			"-y 20:1" \
 			"DEF:drange=$(check $2/dump1090_range-max_range_978.rrd):value:MAX" \
@@ -766,6 +766,7 @@ range_graph(){
 			"DEF:dmedian=$(check $2/dump1090_range-median_978.rrd):value:AVERAGE" \
 		)
 	else
+		if [ $ul_range ]; then upper="--rigid --upper-limit $ul_range"; else upper=""; fi
 		defines=( \
 			"-y 40:1" \
 			"DEF:drange=$(check $2/dump1090_range-max_range.rrd):value:MAX" \
