@@ -90,7 +90,7 @@ lighty-enable-mod graphs1090 >/dev/null
 
 
 if wget --timeout=30 http://localhost/dump1090-fa/data/stats.json -O /dev/null -q; then
-	true
+	sed -i 's?localhost/dump1090"?localhost/dump1090-fa"?' /etc/collectd/collectd.conf
 elif wget --timeout=30 http://localhost/dump1090/data/stats.json -O /dev/null -q; then
 	sed -i 's?localhost/dump1090-fa?localhost/dump1090?' /etc/collectd/collectd.conf
 	echo --------------
