@@ -75,6 +75,7 @@ if ! grep -e 'system_stats' -qs /etc/collectd/collectd.conf; then
 	echo "------------------"
 fi
 sed -i -e 's/XFF.*/XFF 0.8/' /etc/collectd/collectd.conf
+sed -i -e 's/skyview978/skyaware978/' /etc/collectd/collectd.conf
 rm -f /etc/cron.d/cron-graphs1090
 cp -r html $ipath
 cp -n default /etc/default/graphs1090
