@@ -119,3 +119,16 @@ sudo dpkg -i /tmp/collectd.deb
 ```
 sudo bash /usr/share/graphs1090/uninstall.sh
 ```
+
+### nginx configuration:
+
+```
+location /graphs1090/graphs/ {
+  alias /run/graphs1090/;
+}
+
+location /graphs1090 {
+  alias /usr/share/graphs1090/html/;
+  try_files $uri $uri/ =404;
+}
+```
