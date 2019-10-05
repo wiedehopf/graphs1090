@@ -132,3 +132,17 @@ location /graphs1090 {
   try_files $uri $uri/ =404;
 }
 ```
+
+
+### no http config
+
+in collectd.conf:
+```
+  URL "file:///usr/local/share/dump1090-data"
+```
+commands:
+```
+sudo mkdir -p /usr/local/share/dump1090-data
+sudo ln -s /run/dump1090-fa /usr/local/share/dump1090-data/data
+```
+
