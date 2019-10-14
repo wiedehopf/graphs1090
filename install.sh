@@ -116,13 +116,12 @@ fi
 mkdir -p /var/lib/collectd/rrd/localhost/dump1090-localhost
 
 
-systemctl daemon-reload
-systemctl enable collectd &>/dev/null
 systemctl restart lighttpd
-sleep 2
+
+systemctl enable collectd &>/dev/null
 systemctl restart collectd
+
 systemctl enable graphs1090
-sleep 1
 systemctl restart graphs1090
 
 #fix readonly remount logic in fr24feed update script
