@@ -82,6 +82,7 @@ cp -n default /etc/default/graphs1090
 cp default $ipath/default-config
 cp collectd.conf $ipath/default-collectd.conf
 cp service.service /lib/systemd/system/graphs1090.service
+cp nginx-graphs1090.conf $ipath
 
 # bust cache for all css and js files
 sed -i -e "s/__cache_version__/$(date +%s | tail -c5)/g" $ipath/html/index.html
@@ -131,3 +132,11 @@ echo --------------
 echo --------------
 echo "All done! Graphs available at http://$(ip route | grep -m1 -o -P 'src \K[0-9,.]*')/graphs1090"
 echo "It may take up to 10 minutes until the first data is displayed"
+
+
+if command -v nginx &>/dev/null
+then
+	echo --------------
+	echo "To configure nginx for graphs1090, please add the following line(s) in the server {} section:"
+	echo "include /usr/share/tar1090/nginx-graphs1090.conf;"
+fi
