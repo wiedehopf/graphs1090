@@ -214,12 +214,12 @@ tracks_graph() {
 		"DEF:all=$(check $2/dump1090_tracks-all.rrd):value:AVERAGE" \
 		"DEF:single=$(check $2/dump1090_tracks-single_message.rrd):value:AVERAGE" \
 		"CDEF:hall=all,3600,*" \
+		"SHIFT:single:-60" \
 		"CDEF:hsingle=single,3600,*" \
 		"CDEF:rhall=hall,120,TRENDNAN" \
 		"CDEF:rsingle=hsingle,120,TRENDNAN" \
-		"AREA:rsingle#$RED:Tracks with single message" \
-		"AREA:rhall#$GREEN:Unique tracks\c:STACK" \
-		"COMMENT: \n" \
+		"AREA:rhall#$GREEN:Tracks with more than one message\c" \
+		"AREA:rsingle#$RED:Tracks with single message (mostly bad decodes)\c" \
 		--watermark "Drawn: $nowlit";
 	mv "$1.tmp" "$1"
 	}
