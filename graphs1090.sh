@@ -205,21 +205,29 @@ tracks_graph() {
 		"$1.tmp" \
 		--start end-$4 \
 		$small \
-		--title "$3 Tracks Seen" \
+		--title "$3 Tracks Seen (8 minute exp. moving avg.)" \
 		--vertical-label "Tracks/Hour" \
 		--lower-limit 0 \
 		$upper \
-		--right-axis 1:0 \
 		--units-exponent 0 \
+		--right-axis 1:0 \
 		"DEF:all=$(check $2/dump1090_tracks-all.rrd):value:AVERAGE" \
 		"DEF:single=$(check $2/dump1090_tracks-single_message.rrd):value:AVERAGE" \
-		"CDEF:hall=all,3600,*" \
 		"SHIFT:single:-60" \
-		"CDEF:hsingle=single,3600,*" \
-		"CDEF:rhall=hall,120,TRENDNAN" \
-		"CDEF:rsingle=hsingle,120,TRENDNAN" \
-		"AREA:rhall#$GREEN:Tracks with more than one message\c" \
-		"AREA:rsingle#$RED:Tracks with single message (mostly bad decodes)\c" \
+		"CDEF:s=single,3600,*" \
+		"CDEF:m=all,3600,*,s,-" \
+		"CDEF:s8=s,480,TRENDNAN,4.1,*" \
+		"CDEF:m8=m,480,TRENDNAN,4.1,*" \
+		"CDEF:s4=s,240,TRENDNAN,2.6,*" \
+		"CDEF:m4=m,240,TRENDNAN,2.6,*" \
+		"CDEF:s2=s,120,TRENDNAN,1.6,*" \
+		"CDEF:m2=m,120,TRENDNAN,1.6,*" \
+		"CDEF:s1=s,60,TRENDNAN" \
+		"CDEF:m1=m,60,TRENDNAN" \
+		"CDEF:s_ema=s8,s4,+,s2,+,s1,+,9.3,/" \
+		"CDEF:m_ema=m8,m4,+,m2,+,m1,+,9.3,/" \
+		"AREA:m_ema#$GREEN:Tracks with more than one message\c" \
+		"AREA:s_ema#$RED:Tracks with single message (mostly bad decodes)\c:STACK" \
 		--watermark "Drawn: $nowlit";
 	mv "$1.tmp" "$1"
 	}
