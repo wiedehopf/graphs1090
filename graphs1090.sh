@@ -210,6 +210,8 @@ tracks_graph() {
 		--lower-limit 0 \
 		$upper \
 		--units-exponent 0 \
+		--left-axis-format "%.0lf" \
+		--right-axis-format "%.0lf" \
 		--right-axis 1:0 \
 		"DEF:all=$(check $2/dump1090_tracks-all.rrd):value:AVERAGE" \
 		"DEF:single=$(check $2/dump1090_tracks-single_message.rrd):value:AVERAGE" \
