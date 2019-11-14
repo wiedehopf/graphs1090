@@ -16,11 +16,11 @@ while sleep 10; do
 	h=$(date +%H)
 
 	if [[ $(($m%4)) == 1 ]]; then
-		graphs 1h
+		graphs 8h
 	elif [[ $(($m%4)) == 2 ]]; then
-		graphs 6h
-	elif [[ $(($m%4)) == 3 ]]; then
 		graphs 24h
+	elif [[ $(($m%4)) == 3 ]]; then
+		graphs 8h
 	elif [[ $(($m%8)) == 4 ]]; then
 		graphs 48h
 	elif [[ $m == 16 ]] || [[ $m == 48 ]]; then
