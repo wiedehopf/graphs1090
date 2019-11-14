@@ -1,7 +1,7 @@
 //*** BEGIN USER DEFINED VARIABLES ***//
 
 // Set the default time frame to use when loading images when the page is first accessed.
-// Can be set to 1h, 8h, 24h, 7d, 30d, or 365d.
+// Can be set to 2h, 8h, 24h, 7d, 30d, or 365d.
 $timeFrame = '24h';
 
 // Set this to the hostname of the system which is running dump1090.
@@ -125,7 +125,7 @@ function switchView(newTimeFrame) {
     $("#system-disk_io_octets-link").attr("href", "graphs/system-" + $hostName + "-disk_io_octets-" + $timeFrame + ".png?time=" + $timestamp);
 
 	// Set the button related to the selected time frame to active.
-    //$("#btn-1h").removeClass('active');
+    $("#btn-2h").removeClass('active');
     $("#btn-8h").removeClass('active');
     $("#btn-24h").removeClass('active');
     $("#btn-48h").removeClass('active');
