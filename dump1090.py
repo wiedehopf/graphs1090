@@ -1,10 +1,20 @@
 import collectd, sys
 import json, math
 from contextlib import closing
-from urllib2 import urlopen, URLError
-import urlparse
+try:
+    from urllib2 import urlopen, URLError
+except ImportError:
+    from urllib.request import urlopen, URLError
 import time
 import subprocess
+
+if (sys.version_info > (3, 0)):
+    def has_key(book, key):
+        return (key in book)
+else:
+    def has_key(book, key):
+        return book.has_key(key)
+
 
 def handle_config(root):
     for child in root.children:
@@ -51,7 +61,7 @@ def read_1090(data):
         with closing(urlopen(url + '/data/receiver.json', None, 5.0)) as receiver_file:
             receiver = json.load(receiver_file)
 
-        if receiver.has_key('lat'):
+        if has_key(receiver,'lat'):
             rlat = float(receiver['lat'])
             rlon = float(receiver['lon'])
         else:
@@ -65,8 +75,8 @@ def read_1090(data):
         return
 
     # Signal measurements - from the 1 min bucket
-    if stats['last1min'].has_key('local'):
-        if stats['last1min']['local'].has_key('signal'):
+    if has_key(stats['last1min'],'local'):
+        if has_key(stats['last1min']['local'],'signal'):
           V.dispatch(plugin_instance = instance_name,
                    host=host,
                    type='dump1090_dbfs',
@@ -75,7 +85,7 @@ def read_1090(data):
                    values = [stats['last1min']['local']['signal']],
                    interval = 60)
 
-        if False and stats['last1min']['local'].has_key('peak_signal'):
+        if False and has_key(stats['last1min']['local'],'peak_signal'):
           V.dispatch(plugin_instance = instance_name,
                    host=host,
                    type='dump1090_dbfs',
@@ -84,7 +94,7 @@ def read_1090(data):
                    values = [stats['last1min']['local']['peak_signal']],
                    interval = 60)
 
-        if False and stats['last1min']['local'].has_key('min_signal'):
+        if False and has_key(stats['last1min']['local'],'min_signal'):
           V.dispatch(plugin_instance = instance_name,
                    host=host,
                    type='dump1090_dbfs',
@@ -93,7 +103,7 @@ def read_1090(data):
                    values = [stats['last1min']['local']['min_signal']],
                    interval = 60)
 
-        if stats['last1min']['local'].has_key('noise'):
+        if has_key(stats['last1min']['local'],'noise'):
           V.dispatch(plugin_instance = instance_name,
                    host=host,
                    type='dump1090_dbfs',
@@ -107,7 +117,7 @@ def read_1090(data):
     signals = []
 
     for a in aircraft_data['aircraft']:
-        if a.has_key('rssi') and a['messages'] > 4 and a['seen'] < 30 :
+        if has_key(a,'rssi') and a['messages'] > 4 and a['seen'] < 30 :
             rssi = a['rssi']
             if rssi > -49.4 and not 'lat' in a.get('tisb', ()):
                 signals.append(rssi)
@@ -171,7 +181,7 @@ def read_1090(data):
 
 
     # Local message counts
-    if stats['total'].has_key('local'):
+    if has_key(stats['total'],'local'):
         counts = stats['total']['local']['accepted']
 
         V.dispatch(plugin_instance = instance_name,
@@ -181,7 +191,7 @@ def read_1090(data):
                    time=stats['total']['end'],
                    values = [sum(counts)])
 
-        for i in xrange(len(counts)):
+        for i in range(len(counts)):
             V.dispatch(plugin_instance = instance_name,
                        host=host,
                        type='dump1090_messages',
@@ -189,7 +199,7 @@ def read_1090(data):
                        time=stats['total']['end'],
                        values = [counts[i]])
 
-        if stats['total']['local'].has_key('strong_signals'):
+        if has_key(stats['total']['local'],'strong_signals'):
             V.dispatch(plugin_instance = instance_name,
                        host=host,
                        type='dump1090_messages',
@@ -199,7 +209,7 @@ def read_1090(data):
                        interval = 60)
 
     # Remote message counts
-    if stats['total'].has_key('remote'):
+    if has_key(stats['total'],'remote'):
         counts = stats['total']['remote']['accepted']
         V.dispatch(plugin_instance = instance_name,
                    host=host,
@@ -207,7 +217,7 @@ def read_1090(data):
                    type_instance='remote_accepted',
                    time=stats['total']['end'],
                    values = [sum(counts)])
-        for i in xrange(len(counts)):
+        for i in range(len(counts)):
             V.dispatch(plugin_instance = instance_name,
                        host=host,
                        type='dump1090_messages',
@@ -286,7 +296,7 @@ def read_1090(data):
 
     for a in aircraft_data['aircraft']:
         if a['seen'] < 30: total += 1
-        if a.has_key('seen_pos') and a['seen_pos'] < 30:
+        if has_key(a,'seen_pos') and a['seen_pos'] < 30:
             with_pos += 1
             if rlat is not None:
                 distance = greatcircle(rlat, rlon, a['lat'], a['lon'])
@@ -383,7 +393,7 @@ def read_978(data):
         with closing(urlopen(url + '/data/receiver.json', None, 5.0)) as receiver_file:
             receiver = json.load(receiver_file)
 
-        if receiver.has_key('lat'):
+        if has_key(receiver,'lat'):
             rlat = float(receiver['lat'])
             rlon = float(receiver['lon'])
         else:
@@ -409,7 +419,7 @@ def read_978(data):
 
     for a in aircraft_data['aircraft']:
         if a['seen'] < 60: total += 1
-        if a.has_key('seen_pos') and a['seen_pos'] < 60:
+        if has_key(a,'seen_pos') and a['seen_pos'] < 60:
             with_pos += 1
             if rlat is not None:
                 distance = greatcircle(rlat, rlon, a['lat'], a['lon'])
@@ -502,7 +512,7 @@ def read_978(data):
     signals = []
 
     for a in aircraft_data['aircraft']:
-        if a.has_key('rssi') and a['messages'] > 2 and a['seen'] < 60 :
+        if has_key(a,'rssi') and a['messages'] > 2 and a['seen'] < 60 :
             rssi = a['rssi']
             if rssi > -49.4 and not 'lat' in a.get('tisb', ()):
                 signals.append(rssi)
