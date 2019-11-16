@@ -179,9 +179,9 @@ cpu_graph_dump1090() {
 		--units-exponent 0 \
 		--vertical-label "CPU %" \
 		--lower-limit 0 \
+		--upper-limit 5 \
 		$upper \
 		--right-axis 1:0 \
-		--rigid \
 		--left-axis-format "%.0lf" \
 		--right-axis-format "%.0lf" \
 		"DEF:demod=$(check $2/dump1090_cpu-demod.rrd):value:AVERAGE" \
@@ -250,7 +250,7 @@ cpu_graph() {
 		--vertical-label "CPU %" \
 		--right-axis 1:0 \
 		--lower-limit 0 \
-		--rigid \
+		--upper-limit 5 \
 		--left-axis-format "%.0lf" \
 		--right-axis-format "%.0lf" \
 		--pango-markup \
