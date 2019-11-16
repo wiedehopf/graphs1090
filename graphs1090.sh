@@ -181,6 +181,8 @@ cpu_graph_dump1090() {
 		$upper \
 		--right-axis 1:0 \
 		--rigid \
+		--left-axis-format "%.0lf" \
+		--right-axis-format "%.0lf" \
 		"DEF:demod=$(check $2/dump1090_cpu-demod.rrd):value:AVERAGE" \
 		"CDEF:demodp=demod,10,/" \
 		"DEF:reader=$(check $2/dump1090_cpu-reader.rrd):value:AVERAGE" \
@@ -210,9 +212,9 @@ tracks_graph() {
 		--lower-limit 0 \
 		$upper \
 		--units-exponent 0 \
+		--right-axis 1:0 \
 		--left-axis-format "%.0lf" \
 		--right-axis-format "%.0lf" \
-		--right-axis 1:0 \
 		"DEF:all=$(check $2/dump1090_tracks-all.rrd):value:AVERAGE" \
 		"DEF:single=$(check $2/dump1090_tracks-single_message.rrd):value:AVERAGE" \
 		"SHIFT:single:-60" \
@@ -247,7 +249,8 @@ cpu_graph() {
 		--right-axis 1:0 \
 		--lower-limit 0 \
 		--rigid \
-		--units-exponent 0 \
+		--left-axis-format "%.0lf" \
+		--right-axis-format "%.0lf" \
 		--pango-markup \
 		"DEF:idle=$(check $2/cpu-idle.rrd):value:AVERAGE" \
 		"DEF:interrupt=$(check $2/cpu-interrupt.rrd):value:AVERAGE" \
@@ -340,26 +343,31 @@ disk_io_octets_graph() {
 		--start end-$4 \
 		$small \
 		--title "Disk I/O - Bandwidth" \
-		--vertical-label "Bytes/Sec" \
+		--vertical-label "kBytes/Sec" \
 		--right-axis 1:0 \
-		--upper-limit 10000 \
-		--lower-limit -10000 \
+		--upper-limit 10 \
+		--lower-limit -10 \
+		--units-exponent 0 \
+		--left-axis-format "%.0lf" \
+		--right-axis-format "%.0lf" \
 		-A \
 		"TEXTALIGN:center" \
-		"DEF:read=$(check $2/disk_octets.rrd):read:AVERAGE" \
-		"DEF:write=$(check $2/disk_octets.rrd):write:AVERAGE" \
+		"DEF:read_b=$(check $2/disk_octets.rrd):read:AVERAGE" \
+		"DEF:write_b=$(check $2/disk_octets.rrd):write:AVERAGE" \
+		"CDEF:read=read_b,1000,/" \
+		"CDEF:write=write,1000,/" \
 		"CDEF:write_neg=write,-1,*" \
 		"AREA:read#$GREEN:Reads " \
 		"LINE1:read#$DGREEN" \
-		"GPRINT:read:MAX:Max\: %4.1lf %sB/sec" \
-		"GPRINT:read:AVERAGE:Avg\: %4.1lf %SB/sec" \
-		"GPRINT:read:LAST:Current\: %4.1lf %SB/sec\c" \
+		"GPRINT:read_b:MAX:Max\: %4.1lf %sB/sec" \
+		"GPRINT:read_b:AVERAGE:Avg\: %4.1lf %sB/sec" \
+		"GPRINT:read_b:LAST:Current\: %4.1lf %sB/sec\c" \
 		"TEXTALIGN:center" \
 		"AREA:write_neg#$BLUE:Writes" \
 		"LINE1:write_neg#$DBLUE" \
-		"GPRINT:write:MAX:Max\: %4.1lf %sB/sec" \
-		"GPRINT:write:AVERAGE:Avg\: %4.1lf %SB/sec" \
-		"GPRINT:write:LAST:Current\: %4.1lf %SB/sec\c" \
+		"GPRINT:write_b:MAX:Max\: %4.1lf %sB/sec" \
+		"GPRINT:write_b:AVERAGE:Avg\: %4.1lf %sB/sec" \
+		"GPRINT:write_b:LAST:Current\: %4.1lf %sB/sec\c" \
 		--watermark "Drawn: $nowlit";
 	mv "$1.tmp" "$1"
 	}
@@ -425,16 +433,16 @@ network_graph() {
 	if [[ $(ls /var/lib/collectd/rrd/localhost | grep interface -c) < 2 ]]
 	then
 		interfaces=(\
-			"DEF:rx=$(check $2/$ether/if_octets.rrd):rx:AVERAGE" \
-			"DEF:tx=$(check $2/$ether/if_octets.rrd):tx:AVERAGE" )
+			"DEF:rx_b=$(check $2/$ether/if_octets.rrd):rx:AVERAGE" \
+			"DEF:tx_b=$(check $2/$ether/if_octets.rrd):tx:AVERAGE" )
 	else
 		interfaces=(\
 			"DEF:rx1=$(check $2/$wifi/if_octets.rrd):rx:AVERAGE" \
 			"DEF:tx1=$(check $2/$wifi/if_octets.rrd):tx:AVERAGE" \
 			"DEF:rx2=$(check $2/$ether/if_octets.rrd):rx:AVERAGE" \
 			"DEF:tx2=$(check $2/$ether/if_octets.rrd):tx:AVERAGE" \
-			"CDEF:rx=rx1,rx2,ADDNAN" \
-			"CDEF:tx=tx1,tx2,ADDNAN")
+			"CDEF:rx_b=rx1,rx2,ADDNAN" \
+			"CDEF:tx_b=tx1,tx2,ADDNAN")
 	fi
 	$pre
 	rrdtool graph \
@@ -442,24 +450,29 @@ network_graph() {
 		--start end-$4 \
 		$small \
 		--title "Bandwidth Usage (wireless + ethernet)" \
-		--vertical-label "Bytes/Sec" \
+		--vertical-label "kBytes/Sec" \
+		--units-exponent 0 \
 		--right-axis 1:0 \
-		--upper-limit 10000 \
-		--lower-limit -10000 \
+		--upper-limit 10 \
+		--lower-limit -10 \
+		--left-axis-format "%.0lf" \
+		--right-axis-format "%.0lf" \
 		-A \
 		"TEXTALIGN:center" \
 		"${interfaces[@]}" \
+		"CDEF:rx=rx_b,1000,/" \
+		"CDEF:tx=tx_b,1000,/" \
 		"CDEF:tx_neg=tx,-1,*" \
 		"AREA:rx#$GREEN:Incoming" \
 		"LINE1:rx#$DGREEN" \
-		"GPRINT:rx:MAX:Max\:%8.1lf %s" \
-		"GPRINT:rx:AVERAGE:Avg\:%8.1lf %S" \
-		"GPRINT:rx:LAST:Current\:%8.1lf %Sbytes/sec\c" \
+		"GPRINT:rx_b:MAX:Max\:%8.1lf %s" \
+		"GPRINT:rx_b:AVERAGE:Avg\:%8.1lf %s" \
+		"GPRINT:rx_b:LAST:Current\:%8.1lf %sBytes/sec\c" \
 		"AREA:tx_neg#$ABLUE:Outgoing" \
 		"LINE1:tx_neg#$DBLUE" \
-		"GPRINT:tx:MAX:Max\:%8.1lf %S" \
-		"GPRINT:tx:AVERAGE:Avg\:%8.1lf %S" \
-		"GPRINT:tx:LAST:Current\:%8.1lf %Sbytes/sec\c" \
+		"GPRINT:tx_b:MAX:Max\:%8.1lf %s" \
+		"GPRINT:tx_b:AVERAGE:Avg\:%8.1lf %s" \
+		"GPRINT:tx_b:LAST:Current\:%8.1lf %sBytes/sec\c" \
 		--watermark "Drawn: $nowlit";
 	mv "$1.tmp" "$1"
 	}
