@@ -176,6 +176,7 @@ cpu_graph_dump1090() {
 		--start end-$4 \
 		$small \
 		--title "$3 CPU Utilization" \
+		--units-exponent 0 \
 		--vertical-label "CPU %" \
 		--lower-limit 0 \
 		$upper \
@@ -245,6 +246,7 @@ cpu_graph() {
 		--start end-$4 \
 		$big \
 		--title "Overall CPU Utilization" \
+		--units-exponent 0 \
 		--vertical-label "CPU %" \
 		--right-axis 1:0 \
 		--lower-limit 0 \
