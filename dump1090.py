@@ -257,7 +257,7 @@ def read_1090(data):
                    values = [stats['total']['cpu'][k]])
 
     #airspy cpu usage
-    p = subprocess.Popen("cat /proc/$(pgrep airspy_adsb)/task/$(ls /proc/$(pgrep airspy)/task | awk NR==3)/stat | cut -d ' ' -f 14,15 && getconf CLK_TCK",
+    p = subprocess.Popen("cat /proc/$(pgrep airspy_adsb)/task/$(ls /proc/$(pgrep airspy_adsb)/task | awk NR==3)/stat | cut -d ' ' -f 14,15 && getconf CLK_TCK",
                         stdout=subprocess.PIPE,
                         stderr=subprocess.PIPE,
                         shell=True)
