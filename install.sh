@@ -57,7 +57,7 @@ if [[ "$1" == "test" ]]
 then
 	true
 
-elif git clone --depth 1 $repo $ipath/git 2>/dev/null || cd $ipath/git
+elif git clone -b master --depth 1 $repo $ipath/git 2>/dev/null || cd $ipath/git
 then
 	cd $ipath/git
 	git checkout -f master
