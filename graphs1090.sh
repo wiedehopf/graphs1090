@@ -357,7 +357,7 @@ disk_io_octets_graph() {
 		"DEF:read_b=$(check $2/disk_octets.rrd):read:AVERAGE" \
 		"DEF:write_b=$(check $2/disk_octets.rrd):write:AVERAGE" \
 		"CDEF:read=read_b,1000,/" \
-		"CDEF:write=write,1000,/" \
+		"CDEF:write=write_b,1000,/" \
 		"CDEF:write_neg=write,-1,*" \
 		"AREA:read#$GREEN:Reads " \
 		"LINE1:read#$DGREEN" \
