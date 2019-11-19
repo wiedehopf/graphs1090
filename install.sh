@@ -1,24 +1,25 @@
 #!/bin/bash
 
+repo="https://github.com/wiedehopf/graphs1090"
 ipath=/usr/share/graphs1090
 install=0
 
-packages="lighttpd unzip"
-packages2="rrdtool collectd-core"
+commands="lighttpd git python rrdtool collectd"
+packages="lighttpd git python rrdtool collectd-core"
 
 mkdir -p $ipath/installed
 mkdir -p /var/lib/graphs1090/scatter
 
-for i in $packages $packages2
+for CMD in $commands
 do
-	if ! dpkg -s $i 2>/dev/null | grep 'Status.*installed' &>/dev/null
+	if ! command -v "$CMD" &>/dev/null
 	then
 		install=1
 		touch $ipath/installed/$i
 	fi
 done
 
-if ! dpkg -s libpython2.7 2>/dev/null | grep 'Status.*installed' &>/dev/null
+if grep -E 'stretch|jessie' /etc/os-release -qs && ! dpkg -s libpython2.7 2>/dev/null | grep 'Status.*installed' &>/dev/null
 then
 	apt-get update
 	apt-get install -y 'libpython2.7'
@@ -35,7 +36,7 @@ then
 		apt-get update
 	fi
 	#apt-get upgrade -y
-	if apt-get install -y --no-install-suggests $packages && apt-get install -y --no-install-suggests $packages2
+	if apt-get install -y --no-install-suggests $packages
 	then
 		echo "------------------"
 		echo "Packages successfully installed!"
@@ -52,16 +53,23 @@ fi
 hash -r
 
 
-if [ -z $1 ] || [ $1 != "test" ]
+if [[ "$1" == "test" ]]
 then
-	cd /tmp
-	if ! wget --timeout=30 -q -O master.zip https://github.com/wiedehopf/graphs1090/archive/master.zip || ! unzip -q -o master.zip
-	then
-		echo "------------------"
-		echo "Unable to download files, exiting! (Maybe try again?)"
-		exit 1
-	fi
-	cd graphs1090-master
+	true
+
+elif git clone --depth 1 $repo $ipath/git 2>/dev/null || cd $ipath/git
+then
+	cd $ipath/git
+	git checkout -f master
+	git fetch
+	git reset --hard origin/master
+
+elif wget --timeout=30 -q -O /tmp/master.zip $repo/archive/master.zip && unzip -q -o master.zip
+then
+	cd /tmp/graphs1090-master
+else
+	echo "Unable to download files, exiting! (Maybe try again?)"
+	exit 1
 fi
 
 cp dump1090.db dump1090.py system_stats.py LICENSE $ipath
