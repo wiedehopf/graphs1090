@@ -146,3 +146,49 @@ sudo mkdir -p /usr/local/share/dump1090-data
 sudo ln -s /run/dump1090-fa /usr/local/share/dump1090-data/data
 ```
 
+
+### Backup and Restore (same architecture)
+
+Backup this folder:
+```
+/var/lib/collectd/rrd/localhost/
+```
+
+I'm not exactly sure how you would do that on Windows.
+Probably with FileZilla using the SSH/SCP protocol.
+
+On the new card copy the localhost folder to /tmp using FileZilla again.
+
+Then copy it back to its place like this:
+```
+sudo systemctl stop collectd
+sudo mkdir -p /var/lib/collectd/rrd/
+sudo cp -r -T /tmp/localhost /var/lib/collectd/rrd/localhost/
+sudo systemtl restart collectd
+```
+
+If you haven't already, install graphs1090.
+(If you haven't installed it yet, stopping and restarting collectd will fail which is not an issue)
+
+This should be all that is required, no guarantees though!
+
+### Backup and Restore (different architecture, for example moving from RPi to x86 or the other way around)
+
+Basically the same procedure as above, but with this difference:
+
+Before doing the backup, run this command:
+
+```
+sudo /usr/share/graphs1090/rrd-dump.sh /var/lib/collectd/rrd/localhost/
+```
+
+This creates XML files from the database files in the same directory which can be later restored to database files on the target system.
+
+Install graphs1090 on the new system.
+After having copied the folder to `/var/lib/collectd/rrd/localhost/` on the new system, run this command:
+
+```
+sudo /usr/share/graphs1090/rrd-restore.sh /var/lib/collectd/rrd/localhost/
+```
+
+Again no guarantees, but this should work.
