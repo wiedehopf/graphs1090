@@ -157,6 +157,8 @@ Backup this folder:
 I'm not exactly sure how you would do that on Windows.
 Probably with FileZilla using the SSH/SCP protocol.
 
+Install graphs1090 if you haven't already.
+
 On the new card copy the localhost folder to /tmp using FileZilla again.
 
 Then copy it back to its place like this:
@@ -164,11 +166,8 @@ Then copy it back to its place like this:
 sudo systemctl stop collectd
 sudo mkdir -p /var/lib/collectd/rrd/
 sudo cp -r -T /tmp/localhost /var/lib/collectd/rrd/localhost/
-sudo systemtl restart collectd
+sudo systemtl restart collectd graphs1090
 ```
-
-If you haven't already, install graphs1090.
-(If you haven't installed it yet, stopping and restarting collectd will fail which is not an issue)
 
 This should be all that is required, no guarantees though!
 
@@ -184,8 +183,8 @@ sudo /usr/share/graphs1090/rrd-dump.sh /var/lib/collectd/rrd/localhost/
 
 This creates XML files from the database files in the same directory which can be later restored to database files on the target system.
 
-Install graphs1090 on the new system.
-After having copied the folder to `/var/lib/collectd/rrd/localhost/` on the new system, run this command:
+Complete the process described above (backup the folder, then copy it back to its place on the new card).
+Now run this command:
 
 ```
 sudo /usr/share/graphs1090/rrd-restore.sh /var/lib/collectd/rrd/localhost/
