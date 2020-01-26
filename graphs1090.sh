@@ -202,7 +202,7 @@ cpu_graph_dump1090() {
 	}
 
 tracks_graph() {
-	if [ $ul_tracks ]; then upper="--rigid --upper-limit $ul_tracks"; else upper=""; fi
+	if [ $ul_tracks ]; then upper="--upper-limit $ul_tracks"; else upper=""; fi
 	$pre
 	rrdtool graph \
 		"$1.tmp" \
@@ -210,6 +210,7 @@ tracks_graph() {
 		$small \
 		--title "$3 Tracks Seen (8 minute exp. moving avg.)" \
 		--vertical-label "Tracks/Hour" \
+		--rigid \
 		--lower-limit 0 \
 		$upper \
 		--units-exponent 0 \
