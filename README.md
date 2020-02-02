@@ -21,7 +21,7 @@ Ctrl-x to exit, y (yes) and enter to save.
 
 Reset configuration to defaults:
 ```
-sudo cp /usr/share/graphs1090/default /etc/default/graphs1090
+sudo cp /usr/share/graphs1090/default-config /etc/default/graphs1090
 ```
 
 
