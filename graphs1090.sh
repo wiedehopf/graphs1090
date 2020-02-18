@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DOCUMENTROOT=/run/graphs1090
+DOCUMENTROOT=/tmp/graphs1090
 
 renice -n 19 -p $$
 
@@ -35,6 +35,14 @@ RED=FF0000
 DRED=990000
 
 source /etc/default/graphs1090
+
+if [ ! -d $DOCUMENTROOT ]; then
+	if [ -e $DOCUMENTROOT ]; then
+		# $DOCUMENTROOT exists but isn't a directory -- kill it
+		rm -Rf $DOCUMENTROOT || exit 1
+	fi
+	mkdir -m 755 -p $DOCUMENTROOT || exit 1
+fi
 
 case $graph_size in
 	custom)
