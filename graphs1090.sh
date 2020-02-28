@@ -233,7 +233,7 @@ tracks_graph() {
 		"CDEF:s_ema=s8,s4,+,s2,+,s1,+,9.3,/" \
 		"CDEF:m_ema=m8,m4,+,m2,+,m1,+,9.3,/" \
 		"AREA:m_ema#$GREEN:Tracks with more than one message\c" \
-		"AREA:s_ema#$RED:Tracks with single message (mostly bad decodes)\c:STACK" \
+		"AREA:s_ema#$RED:Tracks with single message\c:STACK" \
 		--watermark "Drawn: $nowlit";
 	mv "$1.tmp" "$1"
 	}
