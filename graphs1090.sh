@@ -605,6 +605,14 @@ local_rate_graph() {
 	}
 
 local_trailing_rate_graph() {
+	if ! [ -f $2/dump1090_cpu-airspy.rrd ]; then
+		strong1="AREA:strong#$RED:Messages > -3dBFS\g"
+		strong2="GPRINT:strong_percent_vdef: (%1.1lf<span font='2'> </span>%% of messages)"
+    else
+        #rrdtool graph can't handle empty arguments, give it bogus stuff to do
+        strong1="CDEF:fake1=messages"
+        strong2="CDEF:fake2=messages"
+    fi
 	if [ $ul_message_rate ]; then upper="--rigid --upper-limit $ul_message_rate"; else upper=""; fi
 	if [[ $max_messages_line == 1 ]]
 	then
@@ -751,9 +759,8 @@ local_trailing_rate_graph() {
 		"AREA:maxarea#FFFF99:Min/Max:STACK" \
 		"LINE1:7dayaverage#$GREEN:7 Day Average" \
 		"LINE1:messages#$BLUE" \
-		$maxline1 $maxline2\
-		"AREA:strong#$RED:Messages > -3dBFS\g" \
-		"GPRINT:strong_percent_vdef: (%1.1lf<span font='2'> </span>%% of messages)" \
+		$maxline1 $maxline2 \
+        "$strong1" "$strong2" \
 		"LINE1:y2positions#$CYAN:Positions/s (RHS)\c" \
 		--watermark "Drawn: $nowlit";
 	mv "$1.tmp" "$1"
