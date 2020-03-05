@@ -115,7 +115,7 @@ if wget --timeout=30 http://localhost/dump1090-fa/data/stats.json -O /dev/null -
 elif wget --timeout=30 http://localhost/radar/data/stats.json -O /dev/null -q; then
 	sed -i 's?URL "http://local.*?URL "http://localhost/radar"?' /etc/collectd/collectd.conf
 	echo --------------
-	echo "dump1090 webaddress automatically set to http://localhost/readsb/"
+	echo "dump1090 webaddress automatically set to http://localhost/radar/"
 	echo --------------
 elif wget --timeout=30 http://localhost/dump1090/data/stats.json -O /dev/null -q; then
 	sed -i 's?URL "http://local.*?URL "http://localhost/dump1090"?' /etc/collectd/collectd.conf
