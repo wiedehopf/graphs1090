@@ -29,12 +29,12 @@ then
 	fi
 else
 	if ! dpkg -s libpython2.7 2>/dev/null | grep 'Status.*installed' &>/dev/null \
-		|| ! dpkg -s libpython2.7 2>/dev/null | grep 'Status.*installed' &>/dev/null
+		|| ! dpkg -s libpython3.7 2>/dev/null | grep 'Status.*installed' &>/dev/null
 	then
 		apt-get update
 		apt-get install -y 'libpython2.7'
 		apt-get install -y 'libpython3.7'
-	update_done=yes
+        update_done=yes
 	fi
 fi
 
