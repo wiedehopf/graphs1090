@@ -110,18 +110,16 @@ cp 88-graphs1090.conf /etc/lighttpd/conf-available
 lighty-enable-mod graphs1090 >/dev/null
 
 
-if wget --timeout=30 http://localhost/dump1090-fa/data/stats.json -O /dev/null -q; then
-	sed -i 's?URL "http://local.*?URL "http://localhost/dump1090-fa"?' /etc/collectd/collectd.conf
-elif wget --timeout=30 http://localhost/radar/data/stats.json -O /dev/null -q; then
-	sed -i 's?URL "http://local.*?URL "http://localhost/radar"?' /etc/collectd/collectd.conf
-	echo --------------
-	echo "dump1090 webaddress automatically set to http://localhost/radar/"
-	echo --------------
-elif wget --timeout=30 http://localhost/dump1090/data/stats.json -O /dev/null -q; then
-	sed -i 's?URL "http://local.*?URL "http://localhost/dump1090"?' /etc/collectd/collectd.conf
-	echo --------------
-	echo "dump1090 webaddress automatically set to http://localhost/dump1090/"
-	echo --------------
+SYM=/usr/share/graphs1090/data-symlink
+mkdir -p $SYM
+if [ -f /run/dump1090-fa/stats.json ]; then
+    ln -s -f /run/dump1090-fa $SYM/data
+elif [ -f /run/readsb/stats.json ]; then
+    ln -s -f /run/readsb $SYM/data
+elif [ -f /run/dump1090/stats.json ]; then
+    ln -s -f /run/dump1090 $SYM/data
+elif [ -f /run/dump1090-mutability/stats.json ]; then
+    ln -s -f /run/dump1090-mutability $SYM/data
 else
 	echo --------------
 	echo "Non-standard configuration detected, you need to change the data URL in /etc/collectd/collectd.conf!"
@@ -139,7 +137,6 @@ fi
 
 
 mkdir -p /var/lib/collectd/rrd/localhost/dump1090-localhost
-
 
 systemctl restart lighttpd
 
