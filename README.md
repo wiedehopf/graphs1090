@@ -166,7 +166,7 @@ Then copy it back to its place like this:
 sudo systemctl stop collectd
 sudo mkdir -p /var/lib/collectd/rrd/
 sudo cp -r -T /tmp/localhost /var/lib/collectd/rrd/localhost/
-sudo systemtl restart collectd graphs1090
+sudo systemctl restart collectd graphs1090
 ```
 
 This should be all that is required, no guarantees though!
