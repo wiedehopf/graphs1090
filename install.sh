@@ -159,5 +159,5 @@ if command -v nginx &>/dev/null
 then
 	echo --------------
 	echo "To configure nginx for graphs1090, please add the following line(s) in the server {} section:"
-	echo "include /usr/share/tar1090/nginx-graphs1090.conf;"
+	echo "include /usr/share/graphs1090/nginx-graphs1090.conf;"
 fi
