@@ -45,3 +45,5 @@ echo
 echo
 echo
 echo "All done!"
+
+read
