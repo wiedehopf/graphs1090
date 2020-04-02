@@ -109,17 +109,20 @@ sed -i -e "s/__cache_version__/$(date +%s | tail -c5)/g" $ipath/html/index.html
 cp 88-graphs1090.conf /etc/lighttpd/conf-available
 lighty-enable-mod graphs1090 >/dev/null
 
-
 SYM=/usr/share/graphs1090/data-symlink
 mkdir -p $SYM
 if [ -f /run/dump1090-fa/stats.json ]; then
     ln -s -f /run/dump1090-fa $SYM/data
+    sed -i 's?URL "http://local.*?URL "http://localhost/dump1090-fa"?' /etc/collectd/collectd.conf
 elif [ -f /run/readsb/stats.json ]; then
     ln -s -f /run/readsb $SYM/data
+    sed -i 's?URL "http://local.*?URL "http://localhost/radar"?' /etc/collectd/collectd.conf
 elif [ -f /run/dump1090/stats.json ]; then
     ln -s -f /run/dump1090 $SYM/data
+    sed -i 's?URL "http://local.*?URL "http://localhost/dump1090"?' /etc/collectd/collectd.conf
 elif [ -f /run/dump1090-mutability/stats.json ]; then
     ln -s -f /run/dump1090-mutability $SYM/data
+    sed -i 's?URL "http://local.*?URL "http://localhost/dump1090"?' /etc/collectd/collectd.conf
 else
 	echo --------------
 	echo "Non-standard configuration detected, you need to change the data URL in /etc/collectd/collectd.conf!"
