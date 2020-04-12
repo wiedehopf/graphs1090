@@ -117,6 +117,9 @@ if [ -f /run/dump1090-fa/stats.json ]; then
 elif [ -f /run/readsb/stats.json ]; then
     ln -s -f /run/readsb $SYM/data
     sed -i 's?URL "http://local.*?URL "http://localhost/radar"?' /etc/collectd/collectd.conf
+elif [ -f /run/adsbexchange-feed/stats.json ]; then
+    ln -s -f /run/adsbexchange-feed $SYM/data
+    sed -i 's?URL "http://local.*?URL "http://localhost/tar1090"?' /etc/collectd/collectd.conf
 elif [ -f /run/dump1090/stats.json ]; then
     ln -s -f /run/dump1090 $SYM/data
     sed -i 's?URL "http://local.*?URL "http://localhost/dump1090"?' /etc/collectd/collectd.conf
