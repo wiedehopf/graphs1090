@@ -48,3 +48,8 @@ ul_maxima=
 ul_rate_per_aircraft=
 ul_adsb_cpu=
 ul_range_uat=
+
+# set custom left / right axis ratio
+# leave blank for default
+lr_rate_per_aircraft= # default 10
+

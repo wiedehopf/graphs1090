@@ -128,6 +128,7 @@ aircraft_graph() {
 
 aircraft_message_rate_graph() {
 	if [ $ul_rate_per_aircraft ]; then upper="--rigid --upper-limit $ul_rate_per_aircraft"; else upper=""; fi
+	if [ $lr_rate_per_aircraft ]; then ratio="$lr_rate_per_aircraft"; else ratio=10; fi
 	if [ -f $2/dump1090_messages-remote_accepted.rrd ]
 	then messages="CDEF:messages=messages1,messages2,ADDNAN"
 	else messages="CDEF:messages=messages1"
@@ -142,7 +143,7 @@ aircraft_message_rate_graph() {
 		--lower-limit 0 \
 		$upper \
 		--units-exponent 0 \
-		--right-axis 10:0 \
+		--right-axis "$ratio":0 \
 		"TEXTALIGN:center" \
 		"DEF:aircrafts=$(check $2/dump1090_aircraft-recent.rrd):total:AVERAGE" \
 		"DEF:messages1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE" \
@@ -150,7 +151,7 @@ aircraft_message_rate_graph() {
 		$messages \
 		"CDEF:provisional=messages,aircrafts,/" \
 		"CDEF:rate=aircrafts,0,GT,provisional,0,IF" \
-		"CDEF:aircrafts10=aircrafts,10,/" \
+		"CDEF:aircrafts10=aircrafts,$ratio,/" \
 		"VDEF:avgrate=rate,AVERAGE" \
 		"VDEF:maxrate=rate,MAXIMUM" \
 		"LINE1:rate#$BLUE:Messages / AC" \
