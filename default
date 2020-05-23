@@ -1,5 +1,5 @@
 # after saving this file, run
-# sudo /usr/share/graphs1090/boot.sh
+# sudo systemctl restart graphs1090
 # to update the graphs and web interface
 
 # set to 1 to enable farenheit instead of celsius
