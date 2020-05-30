@@ -134,6 +134,12 @@ else
 	echo --------------
 fi
 
+if wget -O /dev/null http://localhost/skyaware978/data/aircraft.json 2>/dev/null; then
+    sed -i 's?URL_978 "http://local.*?URL_978 "http://localhost/skyaware978"?' /etc/collectd/collectd.conf
+elif wget -O /dev/null http://localhost/978/data/aircraft.json 2>/dev/null; then
+    sed -i 's?URL_978 "http://local.*?URL_978 "http://localhost/978"?' /etc/collectd/collectd.conf
+fi
+
 if grep jessie /etc/os-release >/dev/null
 then
 	echo --------------
