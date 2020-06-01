@@ -109,7 +109,7 @@ cp nginx-graphs1090.conf $ipath
 sed -i -e "s/__cache_version__/$(date +%s | tail -c5)/g" $ipath/html/index.html
 
 cp 88-graphs1090.conf /etc/lighttpd/conf-available
-lighty-enable-mod graphs1090 >/dev/null
+ln -s -f /etc/lighttpd/conf-available/88-graphs1090.conf /etc/lighttpd/conf-enabled/88-graphs1090.conf
 
 SYM=/usr/share/graphs1090/data-symlink
 mkdir -p $SYM
