@@ -149,9 +149,14 @@ sudo ln -s /run/dump1090-fa /usr/local/share/dump1090-data/data
 
 ### Backup and Restore (same architecture)
 
-Backup this folder:
 ```
-/var/lib/collectd/rrd/localhost/
+cd /var/lib/collectd/rrd
+sudo tar cf rrd.tar localhost
+cp rrd.tar /tmp
+```
+Backup this file:
+```
+/tmp/rrd.tar
 ```
 
 I'm not exactly sure how you would do that on Windows.
@@ -159,13 +164,15 @@ Probably with FileZilla using the SSH/SCP protocol.
 
 Install graphs1090 if you haven't already.
 
-On the new card copy the localhost folder to /tmp using FileZilla again.
+On the new card copy the file to /tmp using FileZilla again.
 
 Then copy it back to its place like this:
 ```
-sudo systemctl stop collectd
 sudo mkdir -p /var/lib/collectd/rrd/
-sudo cp -r -T /tmp/localhost /var/lib/collectd/rrd/localhost/
+cd /var/lib/collectd/rrd
+sudo cp /tmp/rrd.tar /var/lib/collectd/rrd/
+sudo systemctl stop collectd
+sudo tar xf rrd.tar
 sudo systemctl restart collectd graphs1090
 ```
 
