@@ -134,10 +134,15 @@ else
 	echo --------------
 fi
 
-if wget -O /dev/null http://localhost/skyaware978/data/aircraft.json 2>/dev/null; then
-    sed -i 's?URL_978 "http://local.*?URL_978 "http://localhost/skyaware978"?' /etc/collectd/collectd.conf
+SYM=/usr/share/graphs1090/978-symlink
+mkdir -p $SYM
+if [ -f /run/skyaware978/aircraft.json ]; then
+    ln -s -f /run/skyaware978 $SYM/data
+    sed -i 's?URL_978.*?URL_978 "file:///usr/share/graphs1090/978-symlink"?' /etc/collectd/collectd.conf
+elif wget -O /dev/null http://localhost/skyaware978/data/aircraft.json 2>/dev/null; then
+    sed -i 's?URL_978.*?URL_978 "http://localhost/skyaware978"?' /etc/collectd/collectd.conf
 elif wget -O /dev/null http://localhost/978/data/aircraft.json 2>/dev/null; then
-    sed -i 's?URL_978 "http://local.*?URL_978 "http://localhost/978"?' /etc/collectd/collectd.conf
+    sed -i 's?URL_978.*?URL_978 "http://localhost/978"?' /etc/collectd/collectd.conf
 fi
 
 if grep jessie /etc/os-release >/dev/null
