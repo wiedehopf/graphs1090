@@ -108,6 +108,12 @@ cp nginx-graphs1090.conf $ipath
 # bust cache for all css and js files
 sed -i -e "s/__cache_version__/$(date +%s | tail -c5)/g" $ipath/html/index.html
 
+if [ -d /etc/lighttpd/conf.d/ ] && ! [ -d /etc/lighttpd/conf-enabled/ ] && ! [ -d /etc/lighttpd/conf-available ] && command -v lighttpd &>/dev/null
+then
+    ln -s /etc/lighttpd/conf.d /etc/lighttpd/conf-enabled
+    mkdir -p /etc/lighttpd/conf-available
+fi
+
 cp 88-graphs1090.conf /etc/lighttpd/conf-available
 ln -s -f /etc/lighttpd/conf-available/88-graphs1090.conf /etc/lighttpd/conf-enabled/88-graphs1090.conf
 
