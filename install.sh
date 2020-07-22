@@ -110,29 +110,29 @@ sed -i -e "s/__cache_version__/$(date +%s | tail -c5)/g" $ipath/html/index.html
 
 if [ -d /etc/lighttpd/conf.d/ ] && ! [ -d /etc/lighttpd/conf-enabled/ ] && ! [ -d /etc/lighttpd/conf-available ] && command -v lighttpd &>/dev/null
 then
-    ln -s /etc/lighttpd/conf.d /etc/lighttpd/conf-enabled
+    ln -snf /etc/lighttpd/conf.d /etc/lighttpd/conf-enabled
     mkdir -p /etc/lighttpd/conf-available
 fi
 
 cp 88-graphs1090.conf /etc/lighttpd/conf-available
-ln -s -f /etc/lighttpd/conf-available/88-graphs1090.conf /etc/lighttpd/conf-enabled/88-graphs1090.conf
+ln -snf /etc/lighttpd/conf-available/88-graphs1090.conf /etc/lighttpd/conf-enabled/88-graphs1090.conf
 
 SYM=/usr/share/graphs1090/data-symlink
 mkdir -p $SYM
 if [ -f /run/dump1090-fa/stats.json ]; then
-    ln -s -f /run/dump1090-fa $SYM/data
+    ln -snf /run/dump1090-fa $SYM/data
     sed -i 's?URL "http://local.*?URL "http://localhost/dump1090-fa"?' /etc/collectd/collectd.conf
 elif [ -f /run/readsb/stats.json ]; then
-    ln -s -f /run/readsb $SYM/data
+    ln -snf /run/readsb $SYM/data
     sed -i 's?URL "http://local.*?URL "http://localhost/radar"?' /etc/collectd/collectd.conf
 elif [ -f /run/adsbexchange-feed/stats.json ]; then
-    ln -s -f /run/adsbexchange-feed $SYM/data
+    ln -snf /run/adsbexchange-feed $SYM/data
     sed -i 's?URL "http://local.*?URL "http://localhost/tar1090"?' /etc/collectd/collectd.conf
 elif [ -f /run/dump1090/stats.json ]; then
-    ln -s -f /run/dump1090 $SYM/data
+    ln -snf /run/dump1090 $SYM/data
     sed -i 's?URL "http://local.*?URL "http://localhost/dump1090"?' /etc/collectd/collectd.conf
 elif [ -f /run/dump1090-mutability/stats.json ]; then
-    ln -s -f /run/dump1090-mutability $SYM/data
+    ln -snf /run/dump1090-mutability $SYM/data
     sed -i 's?URL "http://local.*?URL "http://localhost/dump1090"?' /etc/collectd/collectd.conf
 else
 	echo --------------
@@ -143,7 +143,7 @@ fi
 SYM=/usr/share/graphs1090/978-symlink
 mkdir -p $SYM
 if [ -f /run/skyaware978/aircraft.json ]; then
-    ln -s -f /run/skyaware978 $SYM/data
+    ln -snf /run/skyaware978 $SYM/data
     sed -i 's?URL_978.*?URL_978 "file:///usr/share/graphs1090/978-symlink"?' /etc/collectd/collectd.conf
 elif wget -O /dev/null http://localhost/skyaware978/data/aircraft.json 2>/dev/null; then
     sed -i 's?URL_978.*?URL_978 "http://localhost/skyaware978"?' /etc/collectd/collectd.conf
