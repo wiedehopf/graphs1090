@@ -11,11 +11,6 @@ div() {
 	echo $1 $2 | awk '{printf "%.9f", $1 / $2}'
 }
 
-ether="$(ls /var/lib/collectd/rrd/localhost | grep interface -m1)"
-wifi="$(ls /var/lib/collectd/rrd/localhost | grep interface -m2 | tail -n1)"
-
-disk="$(ls /var/lib/collectd/rrd/localhost | grep disk -m1)"
-
 lwidth=1096
 #1096 or 960
 lheight=235
@@ -34,7 +29,16 @@ CYAN=00A0F0
 RED=FF0000
 DRED=990000
 
+DB=/var/lib/collectd/rrd
+# settings in /etc/default/graphs1090 will overwrite the DB directory
+
 source /etc/default/graphs1090
+
+ether="$(ls ${DB}/localhost | grep interface -m1)"
+wifi="$(ls ${DB}/localhost | grep interface -m2 | tail -n1)"
+
+disk="$(ls ${DB}/localhost | grep disk -m1)"
+
 
 case $graph_size in
 	custom)
@@ -80,7 +84,7 @@ check() {
 		echo $1
 	else
 		echo "File $1 not found! Associated graph will be empty!" 1>&2
-		echo "/var/lib/collectd/rrd/$collectd_hostname/dump1090-$dump1090_instance/dump1090_dbfs-NaN.rrd"
+		echo "${DB}/$collectd_hostname/dump1090-$dump1090_instance/dump1090_dbfs-NaN.rrd"
 	fi
 }
 
@@ -434,7 +438,7 @@ memory_graph() {
 
 
 network_graph() {
-	if [[ $(ls /var/lib/collectd/rrd/localhost | grep interface -c) < 2 ]]
+	if [[ $(ls ${DB}/localhost | grep interface -c) < 2 ]]
 	then
 		interfaces=(\
 			"DEF:rx_b=$(check $2/$ether/if_octets.rrd):rx:AVERAGE" \
@@ -957,41 +961,41 @@ signal_graph() {
 
 
 dump1090_graphs() {
-	aircraft_graph ${DOCUMENTROOT}/dump1090-$2-aircraft-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
-	aircraft_message_rate_graph ${DOCUMENTROOT}/dump1090-$2-aircraft_message_rate-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
-	cpu_graph_dump1090 ${DOCUMENTROOT}/dump1090-$2-cpu-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
-	tracks_graph ${DOCUMENTROOT}/dump1090-$2-tracks-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5" 
-	local_rate_graph ${DOCUMENTROOT}/dump1090-$2-local_rate-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
-	local_trailing_rate_graph ${DOCUMENTROOT}/dump1090-$2-local_trailing_rate-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
+	aircraft_graph ${DOCUMENTROOT}/dump1090-$2-aircraft-$4.png ${DB}/$1/dump1090-$2 "$3" "$4" "$5"
+	aircraft_message_rate_graph ${DOCUMENTROOT}/dump1090-$2-aircraft_message_rate-$4.png ${DB}/$1/dump1090-$2 "$3" "$4" "$5"
+	cpu_graph_dump1090 ${DOCUMENTROOT}/dump1090-$2-cpu-$4.png ${DB}/$1/dump1090-$2 "$3" "$4" "$5"
+	tracks_graph ${DOCUMENTROOT}/dump1090-$2-tracks-$4.png ${DB}/$1/dump1090-$2 "$3" "$4" "$5" 
+	local_rate_graph ${DOCUMENTROOT}/dump1090-$2-local_rate-$4.png ${DB}/$1/dump1090-$2 "$3" "$4" "$5"
+	local_trailing_rate_graph ${DOCUMENTROOT}/dump1090-$2-local_trailing_rate-$4.png ${DB}/$1/dump1090-$2 "$3" "$4" "$5"
 
-	range_graph ${DOCUMENTROOT}/dump1090-$2-range-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
+	range_graph ${DOCUMENTROOT}/dump1090-$2-range-$4.png ${DB}/$1/dump1090-$2 "$3" "$4" "$5"
 
-	signal_graph ${DOCUMENTROOT}/dump1090-$2-signal-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "$3" "$4" "$5"
-	if [ -f /var/lib/collectd/rrd/$1/dump1090-$2/dump1090_messages-messages_978.rrd ]
+	signal_graph ${DOCUMENTROOT}/dump1090-$2-signal-$4.png ${DB}/$1/dump1090-$2 "$3" "$4" "$5"
+	if [ -f ${DB}/$1/dump1090-$2/dump1090_messages-messages_978.rrd ]
 	then
 		sed -i -e 's/ style="display:none"> <!-- dump978 -->/> <!-- dump978 -->/' /usr/share/graphs1090/html/index.html
-		range_graph ${DOCUMENTROOT}/dump1090-$2-range_978-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "UAT" "$4" "$5"
-		978_aircraft ${DOCUMENTROOT}/dump1090-$2-aircraft_978-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "UAT" "$4" "$5"
-		978_messages ${DOCUMENTROOT}/dump1090-$2-messages_978-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "UAT" "$4" "$5"
-		signal_graph ${DOCUMENTROOT}/dump1090-$2-signal_978-$4.png /var/lib/collectd/rrd/$1/dump1090-$2 "UAT" "$4" "$5"
+		range_graph ${DOCUMENTROOT}/dump1090-$2-range_978-$4.png ${DB}/$1/dump1090-$2 "UAT" "$4" "$5"
+		978_aircraft ${DOCUMENTROOT}/dump1090-$2-aircraft_978-$4.png ${DB}/$1/dump1090-$2 "UAT" "$4" "$5"
+		978_messages ${DOCUMENTROOT}/dump1090-$2-messages_978-$4.png ${DB}/$1/dump1090-$2 "UAT" "$4" "$5"
+		signal_graph ${DOCUMENTROOT}/dump1090-$2-signal_978-$4.png ${DB}/$1/dump1090-$2 "UAT" "$4" "$5"
 	fi
 }
 
 system_graphs() {
-	cpu_graph ${DOCUMENTROOT}/system-$2-cpu-$4.png /var/lib/collectd/rrd/$1/aggregation-cpu-average "$3" "$4" "$5"
-	df_root_graph ${DOCUMENTROOT}/system-$2-df_root-$4.png /var/lib/collectd/rrd/$1/df-root "$3" "$4" "$5"
-	disk_io_iops_graph ${DOCUMENTROOT}/system-$2-disk_io_iops-$4.png /var/lib/collectd/rrd/$1/$disk "$3" "$4" "$5"
-	disk_io_octets_graph ${DOCUMENTROOT}/system-$2-disk_io_octets-$4.png /var/lib/collectd/rrd/$1/$disk "$3" "$4" "$5"
-	memory_graph ${DOCUMENTROOT}/system-$2-memory-$4.png /var/lib/collectd/rrd/$1/system_stats "$3" "$4" "$5"
-	network_graph ${DOCUMENTROOT}/system-$2-network_bandwidth-$4.png /var/lib/collectd/rrd/$1 "$3" "$4" "$5"
+	cpu_graph ${DOCUMENTROOT}/system-$2-cpu-$4.png ${DB}/$1/aggregation-cpu-average "$3" "$4" "$5"
+	df_root_graph ${DOCUMENTROOT}/system-$2-df_root-$4.png ${DB}/$1/df-root "$3" "$4" "$5"
+	disk_io_iops_graph ${DOCUMENTROOT}/system-$2-disk_io_iops-$4.png ${DB}/$1/$disk "$3" "$4" "$5"
+	disk_io_octets_graph ${DOCUMENTROOT}/system-$2-disk_io_octets-$4.png ${DB}/$1/$disk "$3" "$4" "$5"
+	memory_graph ${DOCUMENTROOT}/system-$2-memory-$4.png ${DB}/$1/system_stats "$3" "$4" "$5"
+	network_graph ${DOCUMENTROOT}/system-$2-network_bandwidth-$4.png ${DB}/$1 "$3" "$4" "$5"
 	if [[ $farenheit == 1 ]]
 	then
-		temp_graph_imperial ${DOCUMENTROOT}/system-$2-temperature-$4.png /var/lib/collectd/rrd/$1/table-$2 "$3" "$4" "$5"
+		temp_graph_imperial ${DOCUMENTROOT}/system-$2-temperature-$4.png ${DB}/$1/table-$2 "$3" "$4" "$5"
 	else
-		temp_graph_metric ${DOCUMENTROOT}/system-$2-temperature-$4.png /var/lib/collectd/rrd/$1/table-$2 "$3" "$4" "$5"
+		temp_graph_metric ${DOCUMENTROOT}/system-$2-temperature-$4.png ${DB}/$1/table-$2 "$3" "$4" "$5"
 	fi
-	#eth0_graph ${DOCUMENTROOT}/system-$2-eth0_bandwidth-$4.png /var/lib/collectd/rrd/$1/$ether "$3" "$4" "$5"
-	#wlan0_graph ${DOCUMENTROOT}/system-$2-wlan0_bandwidth-$4.png /var/lib/collectd/rrd/$1/$wifi "$3" "$4" "$5"
+	#eth0_graph ${DOCUMENTROOT}/system-$2-eth0_bandwidth-$4.png ${DB}/$1/$ether "$3" "$4" "$5"
+	#wlan0_graph ${DOCUMENTROOT}/system-$2-wlan0_bandwidth-$4.png ${DB}/$1/$wifi "$3" "$4" "$5"
 }
 
 dump1090_receiver_graphs() {

@@ -53,3 +53,5 @@ ul_range_uat=
 # leave blank for default
 lr_rate_per_aircraft= # default 10
 
+DB=/var/lib/collectd/rrd
+#DB=/run/collectd
