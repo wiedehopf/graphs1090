@@ -1,0 +1,25 @@
+[Unit]
+Description=Statistics collection and monitoring daemon
+After=local-fs.target network.target
+Requires=local-fs.target network.target
+ConditionPathExists=/etc/collectd/collectd.conf
+Documentation=man:collectd(1)
+Documentation=man:collectd.conf(5)
+Documentation=https://collectd.org
+
+[Service]
+Type=notify
+NotifyAccess=main
+RuntimeDirectory=collectd
+EnvironmentFile=-/etc/default/collectd
+ExecStartPre=/bin/mkdir -p /var/lib/collectd/rrd/localhost
+ExecStartPre=/bin/cp -rT /var/lib/collectd/rrd/localhost /run/collectd/localhost
+ExecStartPre=/usr/sbin/collectd -t
+ExecStart=/usr/sbin/collectd
+ExecStopPost=/bin/cp -rT /run/collectd/localhost /var/lib/collectd/rrd/localhost
+ExecStopPost=/bin/sync
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
