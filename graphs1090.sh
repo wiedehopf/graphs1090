@@ -610,7 +610,7 @@ local_rate_graph() {
 	}
 
 local_trailing_rate_graph() {
-	if ! [ -f $2/dump1090_cpu-airspy.rrd ]; then
+	if ! [[ -f $2/dump1090_cpu-airspy.rrd ]] && [[ -f $2/dump1090_messages-strong_signals.rrd ]]; then
 		strong1="AREA:strong#$RED:Messages > -3dBFS\g"
 		strong2="GPRINT:strong_percent_vdef: (%1.1lf<span font='2'> </span>%% of messages)"
     else
@@ -874,6 +874,12 @@ signal_graph() {
 		"DEF:peak=$(check $2/dump1090_dbfs-peak_signal.rrd):value:MAX" \
 		)
 	fi
+	if [[ -f $2/dump1090_dbfs-noise.rrd ]]; then
+		noise1="LINE1:noise#$GREEN:Noise"
+    else
+        #rrdtool graph can't handle empty arguments, give it bogus stuff to do
+        noise1="CDEF:fake1=signal"
+    fi
 	$pre
 	rrdtool graph \
 		"$1.tmp" \
@@ -890,6 +896,7 @@ signal_graph() {
 		--rigid \
 		--units-exponent 0 \
 		${defines[*]} \
+		"DEF:noise=$(check $2/dump1090_dbfs-noise.rrd):value:AVERAGE" \
 		"TEXTALIGN:center" \
 		"CDEF:mes=median,UN,signal,median,IF" \
 		"AREA:quart1#$GREEN:1st to 3rd Quartile" \
@@ -898,6 +905,7 @@ signal_graph() {
 		"GPRINT:mes:AVERAGE:%4.1lf\c" \
 		"LINE1:min#$CYAN:Weakest\:" \
 		"GPRINT:min:MIN:%4.1lf" \
+        "$noise1" \
 		"LINE1:peak#$BLUE:Peak Level\:" \
 		"GPRINT:peak:MAX:%4.1lf\c" \
 		--watermark "Drawn: $nowlit";
