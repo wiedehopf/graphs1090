@@ -855,6 +855,8 @@ range_graph(){
 
 
 signal_graph() {
+    #rrdtool graph can't handle empty arguments, give it bogus stuff to do
+    noise1="CDEF:fake1=signal"
 	if [[ $3 == "UAT" ]]; then
 		defines=( \
 		"DEF:signal=$(check $2/dump1090_dbfs-median_978.rrd):value:AVERAGE" \
@@ -873,13 +875,10 @@ signal_graph() {
 		"DEF:median=$(check $2/dump1090_dbfs-median.rrd):value:AVERAGE" \
 		"DEF:peak=$(check $2/dump1090_dbfs-peak_signal.rrd):value:MAX" \
 		)
+        if [[ -f $2/dump1090_dbfs-noise.rrd ]]; then
+            noise1="LINE1:noise#$DGREEN:Noise"
+        fi
 	fi
-	if [[ -f $2/dump1090_dbfs-noise.rrd ]]; then
-		noise1="LINE1:noise#$GREEN:Noise"
-    else
-        #rrdtool graph can't handle empty arguments, give it bogus stuff to do
-        noise1="CDEF:fake1=signal"
-    fi
 	$pre
 	rrdtool graph \
 		"$1.tmp" \
