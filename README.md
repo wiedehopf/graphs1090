@@ -35,7 +35,7 @@ or
 
 http://192.168.x.yy/perf
 
-### Reducing writes to the sd-card
+### Reducing writes to the sd-card (option 1 of 2)
 
 The rrd databases get written to every minute, this adds up to around 100 Megabytes written per hour.
 While most modern SD-cards should handle this for 10 or more years easily, you can reduce the amount written if you want to.
@@ -62,6 +62,19 @@ vm.dirty_expire_centisecs = 360000
 EOF
 ```
 
+### Reducing writes to the sd-card (option 2 of 2)
+
+If you don't mind losing up to 24h of graph data in case of a power loss, you can drastically reduce the writes to the sd-card by graps1090/collect by executing this script:
+
+```
+sudo bash /usr/share/graphs1090/git/malarky.sh
+```
+
+It changes the the configuration of the systemd service to manage the graph data in /run (memory) and only write it to disk every night.
+On reboot / shutdown it's written to disk and the data loaded to /run again when the system boots back up.
+Up to 24h of data is lost when there is a power loss.
+This is somewhat new, there might be some other possibilities graph data might be lost that i'm not aware of.
+So far it's working perfectly for me.
 
 
 ### Non-standard configuration:
