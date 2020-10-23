@@ -119,8 +119,10 @@ sudo screen /usr/share/graphs1090/new-format.sh
 
 Please include the output for the following commands in error reports:
 ```
+sudo systemctl restart collectd
 sudo journalctl --no-pager -u collectd | tail -n40
 sudo /usr/share/graphs1090/graphs1090.sh
+sudo systemctl restart graphs1090
 ```
 Paste the output into a pastebin: https://pastebin.com/
 Then include the link and be sure to also describe the issue and also mention your system (debian / ubuntu / raspbian and RPi vs x86).
