@@ -115,13 +115,23 @@ sudo apt install -y screen
 sudo screen /usr/share/graphs1090/new-format.sh
 ```
 
+### Reporting issues:
+
+Please include the output for the following commands in error reports:
+```
+sudo journalctl --no-pager -u collectd | tail -n40
+sudo /usr/share/graphs1090/graphs1090.sh
+```
+Paste the output into a pastebin: https://pastebin.com/
+Then include the link and be sure to also describe the issue and also mention your system (debian / ubuntu / raspbian and RPi vs x86).
+
 
 ### Known bugs:
 
 ##### disk graphs with kernel >= 4.19 don't work due to a collectd bug
 https://github.com/collectd/collectd/issues/2951
 
-possible sollution: install new collectd version:
+possible sollution: install new collectd version (only on Raspberry pi, if you are using another architecture, this package won't work)
 ```
 wget -O /tmp/collectd.deb http://raspbian.raspberrypi.org/raspbian/pool/main/c/collectd/collectd-core_5.8.1-1.3_armhf.deb
 sudo dpkg -i /tmp/collectd.deb
