@@ -223,3 +223,24 @@ sudo /usr/share/graphs1090/rrd-restore.sh /var/lib/collectd/rrd/localhost/
 ```
 
 Again no guarantees, but this should work.
+
+### Issues with some collectd versions
+
+Symptom: collectd doesn't work, error looks something like this in the syslog:
+```
+collectd[16507]: Traceback (most recent call last):
+collectd[16507]: File "/usr/lib/python2.7/site.py", line 554, in <module>
+```
+
+Possible solution:
+
+```
+echo "LD_PRELOAD=/usr/lib/python3.8/config-3.8-x86_64-linux-gnu/libpython3.8.so" | sudo tee -a /etc/default/collectd
+sudo systemctl restart collectd
+```
+
+Undoing the solution if the logs still show failure or when the issue has been fixed in the package provided by your distribution.
+```
+sudo sed -i -e 's#LD_PRELOAD=/usr/lib/python3.8.*##' /etc/default/collectd
+sudo systemctl restart collectd
+```
