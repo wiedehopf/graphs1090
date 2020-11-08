@@ -4,8 +4,8 @@ repo="https://github.com/wiedehopf/graphs1090"
 ipath=/usr/share/graphs1090
 install=0
 
-commands="git python rrdtool collectd"
-packages="git python rrdtool collectd-core"
+commands="git rrdtool collectd"
+packages="git rrdtool collectd-core"
 
 mkdir -p $ipath/installed
 mkdir -p /var/lib/graphs1090/scatter
