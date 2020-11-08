@@ -8,7 +8,7 @@ fi
 
 sed -i -e 's#^DB=.*#DB=/run/collectd#' /etc/default/graphs1090
 
-systemctl stop collectd
+systemctl stop collectd &>/dev/null
 systemctl daemon-reload
 systemctl restart collectd
 systemctl restart graphs1090
