@@ -166,7 +166,11 @@ mkdir -p /var/lib/collectd/rrd/localhost/dump1090-localhost
 systemctl restart lighttpd
 
 systemctl enable collectd &>/dev/null
-systemctl restart collectd
+if [[ -f /usr/share/graphs1090/noMalarky ]]; then
+    systemctl restart collectd
+else
+    bash $ipath/git/malarky.sh
+fi
 
 systemctl enable graphs1090
 systemctl restart graphs1090

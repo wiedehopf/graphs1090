@@ -1,7 +1,14 @@
+#!/bin/bash
 cp -f /usr/share/graphs1090/git/malarky.service /etc/systemd/system/collectd.service || exit
 sed -i -e 's?DataDir.*?DataDir "/run/collectd"?' /etc/collectd/collectd.conf
-sed -i -e '$d' /etc/default/graphs1090
-echo "DB=/run/collectd" >>/etc/default/graphs1090
+
+if ! grep -qs -e '^DB=' /etc/default/graphs1090; then
+    echo "DB=" >>/etc/default/graphs1090
+fi
+
+sed -i -e 's#^DB=.*#DB=/run/collectd#' /etc/default/graphs1090
+
+systemctl stop collectd
 systemctl daemon-reload
 systemctl restart collectd
 systemctl restart graphs1090
@@ -11,6 +18,8 @@ cat >/etc/cron.d/collectd_to_disk <<"EOF"
 42 23 * * * root /bin/systemctl restart collectd
 EOF
 
+rm -f /usr/share/graphs1090/noMalarky
+
 echo ---------
-echo the malarky has come to pass!
+echo write reducing measures enabled!
 echo ---------

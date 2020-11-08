@@ -35,7 +35,30 @@ or
 
 http://192.168.x.yy/perf
 
-### Reducing writes to the sd-card (option 1 of 2)
+### Reducing writes to the sd-card (enabled by default)
+
+To reduce writes to the sd-card, data is only written to the sd-card every 24h.
+A power outage will cause up to 24h of data loss which usually isn't a big deal.
+Reboots or shutdowns are not an issue and don't cause data loss.
+
+To disable this behaviour use this command:
+```
+sudo bash /usr/share/graphs1090/git/stopMalarky.sh
+```
+
+To re-enable the behavrious use this command:
+```
+sudo bash /usr/share/graphs1090/git/malarky.sh
+```
+
+Explanation on how the above works:
+The configuration of the systemd service is changed so it manages the graph data in /run (memory) and only writes it to disk every night.
+On reboot / shutdown it's written to disk and the data loaded to /run again when the system boots back up.
+Up to 24h of data is lost when there is a power loss.
+
+This has been working well and i have made it the default as many people are concerned about wearing out sd-cards.
+
+### Reducing writes to the sd-card (old, useful for other usecases, not really useful when the above is already enabled)
 
 The rrd databases get written to every minute, this adds up to around 100 Megabytes written per hour.
 While most modern SD-cards should handle this for 10 or more years easily, you can reduce the amount written if you want to.
@@ -61,20 +84,6 @@ vm.dirty_background_ratio = 30
 vm.dirty_expire_centisecs = 360000
 EOF
 ```
-
-### Reducing writes to the sd-card (option 2 of 2)
-
-If you don't mind losing up to 24h of graph data in case of a power loss, you can drastically reduce the writes to the sd-card by graps1090/collect by executing this script:
-
-```
-sudo bash /usr/share/graphs1090/git/malarky.sh
-```
-
-It changes the the configuration of the systemd service to manage the graph data in /run (memory) and only write it to disk every night.
-On reboot / shutdown it's written to disk and the data loaded to /run again when the system boots back up.
-Up to 24h of data is lost when there is a power loss.
-This is somewhat new, there might be some other possibilities graph data might be lost that i'm not aware of.
-So far it's working perfectly for me.
 
 
 ### Non-standard configuration:
