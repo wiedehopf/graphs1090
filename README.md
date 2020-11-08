@@ -58,7 +58,7 @@ Up to 24h of data is lost when there is a power loss.
 
 This has been working well and i have made it the default as many people are concerned about wearing out sd-cards.
 
-### Reducing writes to the sd-card (old, useful for other usecases, not really useful when the above is already enabled)
+### Reducing writes to the sd-card (in case you have the above disabled, works system wide)
 
 The rrd databases get written to every minute, this adds up to around 100 Megabytes written per hour.
 While most modern SD-cards should handle this for 10 or more years easily, you can reduce the amount written if you want to.
