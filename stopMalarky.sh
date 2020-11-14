@@ -1,5 +1,5 @@
 #!/bin/bash
-cp -f /usr/share/graphs1090/git/stopMalarky.service /etc/systemd/system/collectd.service || exit
+rm -f /etc/systemd/system/collectd.service
 sed -i -e 's?DataDir.*?DataDir "/var/lib/collectd/rrd/"?' /etc/collectd/collectd.conf
 
 if ! grep -qs -e '^DB=' /etc/default/graphs1090; then
