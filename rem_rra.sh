@@ -41,15 +41,16 @@ average=" \
 	dump1090_dbfs-signal_978.rrd \
 	"
 
+#	dump1090_dbfs-min_signal.rrd \
+#	dump1090_dbfs-min_signal_978.rrd \
+#	dump1090_range-minimum.rrd \
+#	dump1090_range-minimum_978.rrd \
+#	dump1090_dbfs-peak_signal_978.rrd \
+#	dump1090_dbfs-peak_signal.rrd \
+# removing average has issues when redoing the database format, don't use min / max only
 minimum=" \
-	dump1090_dbfs-min_signal.rrd \
-	dump1090_dbfs-min_signal_978.rrd \
-	dump1090_range-minimum.rrd \
-	dump1090_range-minimum_978.rrd \
 	"
 maximum=" \
-	dump1090_dbfs-peak_signal_978.rrd \
-	dump1090_dbfs-peak_signal.rrd \
 	"
 rem_min="
 	dump1090_aircraft-recent.rrd \

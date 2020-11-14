@@ -22,10 +22,11 @@ if [[ $1 == "nographs" ]]; then
 	exit 0
 fi
 
-if rrdtool info /var/lib/collectd/rrd/localhost/system_stats/memory-used.rrd | grep -qs 'MIN'; then
-	cp -T -r -n /var/lib/collectd/rrd/localhost /var/lib/collectd/rrd/rme_rra_backup
-	/usr/share/graphs1090/rem_rra.sh /var/lib/collectd/rrd/localhost/
-fi
+# disable this for the moment
+#if rrdtool info /var/lib/collectd/rrd/localhost/system_stats/memory-used.rrd | grep -qs 'MIN'; then
+	#cp -T -r -n /var/lib/collectd/rrd/localhost /var/lib/collectd/rrd/rme_rra_backup
+	#/usr/share/graphs1090/rem_rra.sh /var/lib/collectd/rrd/localhost/
+#fi
 
 for i in 24h 8h 2h 48h 7d 14d 30d 90d 180d 365d 730d 1095d
 do
