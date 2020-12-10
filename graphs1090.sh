@@ -20,14 +20,15 @@ sheight=324
 font_size=10.0
 graph_size=default
 
-GREEN=33D000
-DGREEN=336600
-BLUE=0011F8
+GREEN=32CD32
+DGREEN=228B22
+BLUE=0011EE
 ABLUE=0022DD
 DBLUE=0033AA
 CYAN=00A0F0
-RED=FF0000
+RED=E30022
 DRED=990000
+LRED=FFCCCB
 
 DB=/var/lib/collectd/rrd
 # settings in /etc/default/graphs1090 will overwrite the DB directory
@@ -238,7 +239,7 @@ tracks_graph() {
 		"CDEF:s_ema=s8,s4,+,s2,+,s1,+,9.3,/" \
 		"CDEF:m_ema=m8,m4,+,m2,+,m1,+,9.3,/" \
 		"AREA:m_ema#$GREEN:Tracks with more than one message\c" \
-		"AREA:s_ema#$RED:Tracks with single message\c:STACK" \
+		"AREA:s_ema#$LRED:Tracks with single message\c:STACK" \
 		--watermark "Drawn: $nowlit";
 	mv "$1.tmp" "$1"
 	}
