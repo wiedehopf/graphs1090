@@ -44,6 +44,8 @@ My install scripts for either of them provide a handy command line utility:
  - https://github.com/wiedehopf/adsb-scripts/wiki/Automatic-installation-for-dump1090-fa
 
 Otherwise you'll have to configure the location by editing /etc/default/dump1090-fa or /etc/default/readsb.
+For the adsbx image the location is configured in /boot/adsb-config.txt.
+For the piaware image you'll need to configure the location on the online FA stats page.
 
 ### Reducing writes to the sd-card (enabled by default)
 
