@@ -38,9 +38,10 @@ http://192.168.x.yy/perf
 ### Range graph isn't working
 
 You need to configure the location in your decoder (dump1090-fa / readsb).
+
 My install scripts for either of them provide a handy command line utility:
- https://github.com/wiedehopf/adsb-scripts/wiki/Automatic-installation-for-readsb
- https://github.com/wiedehopf/adsb-scripts/wiki/Automatic-installation-for-dump1090-fa
+ - https://github.com/wiedehopf/adsb-scripts/wiki/Automatic-installation-for-readsb
+ - https://github.com/wiedehopf/adsb-scripts/wiki/Automatic-installation-for-dump1090-fa
 
 Otherwise you'll have to configure the location by editing /etc/default/dump1090-fa or /etc/default/readsb.
 
