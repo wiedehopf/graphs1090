@@ -226,12 +226,16 @@ def read_1090(data):
                        values = [counts[i]])
 
     # Position counts
+    posCount = stats['total']['cpr']['global_ok'] + stats['total']['cpr']['local_ok']
+    if has_key(stats['total'],'position_count_total'):
+        posCount = stats['total']['position_count_total']
+
     V.dispatch(plugin_instance = instance_name,
                host=host,
                type='dump1090_messages',
                type_instance='positions',
                time=stats['total']['end'],
-               values = [stats['total']['cpr']['global_ok'] + stats['total']['cpr']['local_ok']])
+               values = [posCount])
 
     # Tracks
     V.dispatch(plugin_instance = instance_name,
