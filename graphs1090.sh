@@ -592,8 +592,8 @@ local_rate_graph() {
 		"DEF:messages2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MAX" \
 		"DEF:positions=$(check $2/dump1090_messages-positions.rrd):value:MAX" \
 		"CDEF:y2positions=positions,$position_scaling,/" \
-		"CDEF:y2gps=gps,10,*" \
-		"CDEF:y2mlat=mlat,10,*" \
+		"CDEF:y2gps=gps,$position_scaling,/" \
+		"CDEF:y2mlat=mlat,$position_scaling,/" \
 		"COMMENT:Messages per second\:\t" \
 		"LINE1:messages1#$BLUE:Local\:\g" \
 		"GPRINT:messages1:MAX: %.0lf\t" \
@@ -642,8 +642,8 @@ local_trailing_rate_graph() {
 		--vertical-label "Messages/Second" \
 		--lower-limit 0  \
 		$upper \
-		--units-exponent 0 \
 		--right-axis $position_scaling:0 \
+		--units-exponent 0 \
 		--pango-markup \
 		"TEXTALIGN:center" \
 		"DEF:messages1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE" \
