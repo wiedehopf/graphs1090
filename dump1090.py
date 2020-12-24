@@ -211,12 +211,15 @@ def read_1090(data):
     # Remote message counts
     if has_key(stats['total'],'remote'):
         counts = stats['total']['remote']['accepted']
+        remote_total = sum(counts)
+        if has_key(stats['total']['remote'],'basestation'):
+            remote_total += stats['total']['remote']['basestation']
         V.dispatch(plugin_instance = instance_name,
                    host=host,
                    type='dump1090_messages',
                    type_instance='remote_accepted',
                    time=stats['total']['end'],
-                   values = [sum(counts)])
+                   values = [remote_total])
         for i in range(len(counts)):
             V.dispatch(plugin_instance = instance_name,
                        host=host,

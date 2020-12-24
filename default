@@ -53,4 +53,8 @@ ul_range_uat=
 # leave blank for default
 lr_rate_per_aircraft= # default 10
 
+# set custom position / messages axis scaling ratio
+# leave blank for a default of 0.1
+position_scaling=
+
 DB=/var/lib/collectd/rrd

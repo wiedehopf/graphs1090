@@ -20,6 +20,8 @@ sheight=324
 font_size=10.0
 graph_size=default
 
+position_scaling=0.1
+
 GREEN=32CD32
 DGREEN=228B22
 BLUE=0011EE
@@ -583,13 +585,13 @@ local_rate_graph() {
 		-M \
 		$upper \
 		--units-exponent 0 \
-		--right-axis 0.1:0 \
+		--right-axis $position_scaling:0 \
 		"DEF:gps=$(check $2/dump1090_gps-recent.rrd):value:MAX" \
 		"DEF:mlat=$(check $2/dump1090_mlat-recent.rrd):value:MAX" \
 		"DEF:messages1=$(check $2/dump1090_messages-local_accepted.rrd):value:MAX" \
 		"DEF:messages2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MAX" \
 		"DEF:positions=$(check $2/dump1090_messages-positions.rrd):value:MAX" \
-		"CDEF:y2positions=positions,10,*" \
+		"CDEF:y2positions=positions,$position_scaling,/" \
 		"CDEF:y2gps=gps,10,*" \
 		"CDEF:y2mlat=mlat,10,*" \
 		"COMMENT:Messages per second\:\t" \
@@ -641,7 +643,7 @@ local_trailing_rate_graph() {
 		--lower-limit 0  \
 		$upper \
 		--units-exponent 0 \
-		--right-axis 0.1:0 \
+		--right-axis $position_scaling:0 \
 		--pango-markup \
 		"TEXTALIGN:center" \
 		"DEF:messages1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE" \
@@ -719,7 +721,7 @@ local_trailing_rate_graph() {
 		"CDEF:g3=g,UN,0,g,IF" \
 		"DEF:strong=$(check $2/dump1090_messages-strong_signals.rrd):value:AVERAGE" \
 		"DEF:positions=$(check $2/dump1090_messages-positions.rrd):value:AVERAGE" \
-		"CDEF:y2positions=positions,10,*" \
+		"CDEF:y2positions=positions,$position_scaling,/" \
 		"VDEF:strong_total=strong,TOTAL" \
 		"VDEF:messages_total=messages,TOTAL" \
 		"CDEF:hundred=messages,UN,100,100,IF" \
