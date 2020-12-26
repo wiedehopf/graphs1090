@@ -22,8 +22,6 @@ sheight=324
 font_size=10.0
 graph_size=default
 
-position_scaling=0.1
-
 GREEN=32CD32
 DGREEN=228B22
 BLUE=0011EE
@@ -44,6 +42,10 @@ wifi="$(ls ${DB}/localhost | grep interface -m2 | tail -n1)"
 
 disk="$(ls ${DB}/localhost | grep disk -m1)"
 
+
+if ! [ $position_scaling ]; then
+    position_scaling=0.1
+fi
 
 case $graph_size in
 	custom)

@@ -50,8 +50,8 @@ ul_adsb_cpu=
 ul_range_uat=
 
 # set custom left / right axis ratio
-# leave blank for default
-lr_rate_per_aircraft= # default 10
+# leave blank for default of 10
+lr_rate_per_aircraft=
 
 # set custom position / messages axis scaling ratio
 # leave blank for a default of 0.1
