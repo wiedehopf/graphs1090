@@ -4,6 +4,8 @@ DOCUMENTROOT=/run/graphs1090
 
 renice -n 19 -p $$
 
+trap 'echo ERROR on line number $LINENO' ERR
+
 mult() {
 	echo $1 $2 | awk '{printf "%.9f", $1 * $2}'
 }

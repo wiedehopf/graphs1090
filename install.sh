@@ -1,5 +1,7 @@
 #!/bin/bash
 
+trap 'echo ERROR on line number $LINENO' ERR
+
 repo="https://github.com/wiedehopf/graphs1090"
 ipath=/usr/share/graphs1090
 install=0
@@ -69,14 +71,8 @@ hash -r
 if [[ "$1" == "test" ]]
 then
 	true
-
-elif git clone -b master --depth 1 $repo $ipath/git 2>/dev/null || cd $ipath/git
-then
-	cd $ipath/git
-	git checkout -f master
-	git fetch
-	git reset --hard origin/master
-
+elif { cd "$ipath/git" &>/dev/null && git fetch origin master && git reset --hard FETCH_HEAD; } || { cd /tmp && rm -rf "$ipath/git" && git clone -b master --depth 1 "$repo" "$ipath/git" && cd $ipath/git; }; then
+    true
 elif wget --timeout=30 -q -O /tmp/master.zip $repo/archive/master.zip && unzip -q -o master.zip
 then
 	cd /tmp/graphs1090-master
@@ -176,7 +172,7 @@ systemctl enable graphs1090
 systemctl restart graphs1090
 
 #fix readonly remount logic in fr24feed update script
-sed -i -e 's?$(mount | grep " on / " | grep rw)?{ mount | grep " on / " | grep rw; }?' /usr/lib/fr24/fr24feed_updater.sh &>/dev/null
+sed -i -e 's?$(mount | grep " on / " | grep rw)?{ mount | grep " on / " | grep rw; }?' /usr/lib/fr24/fr24feed_updater.sh &>/dev/null || true
 
 echo --------------
 echo --------------
