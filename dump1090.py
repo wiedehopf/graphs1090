@@ -54,6 +54,15 @@ V=collectd.Values(host='', plugin='dump1090', time=0)
 
 def read_1090(data):
     instance_name,host,url = data
+
+    #NaN rrd
+    V.dispatch(plugin_instance = instance_name,
+               host=host,
+               type='dump1090_dbfs',
+               type_instance='NaN',
+               time=time.time(),
+               values = [1])
+
     try:
         with closing(urlopen(url + '/data/stats.json', None, 5.0)) as stats_file:
             stats = json.load(stats_file)
@@ -170,14 +179,6 @@ def read_1090(data):
                time=aircraft_data['now'],
                values = [minimum],
                interval = 60)
-
-    #NaN rrd
-    V.dispatch(plugin_instance = instance_name,
-               host=host,
-               type='dump1090_dbfs',
-               type_instance='NaN',
-               time=time.time(),
-               values = [1])
 
 
     # Local message counts
