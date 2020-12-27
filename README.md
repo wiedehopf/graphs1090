@@ -179,6 +179,25 @@ location /graphs1090 {
 }
 ```
 
+### Removing 978 graphs + data
+
+```
+sudo systemctl stop collectd
+sudo rm /var/lib/collectd/rrd/localhost/dump1090-localhost/*978*
+sudo systemctl restart collectd graphs1090
+```
+
+### Hiding / showing 1090 graphs
+
+(might only work after an update to the version this was introduced (December 2020))
+
+```
+# Hide:
+sudo sed -i -e 's/id="panel_1090" style="display:block"/id="panel_1090" style="display:none"/' /usr/share/graphs1090/html/index.html
+# Show:
+sudo sed -i -e 's/id="panel_1090" style="display:none"/id="panel_1090" style="display:block"/' /usr/share/graphs1090/html/index.html
+```
+
 
 ### no http config
 
