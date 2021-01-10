@@ -168,16 +168,13 @@ sudo bash /usr/share/graphs1090/uninstall.sh
 
 ### nginx configuration:
 
+Add the following line
 ```
-location /graphs1090/graphs/ {
-  alias /run/graphs1090/;
-}
+include /usr/share/graphs1090/nginx-graphs1090.conf;
+```
+in the server { } section of either `/etc/nginx/sites-enabled/default` or `/etc/nginx/conf.d/default.conf` depending on your system configuration.
 
-location /graphs1090 {
-  alias /usr/share/graphs1090/html/;
-  try_files $uri $uri/ =404;
-}
-```
+Don't forget to restart the nginx service.
 
 ### Removing 978 graphs + data
 
