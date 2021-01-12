@@ -51,7 +51,7 @@ then
 		apt-get update
 	fi
 	#apt-get upgrade -y
-	if apt-get install -y --no-install-suggests $packages
+	if apt-get install -y --no-install-suggests --no-install-recommends $packages
 	then
 		echo "------------------"
 		echo "Packages successfully installed!"
@@ -109,9 +109,21 @@ then
     ln -snf /etc/lighttpd/conf.d /etc/lighttpd/conf-enabled
     mkdir -p /etc/lighttpd/conf-available
 fi
+if [ -d /etc/lighttpd/conf-enabled/ ] && [ -d /etc/lighttpd/conf-available ] && command -v lighttpd &>/dev/null
+then
+    lighttpd=yes
+fi
 
-cp 88-graphs1090.conf /etc/lighttpd/conf-available
-ln -snf /etc/lighttpd/conf-available/88-graphs1090.conf /etc/lighttpd/conf-enabled/88-graphs1090.conf
+if [[ $lighttpd == yes ]]; then
+    cp 88-graphs1090.conf /etc/lighttpd/conf-available
+    ln -snf /etc/lighttpd/conf-available/88-graphs1090.conf /etc/lighttpd/conf-enabled/88-graphs1090.conf
+    if ! grep -qs -E -e '^[^#]*"mod_alias"' /etc/lighttpd/lighttpd.conf /etc/lighttp/conf-enabled/* /etc/lighttpd/external.conf; then
+        echo 'server.modules += ( "mod_alias" )' > /etc/lighttpd/conf-available/07-mod_alias.conf
+        ln -s -f /etc/lighttpd/conf-available/07-mod_alias.conf /etc/lighttpd/conf-enabled/07-mod_alias.conf
+    else
+        rm -f /etc/lighttpd/conf-enabled/07-mod_alias.conf
+    fi
+fi
 
 SYM=/usr/share/graphs1090/data-symlink
 mkdir -p $SYM
@@ -159,7 +171,9 @@ fi
 
 mkdir -p /var/lib/collectd/rrd/localhost/dump1090-localhost
 
-systemctl restart lighttpd
+if [[ $lighttpd == yes ]]; then
+    systemctl restart lighttpd
+fi
 
 systemctl enable collectd &>/dev/null
 if [[ -f /usr/share/graphs1090/noMalarky ]]; then
