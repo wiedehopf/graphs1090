@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -e
 trap 'echo ERROR on line number $LINENO' ERR
 
 repo="https://github.com/wiedehopf/graphs1090"
@@ -84,8 +85,8 @@ fi
 cp dump1090.db dump1090.py system_stats.py LICENSE $ipath
 cp *.sh $ipath
 chmod u+x $ipath/*.sh
-if ! grep -e 'system_stats' -qs /etc/collectd/collectd.conf; then
-	cp /etc/collectd/collectd.conf /etc/collectd/collectd.conf.graphs1090 2>/dev/null
+if ! grep -e 'system_stats' -qs /etc/collectd/collectd.conf &>/dev/null; then
+	cp /etc/collectd/collectd.conf /etc/collectd/collectd.conf.graphs1090 &>/dev/null || true
 	cp collectd.conf /etc/collectd/collectd.conf
 	echo "------------------"
 	echo "Overwriting /etc/collectd/collectd.conf, the old file has been moved to /etc/collectd/collectd.conf.graphs1090"
