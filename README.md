@@ -35,6 +35,12 @@ or
 
 http://192.168.x.yy/perf
 
+### Adjusting gain
+
+The fine tuning is up to taste but quite a few setups are using way too much gain (AGC is maximum gain it does not work as intended for ADS-B).
+Thus i'll link some guidelines on how to set your gain: https://github.com/wiedehopf/adsb-scripts/wiki/Optimizing-gain
+If you can't be bothered and would rather use something automatic: https://github.com/wiedehopf/adsb-scripts/wiki/Automatic-gain-optimization-for-readsb-and-dump1090-fa
+
 ### Range graph isn't working
 
 You need to configure the location in your decoder (dump1090-fa / readsb).
