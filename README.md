@@ -154,6 +154,13 @@ sudo systemctl restart graphs1090
 Paste the output into a pastebin: https://pastebin.com/
 Then include the link and be sure to also describe the issue and also mention your system (debian / ubuntu / raspbian and RPi vs x86).
 
+For errors like 404 or the pages not being available in the browser, do the same pastebin stuff for the output of these commands:
+```
+sudo systemctl restart lighttpd
+sudo journalctl --no-pager -u lighttpd
+ls /etc/lighttpd/conf-enabled
+```
+
 
 ### Known bugs:
 
