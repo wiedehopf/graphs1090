@@ -84,6 +84,7 @@ fi
 
 cp dump1090.db dump1090.py system_stats.py LICENSE $ipath
 cp *.sh $ipath
+cp malarky.service $ipath
 chmod u+x $ipath/*.sh
 if ! grep -e 'system_stats' -qs /etc/collectd/collectd.conf &>/dev/null; then
 	cp /etc/collectd/collectd.conf /etc/collectd/collectd.conf.graphs1090 &>/dev/null || true
@@ -180,7 +181,7 @@ systemctl enable collectd &>/dev/null
 if [[ -f /usr/share/graphs1090/noMalarky ]]; then
     systemctl restart collectd
 else
-    bash $ipath/git/malarky.sh
+    bash $ipath/malarky.sh
 fi
 
 systemctl enable graphs1090

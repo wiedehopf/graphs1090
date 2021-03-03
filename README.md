@@ -3,7 +3,7 @@
 
 # graphs1090
 ![Screenshot](https://raw.githubusercontent.com/wiedehopf/graphs1090/screenshots/messages_24h.png)
-Graphs for dump1090-fa (based on dump1090-tools by mutability)
+Graphs for readsb (wiedehopf fork) and dump1090-fa (based on dump1090-tools by mutability)
 
 Also works for other dump1090 variants supplying stats.json
 
@@ -226,6 +226,7 @@ sudo ln -s /run/dump1090-fa /usr/local/share/dump1090-data/data
 
 ```
 cd /var/lib/collectd/rrd
+sudo bash /usr/share/graphs1090/gunzip.sh
 sudo tar cf rrd.tar localhost
 cp rrd.tar /tmp
 ```

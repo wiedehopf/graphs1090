@@ -1,5 +1,6 @@
 #!/bin/bash
 systemctl stop collectd
+bash /usr/share/graphs1090/gunzip.sh
 
 for file in $(find $1 | grep '\.rrd' | cut -d. -f1)
 do

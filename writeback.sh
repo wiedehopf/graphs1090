@@ -6,6 +6,7 @@ TARGET=/var/lib/collectd/rrd/localhost
 BACKUP1=/var/lib/collectd/rrd/graphs1090-writeback-backup1
 BACKUP2=/var/lib/collectd/rrd/graphs1090-writeback-backup2
 
+find /run/collectd/localhost -name '*.rrd' -exec gzip -1 '{}' \+
 cp -afT /run/collectd/localhost "$GTMP"
 rm -rf "$BACKUP2"
 

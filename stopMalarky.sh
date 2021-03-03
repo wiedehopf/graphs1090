@@ -10,6 +10,9 @@ sed -i -e 's#^DB=.*#DB=/var/lib/collectd/rrd#' /etc/default/graphs1090
 
 systemctl stop collectd &>/dev/null
 systemctl daemon-reload
+
+find /var/lib/collectd/rrd/localhost -name '*.gz' -exec gunzip '{}' \+
+
 systemctl restart collectd
 systemctl restart graphs1090
 

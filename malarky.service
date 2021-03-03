@@ -8,12 +8,12 @@ Documentation=man:collectd.conf(5)
 Documentation=https://collectd.org
 
 [Service]
+SyslogIdentifier=collectd
 Type=notify
 NotifyAccess=main
 RuntimeDirectory=collectd
 EnvironmentFile=-/etc/default/collectd
-ExecStartPre=/bin/mkdir -p /var/lib/collectd/rrd/localhost
-ExecStartPre=/bin/cp -aT /var/lib/collectd/rrd/localhost /run/collectd/localhost
+ExecStartPre=/bin/bash /usr/share/graphs1090/readback.sh
 ExecStartPre=/usr/sbin/collectd -t
 ExecStart=/usr/sbin/collectd
 ExecStopPost=/bin/bash /usr/share/graphs1090/writeback.sh
