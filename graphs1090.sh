@@ -103,6 +103,7 @@ aircraft_graph() {
 	if [ $ul_aircraft ]; then upper="--rigid --upper-limit $ul_aircraft"; else upper=""; fi
 	rrdtool graph \
 		"$1.tmp" \
+		--end "$END_TIME" \
 		--start end-$4 \
 		$small \
 		--title "$3 Aircraft Seen / Tracked" \
@@ -147,6 +148,7 @@ aircraft_message_rate_graph() {
 	$pre
 	rrdtool graph \
 		"$1.tmp" \
+		--end "$END_TIME" \
 		--start end-$4 \
 		$small \
 		--title "$3 Message Rate / Aircraft" \
@@ -160,8 +162,7 @@ aircraft_message_rate_graph() {
 		"DEF:messages1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE" \
 		"DEF:messages2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE" \
 		$messages \
-		"CDEF:provisional=messages,aircrafts,/" \
-		"CDEF:rate=aircrafts,0,GT,provisional,0,IF" \
+		"CDEF:rate=messages,aircrafts,/" \
 		"CDEF:aircrafts10=aircrafts,$ratio,/" \
 		"VDEF:avgrate=rate,AVERAGE" \
 		"VDEF:maxrate=rate,MAXIMUM" \
@@ -185,6 +186,7 @@ cpu_graph_dump1090() {
 	$pre
 	rrdtool graph \
 		"$1.tmp" \
+		--end "$END_TIME" \
 		--start end-$4 \
 		$small \
 		--title "$3 CPU Utilization" \
@@ -218,6 +220,7 @@ tracks_graph() {
 	$pre
 	rrdtool graph \
 		"$1.tmp" \
+		--end "$END_TIME" \
 		--start end-$4 \
 		$small \
 		--title "$3 Tracks Seen (8 minute exp. moving avg.)" \
@@ -256,6 +259,7 @@ cpu_graph() {
 	$pre
 	rrdtool graph \
 		"$1.tmp" \
+		--end "$END_TIME" \
 		--start end-$4 \
 		$big \
 		--title "Overall CPU Utilization" \
@@ -301,6 +305,7 @@ df_root_graph() {
 	$pre
 	rrdtool graph \
 		"$1.tmp" \
+		--end "$END_TIME" \
 		--start end-$4 \
 		$small \
 		--title "Disk Usage (/)" \
@@ -326,6 +331,7 @@ disk_io_iops_graph() {
 	$pre
 	rrdtool graph \
 		"$1.tmp" \
+		--end "$END_TIME" \
 		--start end-$4 \
 		$small \
 		--title "Disk I/O - IOPS" \
@@ -355,6 +361,7 @@ disk_io_octets_graph() {
 	$pre
 	rrdtool graph \
 		"$1.tmp" \
+		--end "$END_TIME" \
 		--start end-$4 \
 		$small \
 		--title "Disk I/O - Bandwidth" \
@@ -391,6 +398,7 @@ eth0_graph() {
 	$pre
 	rrdtool graph \
 		"$1.tmp" \
+		--end "$END_TIME" \
 		--start end-$4 \
 		$small \
 		--title "Bandwidth Usage (eth0)" \
@@ -418,6 +426,7 @@ memory_graph() {
 	$pre
 	rrdtool graph \
 		"$1.tmp" \
+		--end "$END_TIME" \
 		--start end-$4 \
 		$small \
 		--lower-limit 0 \
@@ -462,6 +471,7 @@ network_graph() {
 	$pre
 	rrdtool graph \
 		"$1.tmp" \
+		--end "$END_TIME" \
 		--start end-$4 \
 		$small \
 		--title "Bandwidth Usage (wireless + ethernet)" \
@@ -496,6 +506,7 @@ temp_graph_imperial() {
 	$pre
 	rrdtool graph \
 		"$1.tmp" \
+		--end "$END_TIME" \
 		--start end-$4 \
 		$small \
 		--title "Maximum Core Temperature" \
@@ -523,6 +534,7 @@ temp_graph_metric() {
 	$pre
 	rrdtool graph \
 		"$1.tmp" \
+		--end "$END_TIME" \
 		--start end-$4 \
 		$small \
 		--title "Maximum Core Temperature" \
@@ -550,6 +562,7 @@ wlan0_graph() {
 	$pre
 	rrdtool graph \
 		"$1.tmp" \
+		--end "$END_TIME" \
 		--start end-$4 \
 		$small \
 		--title "Bandwidth Usage (wlan0)" \
@@ -580,6 +593,7 @@ local_rate_graph() {
 	$pre
 	rrdtool graph \
 		"$1.tmp" \
+		--end "$END_TIME" \
 		--start end-$4 \
 		$small \
 		--title "$3 Maxima" \
@@ -639,6 +653,7 @@ local_trailing_rate_graph() {
 	$pre
 	rrdtool graph \
 		"$1.tmp" \
+		--end "$END_TIME" \
 		--start end-$4 \
 		$big \
 		--slope-mode \
@@ -826,6 +841,7 @@ range_graph(){
 	$pre
 	rrdtool graph \
 		"$1.tmp" \
+		--end "$END_TIME" \
 		--start end-$4 \
 		$small \
 		--title "$3 Range" \
@@ -889,6 +905,7 @@ signal_graph() {
 	$pre
 	rrdtool graph \
 		"$1.tmp" \
+		--end "$END_TIME" \
 		--start end-$4 \
 		$small \
 		--title "$3 Signal Level" \
@@ -923,6 +940,7 @@ signal_graph() {
 	$pre
 	rrdtool graph \
 		"$1.tmp" \
+		--end "$END_TIME" \
 		--start end-$4 \
 		$small \
 		--title "UAT Aircraft Seen / Tracked" \
@@ -958,6 +976,7 @@ signal_graph() {
 	$pre
 	rrdtool graph \
 		"$1.tmp" \
+		--end "$END_TIME" \
 		--start end-$4 \
 		$small \
 		--title "UAT Message Rate" \
@@ -1020,7 +1039,8 @@ dump1090_receiver_graphs() {
 
 period="$1"
 step="$3"
-nowlit=`date '+%Y-%m-%d %H:%M %Z'`;
+END_TIME=$(date -d -1min '+%H:%M')
+nowlit=$(date -d "$END_TIME" '+%Y-%m-%d %H:%M %Z')
 
 # Changing the following two variables means you need to change the names in html/graph.js as well so that the graphs are correctly displayed
 dump1090_instance="localhost"
