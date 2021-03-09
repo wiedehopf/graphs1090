@@ -265,10 +265,11 @@ def read_1090(data):
                    values = [stats['total']['cpu'][k]])
 
     #airspy cpu usage
-    p = subprocess.Popen("PID=$(systemctl show -p MainPID airspy_adsb | cut -f 2 -d=); cat /proc/$PID/task/$(ls /proc/$PID/task | awk NR==3)/stat | cut -d ' ' -f 14,15 && getconf CLK_TCK",
-                        stdout=subprocess.PIPE,
-                        stderr=subprocess.PIPE,
-                        shell=True)
+    cmdString = "PID=$(systemctl show -p MainPID airspy_adsb | cut -f 2 -d=); cat /proc/$PID/task/$(ls /proc/$PID/task | awk NR==3)/stat | cut -d ' ' -f 14,15 && getconf CLK_TCK"
+    if (sys.version_info > (3, 0)):
+        p = subprocess.Popen(cmdString, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True)
+    else:
+        p = subprocess.Popen(cmdString, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
     out, err = p.communicate()
 
