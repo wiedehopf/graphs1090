@@ -248,6 +248,7 @@ sudo mkdir -p /var/lib/collectd/rrd/
 cd /var/lib/collectd/rrd
 sudo cp /tmp/rrd.tar /var/lib/collectd/rrd/
 sudo systemctl stop collectd
+sudo bash /usr/share/graphs1090/gunzip.sh
 sudo tar xf rrd.tar
 sudo systemctl restart collectd graphs1090
 ```
