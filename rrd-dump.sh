@@ -1,6 +1,6 @@
 #!/bin/bash
 systemctl stop collectd
-bash /usr/share/graphs1090/gunzip.sh
+/usr/share/graphs1090/gunzip.sh /var/lib/collectd/rrd/localhost
 
 for file in $(find $1 | grep '\.rrd' | cut -d. -f1)
 do

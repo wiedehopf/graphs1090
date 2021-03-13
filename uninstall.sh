@@ -2,7 +2,8 @@
 
 ipath=/usr/share/graphs1090
 systemctl stop collectd
-bash /usr/share/graphs1090/gunzip.sh
+
+/usr/share/graphs1090/gunzip.sh /var/lib/collectd/rrd/localhost
 
 rm -f /etc/systemd/system/collectd.service
 mv /etc/collectd/collectd.conf.graphs1090 /etc/collectd/collectd.conf &>/dev/null
