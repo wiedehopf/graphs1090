@@ -296,3 +296,12 @@ Undoing the solution if the logs still show failure or when the issue has been f
 sudo sed -i -e 's#LD_PRELOAD=/usr/lib/python3.8.*##' /etc/default/collectd
 sudo systemctl restart collectd
 ```
+
+
+### Wipe the database (delete ALL DATA !!! be certain you want this)
+
+```
+sudo systemctl stop collectd
+sudo rm /var/lib/collectd/rrd/localhost -rf
+sudo systemctl restart collectd graphs1090
+```
