@@ -304,8 +304,8 @@ def read_1090(data):
     ranges = []
 
     for a in aircraft_data['aircraft']:
-        if a['seen'] < 30: total += 1
-        if has_key(a,'seen_pos') and a['seen_pos'] < 30:
+        if a['seen'] < 60: total += 1
+        if has_key(a,'seen_pos') and a['seen_pos'] < 60:
             with_pos += 1
             if rlat is not None:
                 distance = greatcircle(rlat, rlon, a['lat'], a['lon'])

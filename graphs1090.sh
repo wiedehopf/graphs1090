@@ -162,7 +162,8 @@ aircraft_message_rate_graph() {
 		"DEF:messages1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE" \
 		"DEF:messages2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE" \
 		$messages \
-		"CDEF:rate=messages,aircrafts,/" \
+		"CDEF:raw_rate=messages,aircrafts,/" \
+		"CDEF:rate=aircrafts,0,GT,raw_rate,UNKN,IF" \
 		"CDEF:aircrafts10=aircrafts,$ratio,/" \
 		"VDEF:avgrate=rate,AVERAGE" \
 		"VDEF:maxrate=rate,MAXIMUM" \
