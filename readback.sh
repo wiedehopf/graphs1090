@@ -2,6 +2,7 @@
 set -e
 DBFOLDER=/var/lib/collectd/rrd/localhost
 RUNFOLDER=/run/collectd/localhost
+echo "copying DB from disk to $RUNFOLDER"
 mkdir -p "$DBFOLDER"
 cp -aT "$DBFOLDER" "$RUNFOLDER"
 

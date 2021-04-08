@@ -84,7 +84,7 @@ fi
 
 cp dump1090.db dump1090.py system_stats.py LICENSE $ipath
 cp *.sh $ipath
-cp malarky.service $ipath
+cp malarky.conf $ipath
 chmod u+x $ipath/*.sh
 if ! grep -e 'system_stats' -qs /etc/collectd/collectd.conf &>/dev/null; then
 	cp /etc/collectd/collectd.conf /etc/collectd/collectd.conf.graphs1090 &>/dev/null || true

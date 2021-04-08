@@ -5,9 +5,12 @@ GTMP=/var/lib/collectd/rrd/graphs1090-writeback-tmp
 TARGET=/var/lib/collectd/rrd/localhost
 BACKUP1=/var/lib/collectd/rrd/graphs1090-writeback-backup1
 BACKUP2=/var/lib/collectd/rrd/graphs1090-writeback-backup2
+RUNFOLDER=/run/collectd/localhost
 
-find /run/collectd/localhost -name '*.rrd' -exec gzip -1 '{}' \+
-cp -afT /run/collectd/localhost "$GTMP"
+echo "writing DB from $RUNFOLDER to disk"
+
+find "$RUNFOLDER" -name '*.rrd' -exec gzip -1 '{}' \+
+cp -afT "$RUNFOLDER" "$GTMP"
 rm -rf "$BACKUP2"
 
 sync

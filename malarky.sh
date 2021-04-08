@@ -1,5 +1,11 @@
 #!/bin/bash
-cp -f /usr/share/graphs1090/malarky.service /etc/systemd/system/collectd.service || exit
+systemctl stop collectd &>/dev/null
+
+set -e
+mkdir -p /etc/systemd/system/collectd.service.d
+rm -f /etc/systemd/system/collectd.service
+cp -f /usr/share/graphs1090/malarky.conf /etc/systemd/system/collectd.service.d/malarky.conf
+set +e
 sed -i -e 's?DataDir.*?DataDir "/run/collectd"?' /etc/collectd/collectd.conf
 
 if ! grep -qs -e '^DB=' /etc/default/graphs1090; then
@@ -8,7 +14,6 @@ fi
 
 sed -i -e 's#^DB=.*#DB=/run/collectd#' /etc/default/graphs1090
 
-systemctl stop collectd &>/dev/null
 systemctl daemon-reload
 systemctl restart collectd
 systemctl restart graphs1090

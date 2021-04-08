@@ -1,5 +1,8 @@
 #!/bin/bash
+systemctl stop collectd &>/dev/null
+
 rm -f /etc/systemd/system/collectd.service
+rm -f /etc/systemd/system/collectd.service.d/malarky.conf
 sed -i -e 's?DataDir.*?DataDir "/var/lib/collectd/rrd/"?' /etc/collectd/collectd.conf
 
 if ! grep -qs -e '^DB=' /etc/default/graphs1090; then
@@ -8,7 +11,6 @@ fi
 
 sed -i -e 's#^DB=.*#DB=/var/lib/collectd/rrd#' /etc/default/graphs1090
 
-systemctl stop collectd &>/dev/null
 systemctl daemon-reload
 
 /usr/share/graphs1090/gunzip.sh /var/lib/collectd/rrd/localhost

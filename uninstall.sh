@@ -5,6 +5,7 @@ systemctl stop collectd
 
 /usr/share/graphs1090/gunzip.sh /var/lib/collectd/rrd/localhost
 
+rm -f /etc/systemd/system/collectd.service.d/malarky.conf
 rm -f /etc/systemd/system/collectd.service
 mv /etc/collectd/collectd.conf.graphs1090 /etc/collectd/collectd.conf &>/dev/null
 rm -f /etc/cron.d/cron-graphs1090
