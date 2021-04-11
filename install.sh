@@ -95,6 +95,20 @@ if ! grep -e 'system_stats' -qs /etc/collectd/collectd.conf &>/dev/null; then
 fi
 sed -i -e 's/XFF.*/XFF 0.8/' /etc/collectd/collectd.conf
 sed -i -e 's/skyview978/skyaware978/' /etc/collectd/collectd.conf
+
+# unlisted interfaces
+for path in /sys/class/net/*
+do
+    iface=$(basename $path)
+    # exclude loopback, docker, virtual bridges
+    case $iface in lo|docker*|vbr*) continue;; esac
+    # no action on existing interfaces
+    fgrep -q 'Interface "'$iface'"' /etc/collectd/collectd.conf && continue
+    sed -ie '/<Plugin "interface">/{a\
+	Interface "'$iface'"
+      }' /etc/collectd/collectd.conf
+done
+
 rm -f /etc/cron.d/cron-graphs1090
 cp -r html $ipath
 cp -n default /etc/default/graphs1090
