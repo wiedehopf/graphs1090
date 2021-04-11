@@ -100,13 +100,16 @@ sed -i -e 's/skyview978/skyaware978/' /etc/collectd/collectd.conf
 for path in /sys/class/net/*
 do
     iface=$(basename $path)
-    # exclude loopback, docker, virtual bridges
-    case $iface in lo|docker*|vbr*) continue;; esac
     # no action on existing interfaces
     fgrep -q 'Interface "'$iface'"' /etc/collectd/collectd.conf && continue
-    sed -ie '/<Plugin "interface">/{a\
-	Interface "'$iface'"
-      }' /etc/collectd/collectd.conf
+    # only add interface starting with et en and wl
+    case $iface in
+        et*|en*|wl*)
+sed -ie '/<Plugin "interface">/{a\
+    Interface "'$iface'"
+}' /etc/collectd/collectd.conf
+        ;;
+    esac
 done
 
 rm -f /etc/cron.d/cron-graphs1090
