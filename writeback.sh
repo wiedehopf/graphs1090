@@ -9,7 +9,7 @@ RUNFOLDER=/run/collectd/localhost
 
 echo "writing DB from $RUNFOLDER to disk"
 
-find "$RUNFOLDER" -name '*.rrd' -exec gzip -1 '{}' \+
+find "$RUNFOLDER" -name '*.rrd' -exec gzip -f -1 '{}' '+'
 cp -afT "$RUNFOLDER" "$GTMP"
 rm -rf "$BACKUP2"
 
