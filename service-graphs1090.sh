@@ -1,10 +1,10 @@
 #!/bin/bash
 
 echo "Generating all graphs"
-/usr/share/graphs1090/boot.sh 0.4 &>/dev/null
+/usr/share/graphs1090/boot.sh 0.4
 
 graphs() {
-	echo "Generating $1 graphs"
+	#echo "Generating $1 graphs"
 	/usr/share/graphs1090/graphs1090.sh $1 0.7 &>/dev/null
 }
 counter=0

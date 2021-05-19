@@ -30,7 +30,12 @@ fi
 	#/usr/share/graphs1090/rem_rra.sh /var/lib/collectd/rrd/localhost/
 #fi
 
+while ! [[ -d $DB ]] && sleep 5; do
+    echo Sleeping a bit, waiting for database directory / collectd to start.
+    true
+done
+
 for i in 24h 8h 2h 48h 7d 14d 30d 90d 180d 365d 730d 1095d
 do
-	/usr/share/graphs1090/graphs1090.sh $i $1
+	/usr/share/graphs1090/graphs1090.sh $i $1 &>/dev/null
 done

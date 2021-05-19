@@ -1,12 +1,11 @@
 
 [Unit]
 Description=graphs1090 graph generation
+After=collectd.service
 
 [Service]
 ExecStart=/usr/share/graphs1090/service-graphs1090.sh
 SyslogIdentifier=graphs1090
-StandardOutput=null
-StandardError=null
 RuntimeDirectory=graphs1090
 RuntimeDirectoryMode=0755
 Type=simple
