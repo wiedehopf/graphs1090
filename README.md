@@ -59,6 +59,20 @@ To reduce writes to the sd-card, data is only written to the sd-card every 24h.
 A power outage will cause up to 24h of data loss which usually isn't a big deal.
 Reboots or shutdowns are not an issue and don't cause data loss.
 
+If you want to change how often the data is written to disk, edit `/etc/cron.d/collectd_to_disk` and replace the content with one of the following options:
+(updating / running the graphs1090 install script will overwrite this to the default)
+```
+
+# every day at 23:42
+42 23 * * * root /bin/systemctl restart collectd
+
+# every Sunday
+42 23 * * 0 root /bin/systemctl restart collectd
+
+# every 6 hours
+42 */6 * * * root /bin/systemctl restart collectd
+```
+
 To disable this behaviour use this command:
 ```
 sudo bash /usr/share/graphs1090/git/stopMalarky.sh
