@@ -1,4 +1,8 @@
 #!/bin/bash
+TARGET="$1"
+if [[ -z $TARGET ]]; then
+    TARGET="/var/lib/collectd/rrd/localhost"
+fi
 while IFS= read -r -d '' gz; do
     rrd="${gz::-3}"
     if [[ -f "$rrd" ]] && [[ "$rrd" -ot "$gz" ]]; then

@@ -240,7 +240,7 @@ sudo ln -s /run/dump1090-fa /usr/local/share/dump1090-data/data
 
 ```
 cd /var/lib/collectd/rrd
-sudo bash /usr/share/graphs1090/gunzip.sh
+sudo /usr/share/graphs1090/gunzip.sh /var/lib/collectd/rrd/localhost
 sudo tar cf rrd.tar localhost
 cp rrd.tar /tmp
 ```
@@ -262,7 +262,7 @@ sudo mkdir -p /var/lib/collectd/rrd/
 cd /var/lib/collectd/rrd
 sudo cp /tmp/rrd.tar /var/lib/collectd/rrd/
 sudo systemctl stop collectd
-sudo bash /usr/share/graphs1090/gunzip.sh
+sudo /usr/share/graphs1090/gunzip.sh /var/lib/collectd/rrd/localhost
 sudo tar xf rrd.tar
 sudo systemctl restart collectd graphs1090
 ```
