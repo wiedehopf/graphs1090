@@ -12,6 +12,9 @@ Also works for other dump1090 variants supplying stats.json
 sudo bash -c "$(curl -L -o - https://github.com/wiedehopf/graphs1090/raw/master/install.sh)"
 ```
 
+Note on data loss: When removing or losing power you will lose graph data generated after 23:42 of the previous day.
+To avoid that issue `sudo shutdown now` before unplugging the pi. See the section on reducing writes for more detail.
+
 ## Configuration (optional):
 Edit the configuration file to change graph layout options, for example size:
 ```
@@ -56,7 +59,8 @@ For the piaware image you'll need to configure the location on the online FA sta
 ### Reducing writes to the sd-card (enabled by default)
 
 To reduce writes to the sd-card, data is only written to the sd-card every 24h.
-A power outage will cause up to 24h of data loss which usually isn't a big deal.
+Note on data loss: When removing or losing power you will lose graph data generated after 23:42 of the previous day.
+To avoid that issue `sudo shutdown now` before unplugging the pi. See the section on reducing writes for more detail.
 Reboots or shutdowns are not an issue and don't cause data loss.
 
 If you want to change how often the data is written to disk, edit `/etc/cron.d/collectd_to_disk` and replace the content with one of the following options:
