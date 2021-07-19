@@ -244,9 +244,11 @@ sudo ln -s /run/dump1090-fa /usr/local/share/dump1090-data/data
 
 ```
 cd /var/lib/collectd/rrd
+sudo systemctl stop collectd
 sudo /usr/share/graphs1090/gunzip.sh /var/lib/collectd/rrd/localhost
 sudo tar cf rrd.tar localhost
 cp rrd.tar /tmp
+sudo systemctl restart collectd
 ```
 Backup this file:
 ```
