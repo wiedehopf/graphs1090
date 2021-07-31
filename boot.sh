@@ -2,6 +2,13 @@
 
 source /etc/default/graphs1090
 
+# fontconfig writes stuff to that directory for no good reason
+# graphs1090 is mostly used on RPis, avoiding frequent disk writes is preferred
+# if this fails, no big deal either.
+if ! mount | grep -qs -e /var/cache/fontconfig &>/dev/null; then
+    mount -o rw,nosuid,nodev,relatime,size=32000k,mode=755 -t tmpfs tmpfs /var/cache/fontconfig &>/dev/null || true
+fi
+
 if [ -f /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_messages-messages_978.rrd ] \
     || [ -f /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_messages-messages_978.rrd.gz ] \
     || [ -f /run/collectd/localhost/dump1090-localhost/dump1090_messages-messages_978.rrd ]
