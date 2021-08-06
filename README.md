@@ -207,10 +207,11 @@ in the server { } section of either `/etc/nginx/sites-enabled/default` or `/etc/
 
 Don't forget to restart the nginx service.
 
-### Removing 978 graphs + data
+### Removing UAT / 978 graphs + data
 
 ```
 sudo systemctl stop collectd
+sudo /usr/share/graphs1090/gunzip.sh /var/lib/collectd/rrd/localhost
 sudo rm /var/lib/collectd/rrd/localhost/dump1090-localhost/*978*
 sudo systemctl restart collectd graphs1090
 ```
