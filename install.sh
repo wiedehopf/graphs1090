@@ -68,11 +68,24 @@ fi
 # make sure commands are available if they were just installed
 hash -r
 
+function getGIT() {
+    # getGIT $REPO $BRANCH $TARGET-DIR
+    if [[ -z "$1" ]] || [[ -z "$2" ]] || [[ -z "$3" ]]; then
+        echo "getGIT wrong usage, check your script or tell the author!" 1>&2
+        return 1
+    fi
+    if ! cd "$3" &>/dev/null || ! git fetch --depth 2 origin "$2" || ! git reset --hard FETCH_HEAD; then
+        if ! rm -rf "$3" || ! git clone --depth 2 --single-branch --branch "$2" "$1" "$3"; then
+            return 1
+        fi
+    fi
+    return 0
+}
 
 if [[ "$1" == "test" ]]
 then
 	true
-elif { cd "$ipath/git" &>/dev/null && git fetch origin master && git reset --hard FETCH_HEAD; } || { cd /tmp && rm -rf "$ipath/git" && git clone -b master --depth 1 "$repo" "$ipath/git" && cd $ipath/git; }; then
+elif getGIT "$repo" "master" "$ipath/git"; then
     true
 elif wget --timeout=30 -q -O /tmp/master.zip $repo/archive/master.zip && unzip -q -o master.zip
 then
@@ -81,6 +94,9 @@ else
 	echo "Unable to download files, exiting! (Maybe try again?)"
 	exit 1
 fi
+
+echo "------------------"
+echo "Install in progress, this shouldn't take longer than a minute or two .........."
 
 cp dump1090.db dump1090.py system_stats.py LICENSE $ipath
 cp *.sh $ipath
