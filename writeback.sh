@@ -1,22 +1,20 @@
 #!/bin/bash
 set -e
 
-GTMP=/var/lib/collectd/rrd/graphs1090-writeback-tmp
-TARGET=/var/lib/collectd/rrd/localhost
-BACKUP1=/var/lib/collectd/rrd/graphs1090-writeback-backup1
-BACKUP2=/var/lib/collectd/rrd/graphs1090-writeback-backup2
-RUNFOLDER=/run/collectd/localhost
+TARGET=/var/lib/collectd/rrd/
+RUNFOLDER=/run/collectd/
 
 echo "writing DB from $RUNFOLDER to disk"
 
-find "$RUNFOLDER" -name '*.rrd' -exec gzip -f -1 '{}' '+'
-cp -afT "$RUNFOLDER" "$GTMP"
-rm -rf "$BACKUP2"
+tar --directory "$RUNFOLDER" -cz -f "$RUNFOLDER/localhost.tar.gz" localhost
 
-sync
+mv -T "$TARGET/localhost.tar.gz" "$TARGET/auto-backup-$(date +%Y-week_%V).tar.gz" &>/dev/null || true
+find "$TARGET" -name 'auto-backup-*.tar.gz' -mtime +60 -delete
+cp -fT "$RUNFOLDER/localhost.tar.gz" "$TARGET/localhost.tar.gz"
 
-mv -T "$BACKUP1" "$BACKUP2" || true
-mv -T "$TARGET" "$BACKUP1"
-mv -T "$GTMP" "$TARGET"
+# remove legacy stuff
+rm -rf "$TARGET/graphs1090-writeback-backup1" "$TARGET/graphs1090-writeback-backup2"
+# remove localhost folder as it would be used with preference in the readback instead of localhost.tar.gz
+rm -rf "$TARGET/localhost"
 
 sync

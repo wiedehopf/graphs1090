@@ -14,9 +14,11 @@ if ! [ -d /var/lib/collectd/rrd/localhost ]; then
     exit 1
 fi
 
-cd /var/lib/collectd/rrd
 
 systemctl stop collectd
+/usr/share/graphs1090/gunzip.sh /var/lib/collectd/rrd/localhost
+
+cd /var/lib/collectd/rrd
 
 cp -T -r -n localhost $date
 rm -rf $new

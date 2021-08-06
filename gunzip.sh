@@ -1,8 +1,20 @@
 #!/bin/bash
+set -e
 TARGET="$1"
+# if no target is given assume default path
 if [[ -z $TARGET ]]; then
     TARGET="/var/lib/collectd/rrd/localhost"
 fi
+
+mkdir -p "$TARGET"
+
+# current method
+if [[ -f "$TARGET.tar.gz" ]]; then
+    tar --overwrite --directory "$TARGET/.." -x -f "$TARGET.tar.gz"
+    rm -rf "$TARGET.tar.gz"
+fi
+
+# legacy method, find shouldn't return anything.
 while IFS= read -r -d '' gz; do
     rrd="${gz::-3}"
     if [[ -f "$rrd" ]] && [[ "$rrd" -ot "$gz" ]]; then
@@ -10,4 +22,4 @@ while IFS= read -r -d '' gz; do
     else
         gzip -f -d "$gz"
     fi
-done < <(find $1 -type f -name '*.gz' -print0)
+done < <(find "$TARGET" -type f -name '*.gz' -print0)

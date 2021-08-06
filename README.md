@@ -246,13 +246,13 @@ sudo ln -s /run/dump1090-fa /usr/local/share/dump1090-data/data
 cd /var/lib/collectd/rrd
 sudo systemctl stop collectd
 sudo /usr/share/graphs1090/gunzip.sh /var/lib/collectd/rrd/localhost
-sudo tar cf rrd.tar localhost
-cp rrd.tar /tmp
+sudo tar -cz -f rrd.tar.gz localhost
+cp rrd.tar.gz /tmp
 sudo systemctl restart collectd
 ```
 Backup this file:
 ```
-/tmp/rrd.tar
+/tmp/rrd.tar.gz
 ```
 
 I'm not exactly sure how you would do that on Windows.
@@ -266,10 +266,10 @@ Then copy it back to its place like this:
 ```
 sudo mkdir -p /var/lib/collectd/rrd/
 cd /var/lib/collectd/rrd
-sudo cp /tmp/rrd.tar /var/lib/collectd/rrd/
+sudo cp /tmp/rrd.tar.gz /var/lib/collectd/rrd/
 sudo systemctl stop collectd
 sudo /usr/share/graphs1090/gunzip.sh /var/lib/collectd/rrd/localhost
-sudo tar xf rrd.tar
+sudo tar -x -f rrd.tar.gz
 sudo systemctl restart collectd graphs1090
 ```
 
@@ -287,14 +287,63 @@ sudo /usr/share/graphs1090/rrd-dump.sh /var/lib/collectd/rrd/localhost/
 
 This creates XML files from the database files in the same directory which can be later restored to database files on the target system.
 
-Complete the process described above (backup the folder, then copy it back to its place on the new card).
-Now run this command:
+Follow the procedure outlined in "Backup and Restore (same architecture)" (see above)
+
+After restoring as described, run this command:
 
 ```
 sudo /usr/share/graphs1090/rrd-restore.sh /var/lib/collectd/rrd/localhost/
 ```
 
 Again no guarantees, but this should work.
+
+### Automatic backups
+
+If you have the write saving measures enabled (the default), there will be automatic backups for the last 8 weeks.
+This feature was introduced around 2021-08-07, if you installed before that date you won't have those files.
+
+These commands should list them:
+```
+cd /var/lib/collectd/rrd
+ls
+```
+
+Restoring one of the backups will mean you lose all data collected after that backup.
+(alternatively use the data integration method explained in the next paragraph)
+
+If you want to restore one of them for whatever reason, do the following:
+```
+cd /var/lib/collectd/rrd
+sudo systemctl stop collectd
+sudo tar --overwrite -x -f auto-backup-2021-week_42.tar.gz
+sudo systemctl restart collectd graphs1090
+```
+
+You'll have to choose the week you want to restore, in the above example it's 42 (file auto-backup-2021-week_42.tar.gz).
+
+### Integrate data from two data sets (experimental, results not guaranteed and often a bit different than restoring a backup)
+
+It's best to do a manual backup of the dataset currently being used, instructions from backup and restore apply.
+Often it's just better to use the old data, there are some particular changes that can occur in the data.
+
+You'll need old data, it's best to put them in /tmp/localhost.
+For the automatic backups you can do that like this:
+```
+cp /var/lib/collectd/rrd/auto-backup-2021-week_42.tar.gz /tmp
+cd /tmp
+sudo tar --overwrite -x -f auto-backup-2021-week_42.tar.gz
+```
+Once you have the data in /tmp/localhost, proceed as follows:
+
+```
+sudo systemctl stop collectd
+sudo /usr/share/graphs1090/gunzip.sh /var/lib/collectd/rrd/localhost
+sudo /usr/share/graphs1090/rrd-integrate-old.sh /tmp/localhost
+sudo systemctl restart collectd graphs1090
+```
+
+If it all worked, the two datasets should be integrated now.
+
 
 ### Issues with some collectd versions
 
