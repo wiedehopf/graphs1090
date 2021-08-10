@@ -85,7 +85,7 @@ function getGIT() {
 if [[ "$1" == "test" ]]
 then
 	true
-elif getGIT "$repo" "master" "$ipath/git"; then
+elif getGIT "$repo" "master" "$ipath/git" && "$ipath/git"; then
     true
 elif wget --timeout=30 -q -O /tmp/master.zip $repo/archive/master.zip && unzip -q -o master.zip
 then
