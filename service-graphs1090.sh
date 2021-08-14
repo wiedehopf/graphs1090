@@ -5,7 +5,7 @@ echo "Generating all graphs"
 
 graphs() {
 	#echo "Generating $1 graphs"
-	/usr/share/graphs1090/graphs1090.sh $1 0.7 &>/dev/null
+	/usr/share/graphs1090/graphs1090.sh $1 0.5 &>/dev/null
 }
 counter=0
 hour_done=0
@@ -17,37 +17,23 @@ do
         sleep 0.9 &
         continue
     fi
-    sleep 59.99 & # wait in the while condition
+    sleep 59.9 & # wait in the while condition
 
     m=$(( 10#$(date -u +%s) / 60))
 
-	if [[ $((m%5)) == 1 ]]; then
-		graphs 8h
-	elif [[ $((m%5)) == 2 ]]; then
-		graphs 24h
-	elif [[ $((m%5)) == 3 ]]; then
-		graphs 8h
-	elif [[ $((m%5)) == 4 ]]; then
-		graphs 2h
-	elif [[ $((m%10)) == 5 ]]; then
-		graphs 48h
-	elif [[ $((m%80)) == 30 ]] || [[ $((m%80)) == 70 ]]; then
-		graphs 7d
-	elif [[ $((m%80)) == 20 ]]; then
-		graphs 14d
-	elif [[ $((m%80)) == 40 ]]; then
-		graphs 30d
-	elif [[ $((m%80)) == 50 ]]; then
-		graphs 90d
-	elif [[ $((m%80)) == 60 ]]; then
-		graphs 180d
-    elif [[ $((m%800)) == 10 ]]; then
-        graphs 365d
-    elif [[ $((m%800)) == 90 ]]; then
-        graphs 730d
-    elif [[ $((m%800)) == 170 ]]; then
-        graphs 1095d
-	fi
+    if   (( m % 2 == 1 )); then          graphs 2h
+    elif (( m % 4 == 2 )); then          graphs 8h
+    elif (( m % 8 == 4 )); then          graphs 24h
+    elif (( m % 16 == 8 )); then         graphs 48h
+    elif (( m % 32 == 16 )); then        graphs 7d
+    elif (( m % 64 == 32 )); then        graphs 14d
+    elif (( m % 128 == 64 )); then       graphs 30d
+    elif (( m % 256 == 128 )); then      graphs 90d
+    elif (( m % 512 == 256 )); then      graphs 180d
+    elif (( m % 1024 == 512 )); then     graphs 365d
+    elif (( m % 2048 == 1024 )); then    graphs 730d
+    else                                 graphs 1095d
+    fi
 
     if [[ $(date +%H:%M) == 00:07 ]]; then
         echo running scatter.sh
