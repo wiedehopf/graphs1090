@@ -27,18 +27,20 @@ then
 	if ! dpkg -s libpython2.7 2>/dev/null | grep 'Status.*installed' &>/dev/null
 	then
 		apt-get update
-		apt-get install -y 'libpython2.7'
+		apt-get install -no-install-suggests --no-install-recommends -y 'libpython2.7'
 		update_done=yes
 	fi
 else
 	if ! dpkg -s libpython2.7 2>/dev/null | grep 'Status.*installed' &>/dev/null \
 		|| ! dpkg -s libpython3.7 2>/dev/null | grep 'Status.*installed' &>/dev/null \
-		|| ! dpkg -s libpython3.8 2>/dev/null | grep 'Status.*installed' &>/dev/null
+		|| ! dpkg -s libpython3.8 2>/dev/null | grep 'Status.*installed' &>/dev/null \
+		|| ! dpkg -s libpython3.9 2>/dev/null | grep 'Status.*installed' &>/dev/null
 	then
 		apt-get update
-		apt-get install -y 'libpython2.7'
-		apt-get install -y 'libpython3.7'
-		apt-get install -y 'libpython3.8'
+		apt-get install -no-install-suggests --no-install-recommends -y 'libpython2.7'
+		apt-get install -no-install-suggests --no-install-recommends -y 'libpython3.9' || \
+		apt-get install -no-install-suggests --no-install-recommends -y 'libpython3.8' || \
+		apt-get install -no-install-suggests --no-install-recommends -y 'libpython3.7'
         update_done=yes
 	fi
 fi
