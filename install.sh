@@ -22,40 +22,29 @@ do
 	fi
 done
 
-if grep -E 'stretch|jessie|buster' /etc/os-release -qs
-then
-	if ! dpkg -s libpython2.7 2>/dev/null | grep 'Status.*installed' &>/dev/null
-	then
-		apt-get update
-		apt-get install -no-install-suggests --no-install-recommends -y 'libpython2.7'
-		update_done=yes
-	fi
-else
-	if ! dpkg -s libpython2.7 2>/dev/null | grep 'Status.*installed' &>/dev/null \
-		|| ! dpkg -s libpython3.7 2>/dev/null | grep 'Status.*installed' &>/dev/null \
-		|| ! dpkg -s libpython3.8 2>/dev/null | grep 'Status.*installed' &>/dev/null \
-		|| ! dpkg -s libpython3.9 2>/dev/null | grep 'Status.*installed' &>/dev/null
-	then
-		apt-get update
-		apt-get install -no-install-suggests --no-install-recommends -y 'libpython2.7'
-		apt-get install -no-install-suggests --no-install-recommends -y 'libpython3.9' || \
-		apt-get install -no-install-suggests --no-install-recommends -y 'libpython3.8' || \
-		apt-get install -no-install-suggests --no-install-recommends -y 'libpython3.7'
-        update_done=yes
-	fi
-fi
+function aptUpdate() {
+    if [[ $update_done != "yes" ]]; then
+        apt update && update_done=yes
+    fi
+}
 
 if [[ $install == "1" ]]
 then
 	echo "------------------"
 	echo "Installing required packages: $packages"
 	echo "------------------"
-	if [[ $update_done != "yes" ]]; then
-		apt-get update
-	fi
-	#apt-get upgrade -y
-	if apt-get install -y --no-install-suggests --no-install-recommends $packages
-	then
+    aptUpdate
+	apt-get install -y --no-install-suggests --no-install-recommends $packages
+    success=1
+    for CMD in $commands
+    do
+        if ! command -v "$CMD" &>/dev/null
+        then
+            success=0
+            touch $ipath/installed/$i
+        fi
+    done
+    if [[ $success == 1 ]]; then
 		echo "------------------"
 		echo "Packages successfully installed!"
 		echo "------------------"
@@ -64,6 +53,29 @@ then
 		echo "Failed to install required packages: $packages"
 		echo "Exiting ..."
 		exit 1
+	fi
+fi
+
+if grep -E 'stretch|jessie|buster' /etc/os-release -qs
+then
+	if ! dpkg -s libpython2.7 2>/dev/null | grep 'Status.*installed' &>/dev/null
+	then
+        aptUpdate
+		apt-get install --no-install-suggests --no-install-recommends -y 'libpython2.7'
+	fi
+else
+	if ! dpkg -s libpython2.7 2>/dev/null | grep 'Status.*installed' &>/dev/null \
+		|| ! dpkg -s libpython3.7 2>/dev/null | grep 'Status.*installed' &>/dev/null \
+		|| ! dpkg -s libpython3.8 2>/dev/null | grep 'Status.*installed' &>/dev/null \
+		|| ! dpkg -s libpython3.9 2>/dev/null | grep 'Status.*installed' &>/dev/null
+	then
+        aptUpdate
+
+		apt-get install --no-install-suggests --no-install-recommends -y 'libpython2.7'
+
+		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.9' || \
+		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.8' || \
+		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.7'
 	fi
 fi
 
