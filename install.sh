@@ -56,7 +56,7 @@ then
 	fi
 fi
 
-if grep -E 'stretch|jessie|buster' /etc/os-release -qs
+if grep -E 'stretch|jessie|buster|bullseye' /etc/os-release -qs
 then
 	if ! dpkg -s libpython2.7 2>/dev/null | grep 'Status.*installed' &>/dev/null
 	then
@@ -64,14 +64,11 @@ then
 		apt-get install --no-install-suggests --no-install-recommends -y 'libpython2.7'
 	fi
 else
-	if ! dpkg -s libpython2.7 2>/dev/null | grep 'Status.*installed' &>/dev/null \
-		|| ! dpkg -s libpython3.7 2>/dev/null | grep 'Status.*installed' &>/dev/null \
+		if ! dpkg -s libpython3.7 2>/dev/null | grep 'Status.*installed' &>/dev/null \
 		|| ! dpkg -s libpython3.8 2>/dev/null | grep 'Status.*installed' &>/dev/null \
 		|| ! dpkg -s libpython3.9 2>/dev/null | grep 'Status.*installed' &>/dev/null
 	then
         aptUpdate
-
-		apt-get install --no-install-suggests --no-install-recommends -y 'libpython2.7'
 
 		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.9' || \
 		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.8' || \
