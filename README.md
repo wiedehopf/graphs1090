@@ -372,6 +372,7 @@ sudo systemctl restart collectd
 
 ```
 sudo systemctl stop collectd
+sudo /usr/share/graphs1090/gunzip.sh /var/lib/collectd/rrd/localhost
 sudo rm /var/lib/collectd/rrd/localhost -rf
 sudo systemctl restart collectd graphs1090
 ```
