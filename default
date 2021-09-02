@@ -50,6 +50,8 @@ ul_maxima=
 ul_rate_per_aircraft=
 ul_adsb_cpu=
 ul_range_uat=
+# set custom lower limit for signal graph
+ll_signal=
 
 # set custom left / right axis ratio
 # leave blank for default of 10

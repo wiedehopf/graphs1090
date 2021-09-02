@@ -904,6 +904,7 @@ signal_graph() {
         fi
 	fi
 	$pre
+    if [ $ll_signal ]; then lower="$ll_signal"; else lower="-45"; fi
 	rrdtool graph \
 		"$1.tmp" \
 		--end "$END_TIME" \
@@ -916,7 +917,7 @@ signal_graph() {
 		--left-axis-format "%.0lf" \
 		--right-axis-format "%.0lf" \
 		--upper-limit 1    \
-		--lower-limit -45 \
+		--lower-limit "$lower" \
 		--rigid \
 		--units-exponent 0 \
 		${defines[*]} \
