@@ -231,7 +231,7 @@ def read_1090(data):
 
     # Position counts
     posCount = stats['total']['cpr']['global_ok'] + stats['total']['cpr']['local_ok']
-    if has_key(stats['total'],'position_count_total'):
+    if posCount == 0 and has_key(stats['total'],'position_count_total'):
         posCount = stats['total']['position_count_total']
 
     V.dispatch(plugin_instance = instance_name,
@@ -358,6 +358,8 @@ def read_1090(data):
                    time=aircraft_data['now'],
                    values = [minimum])
 
+    if has_key(stats['last1min'],'max_distance'):
+        max_range = stats['last1min']['max_distance'];
     # max range is always dispatched, even if zero
     V.dispatch(plugin_instance = instance_name,
                host=host,

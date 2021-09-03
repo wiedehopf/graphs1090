@@ -4,6 +4,12 @@ set -e
 TARGET=/var/lib/collectd/rrd/
 RUNFOLDER=/run/collectd/
 
+if ! [[ -d "$RUNFOLDER/localhost" ]] || (( "$(find "$RUNFOLDER/localhost" | wc -l)" < 15 )); then
+    echo "$RUNFOLDER/localhost doesn't have the expected minimum number of files or doesn't exist!"
+    echo "not writing contents to disk!"
+    exit 1
+fi
+
 echo "writing DB from $RUNFOLDER to disk"
 
 tar --directory "$RUNFOLDER" -cz -f "$RUNFOLDER/localhost.tar.gz" localhost
