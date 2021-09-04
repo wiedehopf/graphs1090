@@ -13,6 +13,7 @@ packages="git rrdtool collectd-core"
 mkdir -p $ipath/installed
 mkdir -p /var/lib/graphs1090/scatter
 
+hash -r
 for CMD in $commands
 do
 	if ! command -v "$CMD" &>/dev/null
@@ -36,12 +37,11 @@ then
     aptUpdate
 	apt-get install -y --no-install-suggests --no-install-recommends $packages
     success=1
+    hash -r
     for CMD in $commands
     do
-        if ! command -v "$CMD" &>/dev/null
-        then
+        if ! command -v "$CMD" &>/dev/null; then
             success=0
-            touch $ipath/installed/$i
         fi
     done
     if [[ $success == 1 ]]; then
