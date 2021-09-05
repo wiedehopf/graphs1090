@@ -1,7 +1,8 @@
 #!/bin/bash
 
 set -e
-trap 'echo ERROR on line number $LINENO' ERR
+trap 'echo "[ERROR] Error in line $LINENO when executing: $BASH_COMMAND"' ERR
+renice 10 $$
 
 repo="https://github.com/wiedehopf/graphs1090"
 ipath=/usr/share/graphs1090
@@ -25,7 +26,7 @@ done
 
 function aptUpdate() {
     if [[ $update_done != "yes" ]]; then
-        apt update && update_done=yes
+        apt update && update_done=yes || true
     fi
 }
 
@@ -35,7 +36,7 @@ then
 	echo "Installing required packages: $packages"
 	echo "------------------"
     aptUpdate
-	apt-get install -y --no-install-suggests --no-install-recommends $packages
+	apt-get install -y --no-install-suggests --no-install-recommends $packages || true
     success=1
     hash -r
     for CMD in $commands
@@ -61,7 +62,7 @@ then
 	if ! dpkg -s libpython2.7 2>/dev/null | grep 'Status.*installed' &>/dev/null
 	then
         aptUpdate
-		apt-get install --no-install-suggests --no-install-recommends -y 'libpython2.7'
+		apt-get install --no-install-suggests --no-install-recommends -y 'libpython2.7' || true
 	fi
 else
 		if ! dpkg -s libpython3.7 2>/dev/null | grep 'Status.*installed' &>/dev/null \
@@ -72,7 +73,7 @@ else
 
 		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.9' || \
 		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.8' || \
-		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.7'
+		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.7' || true
 	fi
 fi
 
@@ -221,9 +222,32 @@ if [[ $lighttpd == yes ]]; then
 fi
 
 systemctl enable collectd &>/dev/null
-if [[ -f /usr/share/graphs1090/noMalarky ]]; then
-    systemctl restart collectd
-else
+systemctl restart collectd &>/dev/null || true
+
+if ! systemctl status collectd &>/dev/null; then
+    echo --------------
+    echo "collectd isn't working, trying to install various libpython versions to work around the issue."
+    echo --------------
+    apt update
+    apt-get install --no-install-suggests --no-install-recommends -y 'libpython2.7' || true
+    apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.9' || \
+        apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.8' || \
+        apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.7' || true
+
+    systemctl restart collectd || true
+    if ! systemctl status collectd &>/dev/null; then
+        echo --------------
+        echo "Showing the log for collectd using this command: journalctl --no-pager -u collectd | tail -n40"
+        echo --------------
+        journalctl --no-pager -u collectd | tail -n40
+        echo --------------
+        echo "collectd still isn't working, you can try and rerun the install script at some other time."
+        echo "Or report this issue with the full 40 lines above."
+        echo --------------
+    fi
+fi
+
+if ! [[ -f /usr/share/graphs1090/noMalarky ]]; then
     bash $ipath/malarky.sh
 fi
 
