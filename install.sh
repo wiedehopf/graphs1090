@@ -112,6 +112,8 @@ fi
 echo "------------------"
 echo "Install in progress, this shouldn't take longer than a minute or two .........."
 
+systemctl stop collectd &>/dev/null || true
+
 cp dump1090.db dump1090.py system_stats.py LICENSE $ipath
 cp *.sh $ipath
 cp malarky.conf $ipath
@@ -215,9 +217,6 @@ then
 	sed -i -e 's/ADDNAN/+/' -e 's/TRENDNAN/TREND/' -e 's/MAXNAN/MAX/' -e 's/MINNAN/MIN/' $ipath/graphs1090.sh
 	sed -i -e '/axis-format/d' $ipath/graphs1090.sh
 fi
-
-
-mkdir -p /var/lib/collectd/rrd/localhost/dump1090-localhost
 
 if [[ $lighttpd == yes ]]; then
     systemctl restart lighttpd
