@@ -346,21 +346,22 @@ sudo systemctl restart collectd graphs1090
 If it all worked, the two datasets should be integrated now.
 
 
-### Issues with some collectd versions
+### Ubuntu 20 fixes (symptom: collectd errors out on startup)
 
-Symptom: collectd doesn't work, error looks something like this in the syslog:
+Before trying this, `sudo apt update` and `sudo apt dist-upgrade` your system.
+If that fixes it, no need for this fix.
+
+- arm64 / aarch64:
 ```
-collectd[16507]: Traceback (most recent call last):
-collectd[16507]: File "/usr/lib/python2.7/site.py", line 554, in <module>
+echo "LD_PRELOAD=/usr/lib/python3.8/config-3.8-aarch64-linux-gnu/libpython3.8.so" | sudo tee -a /etc/default/collectd
+sudo systemctl restart collectd
 ```
-
-Possible solution:
-
+- x86_64
 ```
 echo "LD_PRELOAD=/usr/lib/python3.8/config-3.8-x86_64-linux-gnu/libpython3.8.so" | sudo tee -a /etc/default/collectd
 sudo systemctl restart collectd
 ```
-
+- removing this workaround (any architecture)
 Undoing the solution if the logs still show failure or when the issue has been fixed in the package provided by your distribution.
 ```
 sudo sed -i -e 's#LD_PRELOAD=/usr/lib/python3.8.*##' /etc/default/collectd
