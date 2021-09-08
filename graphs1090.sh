@@ -937,6 +937,42 @@ signal_graph() {
 	mv "$1.tmp" "$1"
 	}
 
+signal_airspy() {
+    defines=( \
+        "DEF:min=$(check $2/airspy_$3-min.rrd):value:MIN" \
+        "DEF:quart1=$(check $2/airspy_$3-q1.rrd):value:AVERAGE" \
+        "DEF:quart3=$(check $2/airspy_$3-q3.rrd):value:AVERAGE" \
+        "DEF:median=$(check $2/airspy_$3-median.rrd):value:AVERAGE" \
+        "DEF:peak=$(check $2/airspy_$3-max.rrd):value:MAX" \
+    )
+	rrdtool graph \
+		"$1.tmp" \
+		--end "$END_TIME" \
+		--start end-$4 \
+		$small \
+		--title "Airspy ${3^^}" \
+		--vertical-label "dB" \
+		--right-axis 1:0 \
+		-y 6:1 \
+		--left-axis-format "%.0lf" \
+		--right-axis-format "%.0lf" \
+		--upper-limit 75 \
+		--lower-limit 0  \
+		--units-exponent 0 \
+		${defines[*]} \
+		"TEXTALIGN:center" \
+		"AREA:quart3#$GREEN:1st to 3rd Quartile" \
+		"AREA:quart1#FFFFFF" \
+		"LINE1:median#444444:Mean Median Level\:" \
+		"GPRINT:median:AVERAGE:%4.1lf\c" \
+		"LINE1:min#$CYAN:Weakest\:" \
+		"GPRINT:min:MIN:%4.1lf" \
+		"LINE1:peak#$BLUE:Peak Level\:" \
+		"GPRINT:peak:MAX:%4.1lf\c" \
+		--watermark "Drawn: $nowlit";
+	mv "$1.tmp" "$1"
+	}
+
 
 978_aircraft() {
 	$pre
@@ -1016,6 +1052,13 @@ dump1090_graphs() {
 		978_messages ${DOCUMENTROOT}/dump1090-$2-messages_978-$4.png ${DB}/$1/dump1090-$2 "UAT" "$4" "$5"
 		signal_graph ${DOCUMENTROOT}/dump1090-$2-signal_978-$4.png ${DB}/$1/dump1090-$2 "UAT" "$4" "$5"
 	fi
+    if [[ -f /run/airspy_adsb/stats.json ]]; then
+        if grep -qs -e 'style="display:none"> <!-- airspy -->' /usr/share/graphs1090/html/index.html; then
+            sed -i -e 's/ style="display:none"> <!-- airspy -->/> <!-- airspy -->/' /usr/share/graphs1090/html/index.html
+        fi
+        signal_airspy ${DOCUMENTROOT}/airspy-$2-rssi-$4.png ${DB}/$1/dump1090-$2 "snr" "$4" "$5"
+        signal_airspy ${DOCUMENTROOT}/airspy-$2-snr-$4.png ${DB}/$1/dump1090-$2 "rssi" "$4" "$5"
+    fi
 }
 
 system_graphs() {

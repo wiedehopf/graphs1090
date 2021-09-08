@@ -21,6 +21,18 @@ else
         sed -i -e 's/panel-default"> <!-- dump978 -->/panel-default" style="display:none"> <!-- dump978 -->/' /usr/share/graphs1090/html/index.html
     fi
 fi
+if [ -f /var/lib/collectd/rrd/localhost/dump1090-localhost/airspy_rssi-max.rrd ] \
+    || [ -f /var/lib/collectd/rrd/localhost/dump1090-localhost/airspy_rssi-max.rrd ] \
+    || [ -f /run/collectd/localhost/dump1090-localhost/airspy_rssi-max.rrd ]
+then
+    if grep -qs -e 'style="display:none"> <!-- airspy -->' /usr/share/graphs1090/html/index.html; then
+        sed -i -e 's/ style="display:none"> <!-- airspy -->/> <!-- airspy -->/' /usr/share/graphs1090/html/index.html
+    fi
+else
+    if ! grep -qs -e 'style="display:none"> <!-- airspy -->' /usr/share/graphs1090/html/index.html; then
+        sed -i -e 's/panel-default"> <!-- airspy -->/panel-default" style="display:none"> <!-- airspy -->/' /usr/share/graphs1090/html/index.html
+    fi
+fi
 
 if [[ $all_large == "yes" ]]; then
     if grep -qs -e 'flex: 50%; // all_large' /usr/share/graphs1090/html/portal.css; then

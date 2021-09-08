@@ -73,6 +73,14 @@ function switchView(newTimeFrame) {
     $("#dump1090-cpu-image").attr("src", "graphs/dump1090-" + $hostName + "-cpu-" + $timeFrame + ".png?time=" + $timestamp);
     $("#dump1090-cpu-link").attr("href", "graphs/dump1090-" + $hostName + "-cpu-" + $timeFrame + ".png?time=" + $timestamp);
 
+    if ($("#panel_airspy").css("display") !== "none") {
+        $("#airspy-rssi-image").attr("src", "graphs/airspy-" + $hostName + "-rssi-" + $timeFrame + ".png?time=" + $timestamp);
+        $("#airspy-rssi-link").attr("href", "graphs/airspy-" + $hostName + "-rssi-" + $timeFrame + ".png?time=" + $timestamp);
+
+        $("#airspy-snr-image").attr("src", "graphs/airspy-" + $hostName + "-snr-" + $timeFrame + ".png?time=" + $timestamp);
+        $("#airspy-snr-link").attr("href", "graphs/airspy-" + $hostName + "-snr-" + $timeFrame + ".png?time=" + $timestamp);
+    }
+
 	if ($("#panel_978").css("display") !== "none") {
 		$("#dump1090-aircraft_978-image").attr("src", "graphs/dump1090-" + $hostName + "-aircraft_978-" + $timeFrame + ".png?time=" + $timestamp);
 		$("#dump1090-aircraft_978-link").attr("href", "graphs/dump1090-" + $hostName + "-aircraft_978-" + $timeFrame + ".png?time=" + $timestamp);
