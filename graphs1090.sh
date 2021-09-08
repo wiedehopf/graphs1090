@@ -945,12 +945,14 @@ signal_airspy() {
         "DEF:median=$(check $2/airspy_$3-median.rrd):value:AVERAGE" \
         "DEF:peak=$(check $2/airspy_$3-max.rrd):value:MAX" \
     )
+    TITLE="Airspy ${3^^}"
+    if [[ $3 == "noise" ]]; then TITLE="Airspy Noise"; fi
 	rrdtool graph \
 		"$1.tmp" \
 		--end "$END_TIME" \
 		--start end-$4 \
 		$small \
-		--title "Airspy ${3^^}" \
+		--title "$TITLE" \
 		--vertical-label "dB" \
 		--right-axis 1:0 \
 		-y 6:1 \
@@ -1056,8 +1058,9 @@ dump1090_graphs() {
         if grep -qs -e 'style="display:none"> <!-- airspy -->' /usr/share/graphs1090/html/index.html; then
             sed -i -e 's/ style="display:none"> <!-- airspy -->/> <!-- airspy -->/' /usr/share/graphs1090/html/index.html
         fi
-        signal_airspy ${DOCUMENTROOT}/airspy-$2-rssi-$4.png ${DB}/$1/dump1090-$2 "snr" "$4" "$5"
-        signal_airspy ${DOCUMENTROOT}/airspy-$2-snr-$4.png ${DB}/$1/dump1090-$2 "rssi" "$4" "$5"
+        signal_airspy ${DOCUMENTROOT}/airspy-$2-rssi-$4.png ${DB}/$1/dump1090-$2 "rssi" "$4" "$5"
+        signal_airspy ${DOCUMENTROOT}/airspy-$2-snr-$4.png ${DB}/$1/dump1090-$2 "snr" "$4" "$5"
+        signal_airspy ${DOCUMENTROOT}/airspy-$2-noise-$4.png ${DB}/$1/dump1090-$2 "noise" "$4" "$5"
     fi
 }
 

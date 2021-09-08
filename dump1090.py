@@ -177,6 +177,48 @@ def read_airspy(data):
                 values = [s['max']],
                 interval = 60)
 
+    if has_key(stats, 'noise'):
+        s = stats['noise']
+        V.dispatch(plugin_instance = instance_name,
+                host = host,
+                type = 'airspy_noise',
+                type_instance = 'min',
+                time = now,
+                values = [s['min']],
+                interval = 60)
+
+        V.dispatch(plugin_instance = instance_name,
+                host = host,
+                type = 'airspy_noise',
+                type_instance = 'q1',
+                time = now,
+                values = [s['q1']],
+                interval = 60)
+
+        V.dispatch(plugin_instance = instance_name,
+                host = host,
+                type = 'airspy_noise',
+                type_instance = 'median',
+                time = now,
+                values = [s['median']],
+                interval = 60)
+
+        V.dispatch(plugin_instance = instance_name,
+                host = host,
+                type = 'airspy_noise',
+                type_instance = 'q3',
+                time = now,
+                values = [s['q3']],
+                interval = 60)
+
+        V.dispatch(plugin_instance = instance_name,
+                host = host,
+                type = 'airspy_noise',
+                type_instance = 'max',
+                time = now,
+                values = [s['max']],
+                interval = 60)
+
 def read_1090(data):
     instance_name,host,url = data
 
