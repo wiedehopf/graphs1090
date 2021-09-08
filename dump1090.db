@@ -1,6 +1,8 @@
 dump1090_messages	value:DERIVE:0:8000
 dump1090_cpu		value:DERIVE:0:1200
 dump1090_dbfs		value:GAUGE:U:0
+airspy_rssi			value:GAUGE:-1000:1000
+airspy_snr			value:GAUGE:-1000:1000
 dump1090_aircraft	total:GAUGE:0:1000, positions:GAUGE:0:1000
 dump1090_range		value:GAUGE:0:1000000
 dump1090_tracks		value:DERIVE:0:500
