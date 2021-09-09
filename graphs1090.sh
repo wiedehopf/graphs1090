@@ -989,7 +989,6 @@ misc_airspy() {
         "DEF:samplerate=$(check $2/airspy_misc-samplerate.rrd):value:AVERAGE" \
     )
     TITLE="Airspy Misc"
-    if [[ $3 == "noise" ]]; then TITLE="Airspy Noise"; fi
 	rrdtool graph \
 		"$1.tmp" \
 		--end "$END_TIME" \
@@ -997,6 +996,9 @@ misc_airspy() {
 		$small \
 		--title "$TITLE" \
 		--right-axis 1:0 \
+		--vertical-label "misc" \
+		--left-axis-format "%.0lf" \
+		--right-axis-format "%.0lf" \
 		-y 3:1 \
 		--upper-limit 25 \
 		--lower-limit 4  \
