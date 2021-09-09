@@ -51,37 +51,55 @@ def handle_config(root):
 
 V=collectd.Values(host='', plugin='dump1090', time=0)
 
+def dispatch_quartiles(data, stats, name):
+    if not has_key(stats, name):
+        return
+    if not has_key(stats, 'now'):
+        return
+
+    now = stats['now']
+    quart = stats[name]
+
+    instance_name,host,url = data
+    for index in ['min', 'q1', 'median', 'q3', 'max']:
+        V.dispatch(plugin_instance = instance_name,
+                host = host,
+                type = 'airspy_' + name,
+                type_instance = index,
+                time = now,
+                values = [quart[index]],
+                interval = 60)
+
 def read_airspy(data):
     instance_name,host,url = data
-    #airspy cpu usage
-    cmdString = "PID=$(systemctl show -p MainPID airspy_adsb | cut -f 2 -d=); cat /proc/$PID/task/$(ls /proc/$PID/task | awk NR==3)/stat | cut -d ' ' -f 14,15 && getconf CLK_TCK"
-    if (sys.version_info > (3, 0)):
-        p = subprocess.Popen(cmdString, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True)
-    else:
-        p = subprocess.Popen(cmdString, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
-    out, err = p.communicate()
+    try:
+        #airspy cpu usage
+        cmdString = "PID=$(systemctl show -p MainPID airspy_adsb | cut -f 2 -d=); cat /proc/$PID/task/$(ls /proc/$PID/task | awk NR==3)/stat | cut -d ' ' -f 14,15 && getconf CLK_TCK"
+        if (sys.version_info > (3, 0)):
+            p = subprocess.Popen(cmdString, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True)
+        else:
+            p = subprocess.Popen(cmdString, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
-    ptime=0
+        out, err = p.communicate()
 
-    if p.returncode == 0 :
-        try:
+        ptime=0
+
+        if p.returncode == 0 :
             out, clk_tck = out.split('\n', 1)
             out = [(int(i)*1000)/int(clk_tck) for i in out.split(' ')]
             ptime = sum(out)
             utime = out[0]
             stime = out[1]
 
-        except:
-            ptime=0
-
-    if ptime != 0 :
         V.dispatch(plugin_instance = instance_name,
                    host=host,
                    type='dump1090_cpu',
                    type_instance='airspy',
                    time=time.time(),
                    values = [ptime])
+    except:
+        pass
 
     try:
         with closing(urlopen('file:///run/airspy_adsb/stats.json', None, 5.0)) as stats_file:
@@ -89,135 +107,9 @@ def read_airspy(data):
     except:
         return
 
-    if not has_key(stats, 'now'):
-        return
-    now = stats['now']
-
-    if has_key(stats, 'rssi'):
-        s = stats['rssi']
-        V.dispatch(plugin_instance = instance_name,
-                host = host,
-                type = 'airspy_rssi',
-                type_instance = 'min',
-                time = now,
-                values = [s['min']],
-                interval = 60)
-
-        V.dispatch(plugin_instance = instance_name,
-                host = host,
-                type = 'airspy_rssi',
-                type_instance = 'q1',
-                time = now,
-                values = [s['q1']],
-                interval = 60)
-
-        V.dispatch(plugin_instance = instance_name,
-                host = host,
-                type = 'airspy_rssi',
-                type_instance = 'median',
-                time = now,
-                values = [s['median']],
-                interval = 60)
-
-        V.dispatch(plugin_instance = instance_name,
-                host = host,
-                type = 'airspy_rssi',
-                type_instance = 'q3',
-                time = now,
-                values = [s['q3']],
-                interval = 60)
-
-        V.dispatch(plugin_instance = instance_name,
-                host = host,
-                type = 'airspy_rssi',
-                type_instance = 'max',
-                time = now,
-                values = [s['max']],
-                interval = 60)
-
-    if has_key(stats, 'snr'):
-        s = stats['snr']
-        V.dispatch(plugin_instance = instance_name,
-                host = host,
-                type = 'airspy_snr',
-                type_instance = 'min',
-                time = now,
-                values = [s['min']],
-                interval = 60)
-
-        V.dispatch(plugin_instance = instance_name,
-                host = host,
-                type = 'airspy_snr',
-                type_instance = 'q1',
-                time = now,
-                values = [s['q1']],
-                interval = 60)
-
-        V.dispatch(plugin_instance = instance_name,
-                host = host,
-                type = 'airspy_snr',
-                type_instance = 'median',
-                time = now,
-                values = [s['median']],
-                interval = 60)
-
-        V.dispatch(plugin_instance = instance_name,
-                host = host,
-                type = 'airspy_snr',
-                type_instance = 'q3',
-                time = now,
-                values = [s['q3']],
-                interval = 60)
-
-        V.dispatch(plugin_instance = instance_name,
-                host = host,
-                type = 'airspy_snr',
-                type_instance = 'max',
-                time = now,
-                values = [s['max']],
-                interval = 60)
-
-    if has_key(stats, 'noise'):
-        s = stats['noise']
-        V.dispatch(plugin_instance = instance_name,
-                host = host,
-                type = 'airspy_noise',
-                type_instance = 'min',
-                time = now,
-                values = [s['min']],
-                interval = 60)
-
-        V.dispatch(plugin_instance = instance_name,
-                host = host,
-                type = 'airspy_noise',
-                type_instance = 'q1',
-                time = now,
-                values = [s['q1']],
-                interval = 60)
-
-        V.dispatch(plugin_instance = instance_name,
-                host = host,
-                type = 'airspy_noise',
-                type_instance = 'median',
-                time = now,
-                values = [s['median']],
-                interval = 60)
-
-        V.dispatch(plugin_instance = instance_name,
-                host = host,
-                type = 'airspy_noise',
-                type_instance = 'q3',
-                time = now,
-                values = [s['q3']],
-                interval = 60)
-
-        V.dispatch(plugin_instance = instance_name,
-                host = host,
-                type = 'airspy_noise',
-                type_instance = 'max',
-                time = now,
-                values = [s['max']],
-                interval = 60)
+    dispatch_quartiles(data, stats, 'rssi')
+    dispatch_quartiles(data, stats, 'snr')
+    dispatch_quartiles(data, stats, 'noise')
 
 def read_1090(data):
     instance_name,host,url = data
@@ -230,7 +122,10 @@ def read_1090(data):
                time=time.time(),
                values = [1])
 
-    read_airspy(data)
+    try:
+        read_airspy(data)
+    except:
+        pass
 
     try:
         with closing(urlopen(url + '/data/stats.json', None, 5.0)) as stats_file:
