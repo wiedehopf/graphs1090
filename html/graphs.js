@@ -82,6 +82,9 @@ function switchView(newTimeFrame) {
 
         $("#airspy-noise-image").attr("src", "graphs/airspy-" + $hostName + "-noise-" + $timeFrame + ".png?time=" + $timestamp);
         $("#airspy-noise-link").attr("href", "graphs/airspy-" + $hostName + "-noise-" + $timeFrame + ".png?time=" + $timestamp);
+
+        $("#airspy-misc-image").attr("src", "graphs/airspy-" + $hostName + "-misc-" + $timeFrame + ".png?time=" + $timestamp);
+        $("#airspy-misc-link").attr("href", "graphs/airspy-" + $hostName + "-misc-" + $timeFrame + ".png?time=" + $timestamp);
     }
 
 	if ($("#panel_978").css("display") !== "none") {

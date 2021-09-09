@@ -945,6 +945,13 @@ signal_airspy() {
         "DEF:median=$(check $2/airspy_$3-median.rrd):value:AVERAGE" \
         "DEF:peak=$(check $2/airspy_$3-max.rrd):value:MAX" \
     )
+    if [[ $3 == snr ]]; then
+        UL="--upper-limit 45"
+        LL="--lower-limit 0"
+    else
+        UL="--upper-limit 72"
+        LL="--lower-limit 0"
+    fi
     TITLE="Airspy ${3^^}"
     if [[ $3 == "noise" ]]; then TITLE="Airspy Noise"; fi
 	rrdtool graph \
@@ -958,8 +965,9 @@ signal_airspy() {
 		-y 6:1 \
 		--left-axis-format "%.0lf" \
 		--right-axis-format "%.0lf" \
-		--upper-limit 75 \
-		--lower-limit 0  \
+        --rigid \
+		$UL \
+		$LL \
 		--units-exponent 0 \
 		${defines[*]} \
 		"TEXTALIGN:center" \
@@ -971,6 +979,37 @@ signal_airspy() {
 		"GPRINT:min:MIN:%4.1lf" \
 		"LINE1:peak#$BLUE:Peak Level\:" \
 		"GPRINT:peak:MAX:%4.1lf\c" \
+		--watermark "Drawn: $nowlit";
+	mv "$1.tmp" "$1"
+	}
+misc_airspy() {
+    defines=( \
+        "DEF:gain=$(check $2/airspy_misc-gain.rrd):value:AVERAGE" \
+        "DEF:preamble_filter=$(check $2/airspy_misc-preamble_filter.rrd):value:AVERAGE" \
+        "DEF:samplerate=$(check $2/airspy_misc-samplerate.rrd):value:AVERAGE" \
+    )
+    TITLE="Airspy Misc"
+    if [[ $3 == "noise" ]]; then TITLE="Airspy Noise"; fi
+	rrdtool graph \
+		"$1.tmp" \
+		--end "$END_TIME" \
+		--start end-$4 \
+		$small \
+		--title "$TITLE" \
+		--right-axis 1:0 \
+		-y 3:1 \
+		--upper-limit 25 \
+		--lower-limit 4  \
+        --rigid \
+		--units-exponent 0 \
+		${defines[*]} \
+		"TEXTALIGN:center" \
+		"LINE2:gain#$DRED:Gain\:" \
+		"GPRINT:gain:LAST:%2.0lf" \
+		"LINE2:samplerate#$DBLUE:Samplerate\:" \
+		"GPRINT:samplerate:LAST:%2.0lf" \
+		"LINE2:preamble_filter#$DGREEN:Preamble Filter\:" \
+		"GPRINT:preamble_filter:LAST:%2.0lf" \
 		--watermark "Drawn: $nowlit";
 	mv "$1.tmp" "$1"
 	}
@@ -1061,6 +1100,7 @@ dump1090_graphs() {
         signal_airspy ${DOCUMENTROOT}/airspy-$2-rssi-$4.png ${DB}/$1/dump1090-$2 "rssi" "$4" "$5"
         signal_airspy ${DOCUMENTROOT}/airspy-$2-snr-$4.png ${DB}/$1/dump1090-$2 "snr" "$4" "$5"
         signal_airspy ${DOCUMENTROOT}/airspy-$2-noise-$4.png ${DB}/$1/dump1090-$2 "noise" "$4" "$5"
+        misc_airspy ${DOCUMENTROOT}/airspy-$2-misc-$4.png ${DB}/$1/dump1090-$2 "misc" "$4" "$5"
     fi
 }
 

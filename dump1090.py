@@ -51,6 +51,24 @@ def handle_config(root):
 
 V=collectd.Values(host='', plugin='dump1090', time=0)
 
+def dispatch_misc(data, stats, name):
+    if not has_key(stats, name):
+        return
+    if not has_key(stats, 'now'):
+        return
+    instance_name,host,url = data
+
+    now = stats['now']
+    subject = stats[name]
+
+    V.dispatch(plugin_instance = instance_name,
+            host = host,
+            type = 'airspy_misc' ,
+            type_instance = name,
+            time = now,
+            values = [subject],
+            interval = 60)
+
 def dispatch_quartiles(data, stats, name):
     if not has_key(stats, name):
         return
@@ -75,7 +93,7 @@ def read_airspy(data):
 
     try:
         #airspy cpu usage
-        cmdString = "PID=$(systemctl show -p MainPID airspy_adsb | cut -f 2 -d=); cat /proc/$PID/task/$(ls /proc/$PID/task | awk NR==3)/stat | cut -d ' ' -f 14,15 && getconf CLK_TCK"
+        cmdString = "PID=$(systemctl show -p MainPID airspy_adsb | cut -f 2 -d=); cat /proc/$PID/task/*/stat | cut -d ' ' -f 14,15 && getconf CLK_TCK"
         if (sys.version_info > (3, 0)):
             p = subprocess.Popen(cmdString, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True)
         else:
@@ -86,18 +104,27 @@ def read_airspy(data):
         ptime=0
 
         if p.returncode == 0 :
-            out, clk_tck = out.split('\n', 1)
-            out = [(int(i)*1000)/int(clk_tck) for i in out.split(' ')]
-            ptime = sum(out)
-            utime = out[0]
-            stime = out[1]
+            out, clk_tck, _ = out.rsplit('\n', 2)
+            out = out.split('\n')
+            biggest = 0
+            for line in out:
+                big = int(line.split(' ')[0])
+                if big > biggest:
+                    biggest = big
+                    gold = line
 
-        V.dispatch(plugin_instance = instance_name,
-                   host=host,
-                   type='dump1090_cpu',
-                   type_instance='airspy',
-                   time=time.time(),
-                   values = [ptime])
+            cycles = [int(i) for i in gold.split(' ')]
+            times = [int(i*1000/int(clk_tck)) for i in cycles]
+            ptime = sum(times)
+            utime = times[0]
+            stime = times[1]
+
+            V.dispatch(plugin_instance = instance_name,
+                       host=host,
+                       type='dump1090_cpu',
+                       type_instance='airspy',
+                       time=time.time(),
+                       values = [ptime])
     except:
         pass
 
@@ -110,6 +137,10 @@ def read_airspy(data):
     dispatch_quartiles(data, stats, 'rssi')
     dispatch_quartiles(data, stats, 'snr')
     dispatch_quartiles(data, stats, 'noise')
+
+    dispatch_misc(data, stats, 'preamble_filter')
+    dispatch_misc(data, stats, 'samplerate')
+    dispatch_misc(data, stats, 'gain')
 
 def read_1090(data):
     instance_name,host,url = data
