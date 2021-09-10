@@ -988,6 +988,7 @@ misc_airspy() {
         "DEF:preamble_filter=$(check $2/airspy_misc-preamble_filter.rrd):value:AVERAGE" \
         "DEF:samplerate=$(check $2/airspy_misc-samplerate.rrd):value:AVERAGE" \
     )
+	if [ $ul_airspy_misc ]; then upper="--upper-limit $ul_airspy_misc"; else upper="--upper-limit 25"; fi
     TITLE="Airspy Misc"
 	rrdtool graph \
 		"$1.tmp" \
@@ -1000,7 +1001,7 @@ misc_airspy() {
 		--left-axis-format "%.0lf" \
 		--right-axis-format "%.0lf" \
 		-y 3:1 \
-		--upper-limit 25 \
+        $upper \
 		--lower-limit 4  \
         --rigid \
 		--units-exponent 0 \

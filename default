@@ -53,6 +53,8 @@ ul_range_uat=
 # set custom lower limit for signal graph
 ll_signal=
 
+ul_airspy_misc=
+
 # set custom left / right axis ratio
 # leave blank for default of 10
 lr_rate_per_aircraft=
