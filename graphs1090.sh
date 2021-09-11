@@ -949,7 +949,7 @@ signal_airspy() {
         UL="--upper-limit 45"
         LL="--lower-limit 0"
     else
-        UL="--upper-limit 72"
+        UL="--upper-limit 75"
         LL="--lower-limit 0"
     fi
     TITLE="Airspy ${3^^}"
