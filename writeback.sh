@@ -13,7 +13,7 @@ echo "writing DB from $RUNFOLDER to disk"
 
 tar --directory "$RUNFOLDER" -cz -f "$RUNFOLDER/localhost.tar.gz" localhost
 
-if (( $(stat -c %s "$TARGET/localhost.tar.gz") > 150000 )); then
+if [[ -f "$TARGET/localhost.tar.gz" ]] && (( $(stat -c %s "$TARGET/localhost.tar.gz") > 150000 )); then
     mv -T "$TARGET/localhost.tar.gz" "$TARGET/auto-backup-$(date +%Y-week_%V).tar.gz" &>/dev/null || true
     find "$TARGET" -name 'auto-backup-*.tar.gz' -mtime +60 -delete
 fi
