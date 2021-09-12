@@ -23,6 +23,9 @@ cat >/etc/cron.d/collectd_to_disk <<"EOF"
 42 23 * * * root /bin/systemctl restart collectd
 EOF
 
+# remove legacy stuff
+rm -rf "$TARGET/graphs1090-writeback-backup1" "$TARGET/graphs1090-writeback-backup2"
+
 rm -f /usr/share/graphs1090/noMalarky
 
 echo ---------
