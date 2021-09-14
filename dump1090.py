@@ -51,6 +51,25 @@ def handle_config(root):
 
 V=collectd.Values(host='', plugin='dump1090', time=0)
 
+def dispatch_df(data, stats, name):
+    if not has_key(stats, name):
+        return
+    if not has_key(stats, 'now'):
+        return
+    instance_name,host,url = data
+
+    now = stats['now']
+    df_counts = stats[name]
+
+    for df in [0, 4, 5, 11, 16, 17, 18, 19, 20, 21]:
+        V.dispatch(plugin_instance = instance_name,
+                host = host,
+                type = 'df_count_minute',
+                type_instance = str(df),
+                time = now,
+                values = [df_counts[df]],
+                interval = 60)
+
 def dispatch_misc(data, stats, name):
     if not has_key(stats, name):
         return
@@ -141,6 +160,8 @@ def read_airspy(data):
     dispatch_misc(data, stats, 'preamble_filter')
     dispatch_misc(data, stats, 'samplerate')
     dispatch_misc(data, stats, 'gain')
+
+    dispatch_df(data, stats, 'df_counts')
 
 def read_1090(data):
     instance_name,host,url = data

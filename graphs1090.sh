@@ -4,7 +4,7 @@ DOCUMENTROOT=/run/graphs1090
 
 renice -n 19 -p $$
 
-trap 'echo ERROR on line number $LINENO' ERR
+trap 'echo "[ERROR] Error in line $LINENO when executing: $BASH_COMMAND"' ERR
 
 mult() {
 	echo $1 $2 | awk '{printf "%.9f", $1 * $2}'
@@ -937,6 +937,77 @@ signal_graph() {
 	mv "$1.tmp" "$1"
 	}
 
+df_counts() {
+	DF=(0 4 5 11 16 17 18 19 21)
+	colors=($GREEN $BLUE $DBLUE $ABLUE $RED $DRED $DGREEN $CYAN $LRED)
+	defines=()
+	graphs=()
+	for i in $(seq 0 8); do
+		df="${DF[i]}"
+		defines+=("DEF:df_min${df}=$(check $2/df_count_minute-$df.rrd):value:AVERAGE")
+		if [[ $df == 11 ]]; then
+			defines+=("CDEF:df${df}=df_min${df},120,/")
+			graphs+=("LINE1.5:df${df}#${colors[$i]}:DF${df} halfed")
+			graphs+=("GPRINT:df${df}:LAST:%4.1lf")
+		else
+			defines+=("CDEF:df${df}=df_min${df},60,/")
+			graphs+=("LINE1.5:df${df}#${colors[$i]}:DF${df}")
+			graphs+=("GPRINT:df${df}:LAST:%4.1lf")
+		fi
+		#echo "${defines[$i]}"
+		#echo "${graphs[$i]}"
+	done
+	rrdtool graph \
+		"$1.tmp" \
+		--end "$END_TIME" \
+		--start end-$4 \
+		$small \
+		--title "DF counts" \
+		--vertical-label "per second" \
+		--right-axis 1:0 \
+		--left-axis-format "%.0lf" \
+		--right-axis-format "%.0lf" \
+		--units-exponent 0 \
+		"${defines[@]}" \
+		"TEXTALIGN:center" \
+		"${graphs[@]}" \
+		--watermark "Drawn: $nowlit";
+	mv "$1.tmp" "$1"
+	}
+misc_airspy() {
+    defines=( \
+        "DEF:gain=$(check $2/airspy_misc-gain.rrd):value:AVERAGE" \
+        "DEF:preamble_filter=$(check $2/airspy_misc-preamble_filter.rrd):value:AVERAGE" \
+        "DEF:samplerate=$(check $2/airspy_misc-samplerate.rrd):value:AVERAGE" \
+    )
+	if [ $ul_airspy_misc ]; then upper="--upper-limit $ul_airspy_misc"; else upper="--upper-limit 25"; fi
+    TITLE="Airspy Misc"
+	rrdtool graph \
+		"$1.tmp" \
+		--end "$END_TIME" \
+		--start end-$4 \
+		$small \
+		--title "$TITLE" \
+		--right-axis 1:0 \
+		--vertical-label "misc" \
+		--left-axis-format "%.0lf" \
+		--right-axis-format "%.0lf" \
+		-y 3:1 \
+        $upper \
+		--lower-limit 4  \
+        --rigid \
+		--units-exponent 0 \
+		${defines[*]} \
+		"TEXTALIGN:center" \
+		"LINE2:gain#$DRED:Gain\:" \
+		"GPRINT:gain:LAST:%2.0lf" \
+		"LINE2:samplerate#$DBLUE:Samplerate\:" \
+		"GPRINT:samplerate:LAST:%2.0lf" \
+		"LINE2:preamble_filter#$DGREEN:Preamble Filter\:" \
+		"GPRINT:preamble_filter:LAST:%2.0lf" \
+		--watermark "Drawn: $nowlit";
+	mv "$1.tmp" "$1"
+	}
 signal_airspy() {
     defines=( \
         "DEF:min=$(check $2/airspy_$3-min.rrd):value:MIN" \
@@ -1095,6 +1166,9 @@ dump1090_graphs() {
 		978_aircraft ${DOCUMENTROOT}/dump1090-$2-aircraft_978-$4.png ${DB}/$1/dump1090-$2 "UAT" "$4" "$5"
 		978_messages ${DOCUMENTROOT}/dump1090-$2-messages_978-$4.png ${DB}/$1/dump1090-$2 "UAT" "$4" "$5"
 		signal_graph ${DOCUMENTROOT}/dump1090-$2-signal_978-$4.png ${DB}/$1/dump1090-$2 "UAT" "$4" "$5"
+	fi
+	if [[ -f ${DB}/$1/dump1090-$2/df_count_minute-17.rrd ]]; then
+		df_counts ${DOCUMENTROOT}/df_counts-$2-$4.png ${DB}/$1/dump1090-$2 "df_counts" "$4" "$5"
 	fi
     if [[ -f /run/airspy_adsb/stats.json ]]; then
         if grep -qs -e 'style="display:none"> <!-- airspy -->' /usr/share/graphs1090/html/index.html; then

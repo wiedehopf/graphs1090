@@ -5,6 +5,7 @@ airspy_rssi			value:GAUGE:-1000:1000
 airspy_snr			value:GAUGE:-1000:1000
 airspy_noise		value:GAUGE:-1000:1000
 airspy_misc		    value:GAUGE:-1000:1000
+df_count_minute		value:GAUGE:0:U
 dump1090_aircraft	total:GAUGE:0:1000, positions:GAUGE:0:1000
 dump1090_range		value:GAUGE:0:1000000
 dump1090_tracks		value:DERIVE:0:500
