@@ -20,7 +20,10 @@ do
 	if ! command -v "$CMD" &>/dev/null
 	then
 		install=1
-		touch $ipath/installed/$i
+        if [[ $CMD == collectd ]]; then
+            CMD=collectd-core
+        fi
+		touch $ipath/installed/$CMD
 	fi
 done
 

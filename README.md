@@ -348,6 +348,8 @@ If it all worked, the two datasets should be integrated now.
 
 ### Ubuntu 20 fixes (symptom: collectd errors out on startup)
 
+- also applies to: Linux Mint 20.1
+
 Before trying this, `sudo apt update` and `sudo apt dist-upgrade` your system.
 If that fixes it, no need for this fix.
 
