@@ -49,6 +49,10 @@ join -o 1.1 1.2 2.2 ${tmp}/range ${tmp}/messages_l > ${tmp}/tmp
 join -o 1.1 1.2 1.3 2.2 ${tmp}/tmp ${tmp}/messages_r > ${tmp}/tmp1
 join -o 1.2 1.3 1.4 2.2 ${tmp}/tmp1 ${tmp}/aircraft > $data_dir/$date
 
+# get rid of nan values to simplify usage in gnuplot
+
+sed -i 's/nan/0/g' $data_dir/$date
+
 # some cleanup
 rm -f $(find $data_dir -type f | sort | head -n-450)
 rm -rf "${tmp}"
