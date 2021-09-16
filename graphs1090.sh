@@ -22,6 +22,9 @@ sheight=324
 font_size=10.0
 graph_size=default
 
+LGREEN=45d945
+LBLUE=4f59e3
+LCYAN=29a7e6
 GREEN=32CD32
 DGREEN=228B22
 BLUE=0011EE
@@ -974,46 +977,14 @@ df_counts() {
 		--watermark "Drawn: $nowlit";
 	mv "$1.tmp" "$1"
 	}
-misc_airspy() {
-    defines=( \
-        "DEF:gain=$(check $2/airspy_misc-gain.rrd):value:AVERAGE" \
-        "DEF:preamble_filter=$(check $2/airspy_misc-preamble_filter.rrd):value:AVERAGE" \
-        "DEF:samplerate=$(check $2/airspy_misc-samplerate.rrd):value:AVERAGE" \
-    )
-	if [ $ul_airspy_misc ]; then upper="--upper-limit $ul_airspy_misc"; else upper="--upper-limit 25"; fi
-    TITLE="Airspy Misc"
-	rrdtool graph \
-		"$1.tmp" \
-		--end "$END_TIME" \
-		--start end-$4 \
-		$small \
-		--title "$TITLE" \
-		--right-axis 1:0 \
-		--vertical-label "misc" \
-		--left-axis-format "%.0lf" \
-		--right-axis-format "%.0lf" \
-		-y 3:1 \
-        $upper \
-		--lower-limit 4  \
-        --rigid \
-		--units-exponent 0 \
-		${defines[*]} \
-		"TEXTALIGN:center" \
-		"LINE2:gain#$DRED:Gain\:" \
-		"GPRINT:gain:LAST:%2.0lf" \
-		"LINE2:samplerate#$DBLUE:Samplerate\:" \
-		"GPRINT:samplerate:LAST:%2.0lf" \
-		"LINE2:preamble_filter#$DGREEN:Preamble Filter\:" \
-		"GPRINT:preamble_filter:LAST:%2.0lf" \
-		--watermark "Drawn: $nowlit";
-	mv "$1.tmp" "$1"
-	}
 signal_airspy() {
     defines=( \
         "DEF:min=$(check $2/airspy_$3-min.rrd):value:MIN" \
+        "DEF:p5=$(check $2/airspy_$3-p5.rrd):value:AVERAGE" \
         "DEF:quart1=$(check $2/airspy_$3-q1.rrd):value:AVERAGE" \
-        "DEF:quart3=$(check $2/airspy_$3-q3.rrd):value:AVERAGE" \
         "DEF:median=$(check $2/airspy_$3-median.rrd):value:AVERAGE" \
+        "DEF:quart3=$(check $2/airspy_$3-q3.rrd):value:AVERAGE" \
+        "DEF:p95=$(check $2/airspy_$3-p95.rrd):value:AVERAGE" \
         "DEF:peak=$(check $2/airspy_$3-max.rrd):value:MAX" \
     )
     if [[ $3 == snr ]]; then
@@ -1042,14 +1013,17 @@ signal_airspy() {
 		--units-exponent 0 \
 		${defines[*]} \
 		"TEXTALIGN:center" \
-		"AREA:quart3#$GREEN:1st to 3rd Quartile" \
-		"AREA:quart1#FFFFFF" \
+		"AREA:peak#$LCYAN:Peak Level\:" \
+		"GPRINT:peak:MAX:%4.1lf" \
+		"AREA:p95#$LBLUE:5th to 95th Percentile\c" \
+		"AREA:quart3#$LGREEN:1st to 3rd Quartile" \
+		"AREA:quart1#$LBLUE" \
+		"AREA:p5#$LCYAN" \
+		"AREA:min#FFFFFF" \
 		"LINE1:median#444444:Mean Median Level\:" \
-		"GPRINT:median:AVERAGE:%4.1lf\c" \
-		"LINE1:min#$CYAN:Weakest\:" \
+		"GPRINT:median:AVERAGE:%4.1lf" \
+		"LINE1:min#$LCYAN:Weakest\:" \
 		"GPRINT:min:MIN:%4.1lf" \
-		"LINE1:peak#$BLUE:Peak Level\:" \
-		"GPRINT:peak:MAX:%4.1lf\c" \
 		--watermark "Drawn: $nowlit";
 	mv "$1.tmp" "$1"
 	}
@@ -1083,7 +1057,7 @@ misc_airspy() {
 		"LINE2:samplerate#$DBLUE:Samplerate\:" \
 		"GPRINT:samplerate:LAST:%2.0lf" \
 		"LINE2:preamble_filter#$DGREEN:Preamble Filter\:" \
-		"GPRINT:preamble_filter:LAST:%2.0lf" \
+		"GPRINT:preamble_filter:LAST:%4.1lf" \
 		--watermark "Drawn: $nowlit";
 	mv "$1.tmp" "$1"
 	}

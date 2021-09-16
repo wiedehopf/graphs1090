@@ -98,14 +98,16 @@ def dispatch_quartiles(data, stats, name):
     quart = stats[name]
 
     instance_name,host,url = data
-    for index in ['min', 'q1', 'median', 'q3', 'max']:
-        V.dispatch(plugin_instance = instance_name,
-                host = host,
-                type = 'airspy_' + name,
-                type_instance = index,
-                time = now,
-                values = [quart[index]],
-                interval = 60)
+    for index in ['min', 'p5', 'q1', 'median', 'q3', 'p95', 'max']:
+        if has_key(quart, index):
+            #collectd.warning(index + str(quart[index]))
+            V.dispatch(plugin_instance = instance_name,
+                    host = host,
+                    type = 'airspy_' + name,
+                    type_instance = index,
+                    time = now,
+                    values = [quart[index]],
+                    interval = 60)
 
 def read_airspy(data):
     instance_name,host,url = data
