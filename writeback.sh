@@ -15,6 +15,10 @@ if ! [[ -d "$RUNFOLDER/localhost" ]]; then
 fi
 echo "writing DB from $RUNFOLDER to disk"
 
+#delete empty files (apparently sometimes collectd will create empty files and choke on them)
+find "$RUNFOLDER/localhost" -size -50c -type f -delete -print | sed 's/^/File empty, deleting: /' || true
+
+#tar gz localhost
 tar --directory "$RUNFOLDER" -cz -f "$RUNFOLDER/localhost.tar.gz" localhost
 
 mkdir -p "$TARGET"
