@@ -1,5 +1,5 @@
 dump1090_messages	value:DERIVE:0:8000
-dump1090_cpu		value:DERIVE:0:1200
+dump1090_cpu		value:DERIVE:0:U
 dump1090_dbfs		value:GAUGE:U:0
 airspy_rssi			value:GAUGE:-1000:1000
 airspy_snr			value:GAUGE:-1000:1000

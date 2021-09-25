@@ -115,7 +115,18 @@ fi
 echo "------------------"
 echo "Install in progress, this shouldn't take longer than a minute or two .........."
 
+CPU_AIR=/run/collectd/localhost/dump1090-localhost/dump1090_cpu-airspy.rrd
+if [[ -f "$CPU_AIR" ]]; then
+    cp "$CPU_AIR" /run/collectd/dump1090_cpu-airspy.rrd
+    rrdtool tune --maximum value:U /run/collectd/dump1090_cpu-airspy.rrd
+    cp -f /run/collectd/dump1090_cpu-airspy.rrd "$CPU_AIR"
+fi
+
 systemctl stop collectd &>/dev/null || true
+
+if [[ -f /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_cpu-airspy.rrd ]]; then
+    rrdtool tune --maximum value:U /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_cpu-airspy.rrd
+fi
 
 cp dump1090.db dump1090.py system_stats.py LICENSE $ipath
 cp *.sh $ipath

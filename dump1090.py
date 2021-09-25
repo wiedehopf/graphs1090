@@ -128,13 +128,17 @@ def read_airspy(data):
             out, clk_tck, _ = out.rsplit('\n', 2)
             out = out.split('\n')
             biggest = 0
-            for line in out:
-                big = int(line.split(' ')[0])
-                if big > biggest:
-                    biggest = big
-                    gold = line
+            cycles = []
+            firstLine = out[0]
+            otherLines = out[1:]
+            for i in firstLine.split(' '):
+                cycles.append(int(i))
+            for line in otherLines:
+                inc = 0
+                for i in line.split(' '):
+                    cycles[inc] += int(i)
+                    inc += 1
 
-            cycles = [int(i) for i in gold.split(' ')]
             times = [int(i*1000/int(clk_tck)) for i in cycles]
             ptime = sum(times)
             utime = times[0]
@@ -146,7 +150,8 @@ def read_airspy(data):
                        type_instance='airspy',
                        time=time.time(),
                        values = [ptime])
-    except:
+    except Exception as error:
+        collectd.warning(str(error))
         pass
 
     try:
