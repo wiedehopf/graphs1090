@@ -1029,6 +1029,8 @@ signal_airspy() {
 	}
 misc_airspy() {
     defines=( \
+        "DEF:lost_buffers=$(check $2/airspy_lost-lost_buffers.rrd):value:AVERAGE" \
+        "DEF:aircraft_count=$(check $2/airspy_aircraft-max_aircraft_count.rrd):value:AVERAGE" \
         "DEF:gain=$(check $2/airspy_misc-gain.rrd):value:AVERAGE" \
         "DEF:preamble_filter=$(check $2/airspy_misc-preamble_filter.rrd):value:AVERAGE" \
         "DEF:samplerate=$(check $2/airspy_misc-samplerate.rrd):value:AVERAGE" \
@@ -1057,6 +1059,14 @@ misc_airspy() {
 		"GPRINT:samplerate:LAST:%2.0lf" \
 		"LINE2:preamble_filter#$DGREEN:Preamble Filter\:" \
 		"GPRINT:preamble_filter:LAST:%4.1lf" \
+		"CDEF:lost_buffers_min=lost_buffers,60,*" \
+		"LINE2:lost_buffers_min#$RED:Lost Buffers per minute\c" \
+		"VDEF:total_lost=lost_buffers,TOTAL" \
+		"GPRINT:total_lost:Total Lost Buffers\: %4.0lf%s" \
+		"VDEF:avgac=aircraft_count,AVERAGE" \
+		"GPRINT:avgac:Average Aircraft Count\: %3.0lf" \
+		"VDEF:maxac=aircraft_count,MAXIMUM" \
+		"GPRINT:maxac:Highest Aircraft Count\: %3.0lf" \
 		--watermark "Drawn: $nowlit";
 	mv "$1.tmp" "$1"
 	}

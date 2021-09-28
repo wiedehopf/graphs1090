@@ -70,7 +70,7 @@ def dispatch_df(data, stats, name):
                 values = [df_counts[df]],
                 interval = 60)
 
-def dispatch_misc(data, stats, name):
+def dispatch_misc(data, stats, name, dispatch_type):
     if not has_key(stats, name):
         return
     if not has_key(stats, 'now'):
@@ -82,7 +82,7 @@ def dispatch_misc(data, stats, name):
 
     V.dispatch(plugin_instance = instance_name,
             host = host,
-            type = 'airspy_misc' ,
+            type = dispatch_type ,
             type_instance = name,
             time = now,
             values = [subject],
@@ -164,9 +164,11 @@ def read_airspy(data):
     dispatch_quartiles(data, stats, 'snr')
     dispatch_quartiles(data, stats, 'noise')
 
-    dispatch_misc(data, stats, 'preamble_filter')
-    dispatch_misc(data, stats, 'samplerate')
-    dispatch_misc(data, stats, 'gain')
+    dispatch_misc(data, stats, 'preamble_filter', 'airspy_misc')
+    dispatch_misc(data, stats, 'samplerate', 'airspy_misc')
+    dispatch_misc(data, stats, 'gain', 'airspy_misc')
+    dispatch_misc(data, stats, 'lost_buffers', 'airspy_lost')
+    dispatch_misc(data, stats, 'max_aircraft_count', 'airspy_aircraft')
 
     dispatch_df(data, stats, 'df_counts')
 
