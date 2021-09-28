@@ -14,3 +14,4 @@ dump1090_tracks		value:DERIVE:0:500
 dump1090_mlat		value:GAUGE:0:1000
 dump1090_tisb		value:GAUGE:0:1000
 dump1090_gps		value:GAUGE:0:1000
+dump1090_misc       value:GAUGE:-1000:1000

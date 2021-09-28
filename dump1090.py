@@ -70,14 +70,11 @@ def dispatch_df(data, stats, name):
                 values = [df_counts[df]],
                 interval = 60)
 
-def dispatch_misc(data, stats, name, dispatch_type):
+def dispatch_misc(now, data, stats, name, dispatch_type):
     if not has_key(stats, name):
-        return
-    if not has_key(stats, 'now'):
         return
     instance_name,host,url = data
 
-    now = stats['now']
     subject = stats[name]
 
     V.dispatch(plugin_instance = instance_name,
@@ -151,7 +148,7 @@ def read_airspy(data):
                        time=time.time(),
                        values = [ptime])
     except Exception as error:
-        collectd.warning(str(error))
+        #collectd.warning(str(error))
         pass
 
     try:
@@ -164,11 +161,13 @@ def read_airspy(data):
     dispatch_quartiles(data, stats, 'snr')
     dispatch_quartiles(data, stats, 'noise')
 
-    dispatch_misc(data, stats, 'preamble_filter', 'airspy_misc')
-    dispatch_misc(data, stats, 'samplerate', 'airspy_misc')
-    dispatch_misc(data, stats, 'gain', 'airspy_misc')
-    dispatch_misc(data, stats, 'lost_buffers', 'airspy_lost')
-    dispatch_misc(data, stats, 'max_aircraft_count', 'airspy_aircraft')
+    if has_key(stats,'now'):
+        now = stats['now']
+        dispatch_misc(now, data, stats, 'preamble_filter', 'airspy_misc')
+        dispatch_misc(now, data, stats, 'samplerate', 'airspy_misc')
+        dispatch_misc(now, data, stats, 'gain', 'airspy_misc')
+        dispatch_misc(now, data, stats, 'lost_buffers', 'airspy_lost')
+        dispatch_misc(now, data, stats, 'max_aircraft_count', 'airspy_aircraft')
 
     dispatch_df(data, stats, 'df_counts')
 
@@ -207,6 +206,15 @@ def read_1090(data):
     except Exception as error:
         collectd.warning(str(error))
         return
+
+
+    try:
+        if has_key(stats['last1min'],'adaptive'):
+            stuff = stats['last1min']['adaptive']
+            dispatch_misc(stats['last1min']['end'], data, stuff, 'gain_db', 'dump1090_misc')
+    except:
+        collectd.warning(str(error))
+        pass
 
     # Signal measurements - from the 1 min bucket
     if has_key(stats['last1min'],'local'):
