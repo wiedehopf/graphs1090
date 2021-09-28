@@ -940,6 +940,33 @@ signal_graph() {
 	mv "$1.tmp" "$1"
 	}
 
+dump1090_misc() {
+    defines=( \
+        "DEF:gain=$(check $2/dump1090_misc-gain_db.rrd):value:AVERAGE" \
+    )
+	if [[ -n "$ul_dump1090_misc" ]]; then upper="--rigid --upper-limit $ul_dump1090_misc"; else upper=""; fi
+    TITLE="Misc"
+	rrdtool graph \
+		"$1.tmp" \
+		--end "$END_TIME" \
+		--start end-$4 \
+		$small \
+		--title "$TITLE" \
+		--right-axis 1:0 \
+		--vertical-label "misc" \
+		--left-axis-format "%.0lf" \
+		--right-axis-format "%.0lf" \
+		-y 3:1 \
+        $upper \
+		--lower-limit 4  \
+		--units-exponent 0 \
+		${defines[*]} \
+		"TEXTALIGN:center" \
+		"LINE2:gain#$DRED:Gain\:" \
+		"GPRINT:gain:LAST:%2.0lf" \
+		--watermark "Drawn: $nowlit";
+	mv "$1.tmp" "$1"
+	}
 df_counts() {
 	DF=(0 4 5 11 16 17 18 19 21)
 	colors=($GREEN $BLUE $DBLUE $ABLUE $RED $DRED $DGREEN $CYAN $LRED)
@@ -1162,6 +1189,8 @@ dump1090_graphs() {
         signal_airspy ${DOCUMENTROOT}/airspy-$2-noise-$4.png ${DB}/$1/dump1090-$2 "noise" "$4" "$5"
         misc_airspy ${DOCUMENTROOT}/airspy-$2-misc-$4.png ${DB}/$1/dump1090-$2 "misc" "$4" "$5"
     fi
+
+    dump1090_misc ${DOCUMENTROOT}/dump1090-$2-misc-$4.png ${DB}/$1/dump1090-$2 "misc" "$4" "$5"
 }
 
 system_graphs() {

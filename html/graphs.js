@@ -73,6 +73,9 @@ function switchView(newTimeFrame) {
     $("#dump1090-cpu-image").attr("src", "graphs/dump1090-" + $hostName + "-cpu-" + $timeFrame + ".png?time=" + $timestamp);
     $("#dump1090-cpu-link").attr("href", "graphs/dump1090-" + $hostName + "-cpu-" + $timeFrame + ".png?time=" + $timestamp);
 
+    $("#dump1090-misc-image").attr("src", "graphs/dump1090-" + $hostName + "-misc-" + $timeFrame + ".png?time=" + $timestamp);
+    $("#dump1090-misc-link").attr("href", "graphs/dump1090-" + $hostName + "-misc-" + $timeFrame + ".png?time=" + $timestamp);
+
     if ($("#panel_airspy").css("display") !== "none") {
         $("#airspy-rssi-image").attr("src", "graphs/airspy-" + $hostName + "-rssi-" + $timeFrame + ".png?time=" + $timestamp);
         $("#airspy-rssi-link").attr("href", "graphs/airspy-" + $hostName + "-rssi-" + $timeFrame + ".png?time=" + $timestamp);
