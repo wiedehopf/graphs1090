@@ -1081,15 +1081,15 @@ misc_airspy() {
 		${defines[*]} \
 		"TEXTALIGN:center" \
 		"LINE2:gain#$DRED:Gain\:" \
-		"GPRINT:gain:LAST:%2.0lf" \
+		"GPRINT:gain:LAST:%0.0lf" \
 		"LINE2:samplerate#$DBLUE:Samplerate\:" \
-		"GPRINT:samplerate:LAST:%2.0lf" \
+		"GPRINT:samplerate:LAST:%0.0lf" \
 		"LINE2:preamble_filter#$DGREEN:Preamble Filter\:" \
-		"GPRINT:preamble_filter:LAST:%4.1lf" \
+		"GPRINT:preamble_filter:LAST:%0.1lf\c" \
 		"CDEF:lost_buffers_min=lost_buffers,60,*" \
-		"LINE2:lost_buffers_min#$RED:Lost Buffers per minute\c" \
+		"LINE2:lost_buffers_min#$RED:Lost Buffers per minute" \
 		"VDEF:total_lost=lost_buffers,TOTAL" \
-		"GPRINT:total_lost:Total Lost Buffers\: %4.0lf%s" \
+		"GPRINT:total_lost:Total Lost Buffers\: %0.0lf%s\c" \
 		"VDEF:avgac=aircraft_count,AVERAGE" \
 		"GPRINT:avgac:Average Aircraft Count\: %3.0lf" \
 		"VDEF:maxac=aircraft_count,MAXIMUM" \
