@@ -1076,7 +1076,7 @@ misc_airspy() {
 		--right-axis-format "%.0lf" \
 		-y 3:1 \
         $upper \
-		--lower-limit 4  \
+		--lower-limit 0  \
 		--units-exponent 0 \
 		${defines[*]} \
 		"TEXTALIGN:center" \
