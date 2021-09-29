@@ -9,30 +9,36 @@ if ! mount | grep -qs -e /var/cache/fontconfig &>/dev/null; then
     mount -o rw,nosuid,nodev,relatime,size=32000k,mode=755 -t tmpfs tmpfs /var/cache/fontconfig &>/dev/null || true
 fi
 
-if [ -f /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_messages-messages_978.rrd ] \
-    || [ -f /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_messages-messages_978.rrd.gz ] \
-    || [ -f /run/collectd/localhost/dump1090-localhost/dump1090_messages-messages_978.rrd ]
-then
-    if grep -qs -e 'style="display:none"> <!-- dump978 -->' /usr/share/graphs1090/html/index.html; then
-        sed -i -e 's/ style="display:none"> <!-- dump978 -->/> <!-- dump978 -->/' /usr/share/graphs1090/html/index.html
+function checkrrd() {
+    if [[ -f "/var/lib/collectd/rrd/localhost/dump1090-localhost/$1" ]] \
+        || [[ -f "/var/lib/collectd/rrd/localhost/dump1090-localhost/$1.gz" ]] \
+        || [[ -f "/run/collectd/localhost/dump1090-localhost/$1" ]]
+    then
+        return 0
+    else
+        return 1
     fi
-else
-    if ! grep -qs -e 'style="display:none"> <!-- dump978 -->' /usr/share/graphs1090/html/index.html; then
-        sed -i -e 's/panel-default"> <!-- dump978 -->/panel-default" style="display:none"> <!-- dump978 -->/' /usr/share/graphs1090/html/index.html
+}
+function show() {
+    if grep -qs -e 'style="display:none"> <!-- '$1' -->' /usr/share/graphs1090/html/index.html; then
+        sed -i -e 's/ style="display:none"> <!-- '$1' -->/> <!-- '$1' -->/' /usr/share/graphs1090/html/index.html
     fi
-fi
-if [ -f /var/lib/collectd/rrd/localhost/dump1090-localhost/airspy_rssi-max.rrd ] \
-    || [ -f /var/lib/collectd/rrd/localhost/dump1090-localhost/airspy_rssi-max.rrd ] \
-    || [ -f /run/collectd/localhost/dump1090-localhost/airspy_rssi-max.rrd ]
-then
-    if grep -qs -e 'style="display:none"> <!-- airspy -->' /usr/share/graphs1090/html/index.html; then
-        sed -i -e 's/ style="display:none"> <!-- airspy -->/> <!-- airspy -->/' /usr/share/graphs1090/html/index.html
+}
+function hide() {
+    if ! grep -qs -e 'style="display:none"> <!-- '$1' -->' /usr/share/graphs1090/html/index.html; then
+        sed -i -e 's/> <!-- '$1' -->/ style="display:none"> <!-- '$1' -->/' /usr/share/graphs1090/html/index.html
     fi
-else
-    if ! grep -qs -e 'style="display:none"> <!-- airspy -->' /usr/share/graphs1090/html/index.html; then
-        sed -i -e 's/panel-default"> <!-- airspy -->/panel-default" style="display:none"> <!-- airspy -->/' /usr/share/graphs1090/html/index.html
+}
+function show_hide() {
+    if checkrrd "$1"; then
+        show "$2"
+    else
+        hide "$2"
     fi
-fi
+}
+show_hide dump1090_messages-messages_978.rrd dump978
+show_hide airspy_rssi-max.rrd airspy
+show_hide dump1090_misc-gain_db.rrd dump1090-misc
 
 if [[ $all_large == "yes" ]]; then
     if grep -qs -e 'flex: 50%; // all_large' /usr/share/graphs1090/html/portal.css; then

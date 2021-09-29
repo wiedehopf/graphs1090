@@ -1189,8 +1189,9 @@ dump1090_graphs() {
         signal_airspy ${DOCUMENTROOT}/airspy-$2-noise-$4.png ${DB}/$1/dump1090-$2 "noise" "$4" "$5"
         misc_airspy ${DOCUMENTROOT}/airspy-$2-misc-$4.png ${DB}/$1/dump1090-$2 "misc" "$4" "$5"
     fi
-
-    dump1090_misc ${DOCUMENTROOT}/dump1090-$2-misc-$4.png ${DB}/$1/dump1090-$2 "misc" "$4" "$5"
+    if [[ -f ${DB}/$1/dump1090-$2/dump1090_misc-gain_db.rrd ]]; then
+        dump1090_misc ${DOCUMENTROOT}/dump1090-$2-misc-$4.png ${DB}/$1/dump1090-$2 "misc" "$4" "$5"
+    fi
 }
 
 system_graphs() {
