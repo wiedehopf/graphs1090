@@ -1,11 +1,11 @@
 #!/bin/bash
 
 echo "Generating all graphs"
-/usr/share/graphs1090/boot.sh 0.4
+/usr/share/graphs1090/boot.sh 0.33
 
 graphs() {
 	#echo "Generating $1 graphs"
-	/usr/share/graphs1090/graphs1090.sh $1 0.5 &>/dev/null
+	/usr/share/graphs1090/graphs1090.sh $1 0.33 &>/dev/null
 }
 counter=0
 hour_done=0

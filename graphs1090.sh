@@ -458,6 +458,7 @@ memory_graph() {
 
 
 network_graph() {
+	$pre
 	if [[ $(ls ${DB}/localhost | grep interface -c) < 2 ]]
 	then
 		interfaces=(\
@@ -472,7 +473,6 @@ network_graph() {
 			"CDEF:rx_b=rx1,rx2,ADDNAN" \
 			"CDEF:tx_b=tx1,tx2,ADDNAN")
 	fi
-	$pre
 	rrdtool graph \
 		"$1.tmp" \
 		--end "$END_TIME" \
@@ -593,8 +593,8 @@ wlan0_graph() {
 ## RECEIVER GRAPHS
 
 local_rate_graph() {
-	if [ $ul_maxima ]; then upper="--rigid --upper-limit $ul_maxima"; else upper=""; fi
 	$pre
+	if [ $ul_maxima ]; then upper="--rigid --upper-limit $ul_maxima"; else upper=""; fi
 	rrdtool graph \
 		"$1.tmp" \
 		--end "$END_TIME" \
@@ -635,6 +635,7 @@ local_rate_graph() {
 	}
 
 local_trailing_rate_graph() {
+	$pre
 	if ! [[ -f $2/dump1090_cpu-airspy.rrd ]] && [[ -f $2/dump1090_messages-strong_signals.rrd ]]; then
 		strong1="AREA:strong#$RED:Messages > -3dBFS\g"
 		strong2="GPRINT:strong_percent_vdef: (%1.1lf<span font='2'> </span>%% of messages)"
@@ -654,7 +655,6 @@ local_trailing_rate_graph() {
 	else messages="CDEF:messages=messages1"
 	fi
 	r_window=$((86400))
-	$pre
 	rrdtool graph \
 		"$1.tmp" \
 		--end "$END_TIME" \
@@ -798,6 +798,7 @@ local_trailing_rate_graph() {
 	}
 
 range_graph(){
+	$pre
 	label="Nautical Miles"
 	unitconv=0.000539956803
 	if [[ $range == "statute" ]]; then
@@ -842,7 +843,6 @@ range_graph(){
 			)
 	fi
 
-	$pre
 	rrdtool graph \
 		"$1.tmp" \
 		--end "$END_TIME" \
@@ -882,6 +882,7 @@ range_graph(){
 
 
 signal_graph() {
+	$pre
     #rrdtool graph can't handle empty arguments, give it bogus stuff to do
     noise1="CDEF:fake1=signal"
 	if [[ $3 == "UAT" ]]; then
@@ -906,7 +907,6 @@ signal_graph() {
             noise1="LINE1:noise#$DGREEN:Noise"
         fi
 	fi
-	$pre
     if [ $ll_signal ]; then lower="$ll_signal"; else lower="-45"; fi
 	rrdtool graph \
 		"$1.tmp" \
@@ -941,6 +941,7 @@ signal_graph() {
 	}
 
 dump1090_misc() {
+	$pre
     defines=( \
         "DEF:gain=$(check $2/dump1090_misc-gain_db.rrd):value:AVERAGE" \
     )
@@ -968,6 +969,7 @@ dump1090_misc() {
 	mv "$1.tmp" "$1"
 	}
 df_counts() {
+	$pre
 	DF=(0 4 5 11 16 17 18 19 21)
 	colors=($GREEN $BLUE $DBLUE $ABLUE $RED $DRED $DGREEN $CYAN $LRED)
 	defines=()
@@ -1005,6 +1007,7 @@ df_counts() {
 	mv "$1.tmp" "$1"
 	}
 signal_airspy() {
+	$pre
     defines=( \
         "DEF:min=$(check $2/airspy_$3-min.rrd):value:MIN" \
         "DEF:p5=$(check $2/airspy_$3-p5.rrd):value:AVERAGE" \
@@ -1055,6 +1058,7 @@ signal_airspy() {
 	mv "$1.tmp" "$1"
 	}
 misc_airspy() {
+	$pre
     defines=( \
         "DEF:lost_buffers=$(check $2/airspy_lost-lost_buffers.rrd):value:AVERAGE" \
         "DEF:aircraft_count=$(check $2/airspy_aircraft-max_aircraft_count.rrd):value:AVERAGE" \
