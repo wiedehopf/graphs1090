@@ -81,6 +81,10 @@ if [[ $all_large == "yes" ]]; then
 	small="$options --width $lwidth --height $lheight"
 fi
 
+
+# load bash sleep builtin if available
+[[ -f /usr/lib/bash/sleep ]] && enable -f /usr/lib/bash/sleep sleep || true
+
 pre="sleep 0.01"
 if ! [ -z "$2" ]; then
 	pre="sleep $2"

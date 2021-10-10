@@ -9,6 +9,9 @@ if ! mount | grep -qs -e /var/cache/fontconfig &>/dev/null; then
     mount -o rw,nosuid,nodev,relatime,size=32000k,mode=755 -t tmpfs tmpfs /var/cache/fontconfig &>/dev/null || true
 fi
 
+# load bash sleep builtin if available
+[[ -f /usr/lib/bash/sleep ]] && enable -f /usr/lib/bash/sleep sleep || true
+
 function checkrrd() {
     if [[ -f "/var/lib/collectd/rrd/localhost/dump1090-localhost/$1" ]] \
         || [[ -f "/var/lib/collectd/rrd/localhost/dump1090-localhost/$1.gz" ]] \

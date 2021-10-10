@@ -10,6 +10,9 @@ graphs() {
 counter=0
 hour_done=0
 
+# load bash sleep builtin if available
+[[ -f /usr/lib/bash/sleep ]] && enable -f /usr/lib/bash/sleep sleep || true
+
 while wait;
 do
     SEC=$(( 10#$(date -u +%S) ))

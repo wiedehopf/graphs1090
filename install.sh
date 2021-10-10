@@ -27,6 +27,12 @@ do
 	fi
 done
 
+if ! [[ -f /usr/lib/bash/sleep ]];
+then
+    apt update || true
+    apt install -y --no-install-suggests --no-install-recommends bash-builtins || true
+fi
+
 function aptUpdate() {
     if [[ $update_done != "yes" ]]; then
         apt update && update_done=yes || true
