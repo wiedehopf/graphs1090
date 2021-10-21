@@ -546,7 +546,7 @@ temp_graph_metric() {
 		--start end-$4 \
 		$small \
 		--title "Maximum Core Temperature" \
-		--vertical-label "Degrees Celcius" \
+		--vertical-label "Degrees Celsius" \
 		--right-axis 1:0 \
 		--lower-limit 24 \
 		--upper-limit 66 \
