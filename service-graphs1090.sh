@@ -1,12 +1,33 @@
 #!/bin/bash
 
+source /etc/default/graphs1090
+
+
+if [[ -z $DRAW_INTERVAL ]]; then
+    DRAW_INTERVAL=60
+fi
+
+DRAW_INTERVAL=$(cut -d '.' -f1 <<< $DRAW_INTERVAL)
+DRAW_INTERVAL=$(( 10#$DRAW_INTERVAL ))
+
+if (( DRAW_INTERVAL < 1 )); then
+    DRAW_INTERVAL=1
+fi
+
+if (( DRAW_INTERVAL < 20 )); then
+    GRAPH_DELAY=0
+else
+    GRAPH_DELAY=0.33
+fi
+
 echo "Generating all graphs"
-/usr/share/graphs1090/boot.sh 0.33
+/usr/share/graphs1090/boot.sh $GRAPH_DELAY
 
 graphs() {
 	#echo "Generating $1 graphs"
-	/usr/share/graphs1090/graphs1090.sh $1 0.33 &>/dev/null
+	/usr/share/graphs1090/graphs1090.sh $1 $GRAPH_DELAY &>/dev/null
 }
+
 counter=0
 hour_done=0
 
@@ -15,14 +36,22 @@ hour_done=0
 
 while wait;
 do
-    SEC=$(( 10#$(date -u +%S) ))
-    if (( SEC != 45 )); then
-        sleep 0.9 &
+    SEC=$(( 10#$(date -u +%s) ))
+    EARLY=$(( DRAW_INTERVAL * 3 / 4 - (SEC % DRAW_INTERVAL) ))
+    #echo $(( SEC % DRAW_INTERVAL )) $EARLY $(( DRAW_INTERVAL + EARLY - 1))
+    if (( EARLY < -1 )); then
+        sleep $(( DRAW_INTERVAL + EARLY - 1))
         continue
+    elif (( EARLY > 0 )); then
+        sleep $EARLY
     fi
-    sleep 59.9 & # wait in the while condition
+    if (( EARLY == -1 )); then
+        sleep $(( $DRAW_INTERVAL - 1 )) & # wait in the while condition
+    else
+        sleep $DRAW_INTERVAL & # wait in the while condition
+    fi
 
-    m=$(( 10#$(date -u +%s) / 60))
+    m=$(( SEC / DRAW_INTERVAL))
 
     if   (( m % 2 == 1 )); then          graphs 2h
     elif (( m % 4 == 2 )); then          graphs 8h
