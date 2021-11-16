@@ -212,6 +212,8 @@ def read_1090(data):
         if has_key(stats['last1min'],'adaptive'):
             stuff = stats['last1min']['adaptive']
             dispatch_misc(stats['last1min']['end'], data, stuff, 'gain_db', 'dump1090_misc')
+        if has_key(stats, 'gain_db') and has_key(stats, 'now'):
+            dispatch_misc(stats['now'], data, stats, 'gain_db', 'dump1090_misc')
     except:
         collectd.warning(str(error))
         pass

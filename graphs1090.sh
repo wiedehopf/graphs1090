@@ -968,7 +968,7 @@ dump1090_misc() {
 		${defines[*]} \
 		"TEXTALIGN:center" \
 		"LINE2:gain#$DRED:Gain\:" \
-		"GPRINT:gain:LAST:%2.0lf" \
+		"GPRINT:gain:LAST:%2.1lf" \
 		--watermark "Drawn: $nowlit";
 	mv "$1.tmp" "$1"
 	}
