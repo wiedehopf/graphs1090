@@ -7,10 +7,10 @@ renice -n 19 -p $$
 trap 'echo "[ERROR] Error in line $LINENO when executing: $BASH_COMMAND"' ERR
 
 mult() {
-	echo $1 $2 | awk '{printf "%.9f", $1 * $2}'
+	echo $1 $2 | LC_ALL=C awk '{printf "%.9f", $1 * $2}'
 }
 div() {
-	echo $1 $2 | awk '{printf "%.9f", $1 / $2}'
+	echo $1 $2 | LC_ALL=C awk '{printf "%.9f", $1 / $2}'
 }
 
 lwidth=1096
