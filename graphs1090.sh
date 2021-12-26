@@ -40,10 +40,23 @@ DB=/var/lib/collectd/rrd
 
 source /etc/default/graphs1090
 
-ether="$(ls ${DB}/localhost | grep interface -m1)"
-wifi="$(ls ${DB}/localhost | grep interface -m2 | tail -n1)"
+if [[ -n $ether ]]; then
+    ether="interface-${ether}"
+else
+    ether="$(ls ${DB}/localhost | grep interface -m1)"
+fi
 
-disk="$(ls ${DB}/localhost | grep disk -m1)"
+if [[ -n $wifi ]]; then
+    wifi="interface-${wifi}"
+else
+    wifi="$(ls ${DB}/localhost | grep interface -m2 | tail -n1)"
+fi
+
+if [[ -n $disk ]]; then
+    disk="disk-${disk}"
+else
+    disk="$(ls ${DB}/localhost | grep disk -m1)"
+fi
 
 
 if ! [ $position_scaling ]; then

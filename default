@@ -67,4 +67,11 @@ lr_rate_per_aircraft=
 # leave blank for a default of 0.1
 position_scaling=
 
+# disk stats displayed for device (i.e. mmc0 sda sdc)
+disk=
+
+# net stats displayed for these two devices (i.e. wlp3s0 wlan0 eth0 enp0s25)
+ether=
+wifi=
+
 DB=/var/lib/collectd/rrd
