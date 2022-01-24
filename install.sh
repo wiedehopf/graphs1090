@@ -172,9 +172,6 @@ cp collectd.conf $ipath/default-collectd.conf
 cp service.service /lib/systemd/system/graphs1090.service
 cp nginx-graphs1090.conf $ipath
 
-# bust cache for all css and js files
-sed -i -e "s/__cache_version__/$(date +%s | tail -c5)/g" $ipath/html/index.html
-
 if [ -d /etc/lighttpd/conf.d/ ] && ! [ -d /etc/lighttpd/conf-enabled/ ] && ! [ -d /etc/lighttpd/conf-available ] && command -v lighttpd &>/dev/null
 then
     ln -snf /etc/lighttpd/conf.d /etc/lighttpd/conf-enabled

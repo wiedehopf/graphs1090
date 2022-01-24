@@ -30,7 +30,7 @@ function switchView(newTimeFrame) {
     $timeFrame = newTimeFrame;
 
     // Set the timestamp variable to be used in querystring.
-    $timestamp = new Date().getTime() / 1000
+    $timestamp = Math.round(new Date().getTime() / 1000 / 15) * 15;
 
     // Display images for the requested time frame and create links to full sized images for the requested time frame.
     var element;
