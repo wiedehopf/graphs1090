@@ -211,9 +211,8 @@ elif [ -f /run/dump1090-mutability/stats.json ]; then
     ln -snf /run/dump1090-mutability $SYM/data
     sed -i -e 's?URL .*?URL "file:///usr/share/graphs1090/data-symlink"?' /etc/collectd/collectd.conf
 else
-	echo --------------
-	echo "Non-standard configuration detected, you need to change the data URL in /etc/collectd/collectd.conf!"
-	echo --------------
+    ln -snf /run/readsb $SYM/data
+    sed -i -e 's?URL .*?URL "file:///usr/share/graphs1090/data-symlink"?' /etc/collectd/collectd.conf
 fi
 
 SYM=/usr/share/graphs1090/978-symlink
