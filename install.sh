@@ -9,7 +9,7 @@ ipath=/usr/share/graphs1090
 install=0
 
 commands="git rrdtool collectd wget unzip"
-packages="git rrdtool collectd-core wget unzip"
+packages="git rrdtool collectd-core wget unzip bash-builtins"
 
 mkdir -p $ipath/installed
 mkdir -p /var/lib/graphs1090/scatter
@@ -20,17 +20,12 @@ do
 	if ! command -v "$CMD" &>/dev/null
 	then
 		install=1
-        if [[ $CMD == collectd ]]; then
-            CMD=collectd-core
-        fi
-		touch $ipath/installed/$CMD
 	fi
 done
 
 if ! [[ -f /usr/lib/bash/sleep ]];
 then
-    apt update || true
-    apt install -y --no-install-suggests --no-install-recommends bash-builtins || true
+    install=1
 fi
 
 function aptUpdate() {
@@ -44,8 +39,10 @@ then
 	echo "------------------"
 	echo "Installing required packages: $packages"
 	echo "------------------"
-    aptUpdate
-	apt-get install -y --no-install-suggests --no-install-recommends $packages || true
+	if ! apt-get install -y --no-install-suggests --no-install-recommends $packages; then
+        aptUpdate
+        apt-get install -y --no-install-suggests --no-install-recommends $packages || true
+    fi
     success=1
     hash -r
     for CMD in $commands
@@ -66,7 +63,7 @@ then
 	fi
 fi
 
-if grep -E 'stretch|jessie|buster|bullseye' /etc/os-release -qs
+if grep -E 'stretch|jessie|buster' /etc/os-release -qs
 then
 	if ! dpkg -s libpython2.7 2>/dev/null | grep 'Status.*installed' &>/dev/null
 	then
@@ -74,15 +71,13 @@ then
 		apt-get install --no-install-suggests --no-install-recommends -y 'libpython2.7' || true
 	fi
 else
-		if ! dpkg -s libpython3.7 2>/dev/null | grep 'Status.*installed' &>/dev/null \
-		|| ! dpkg -s libpython3.8 2>/dev/null | grep 'Status.*installed' &>/dev/null \
-		|| ! dpkg -s libpython3.9 2>/dev/null | grep 'Status.*installed' &>/dev/null
+    if ! dpkg -s libpython3.9 2>/dev/null | grep 'Status.*installed' &>/dev/null \
+        && ! dpkg -s libpython3.10 2>/dev/null | grep 'Status.*installed' &>/dev/null
 	then
         aptUpdate
 
-		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.9' || \
-		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.8' || \
-		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.7' || true
+		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.9' \
+		|| apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.10'
 	fi
 fi
 

@@ -13,10 +13,6 @@ rm -f /etc/cron.d/cron-graphs1090
 
 lighty-disable-mod graphs1090 >/dev/null
 
-for package in $(ls $ipath/installed); do
-    apt-get remove -y $package
-done
-
 systemctl daemon-reload
 systemctl restart collectd
 rm -r $ipath
