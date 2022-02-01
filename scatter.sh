@@ -1,5 +1,11 @@
 #!/bin/bash
 
+source /etc/default/graphs1090
+
+if [[ -z "$enable_scatter" ]] || [[ "$enable_scatter" == "no" ]]; then
+    exit 0
+fi
+
 # Fetch a day worth of data from the rrds
 data_dir=/var/lib/graphs1090/scatter
 tmp=/run/graphs1090/scatter
@@ -7,12 +13,6 @@ mkdir -p ${tmp}
 
 DB=/var/lib/collectd/rrd
 # settings in /etc/default/graphs1090 will overwrite the DB directory
-
-source /etc/default/graphs1090
-
-if [[ -z "$enable_scatter" ]] || [[ "enable_scatter" == "no" ]]; then
-    exit 0
-fi
 
 date=$(date -I --date=yesterday)
 endtime="midnight today"
