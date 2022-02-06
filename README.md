@@ -38,6 +38,10 @@ or
 
 http://192.168.x.yy/perf
 
+or
+
+http://192.168.x.yy:8542
+
 ### Adjusting gain
 
 The fine tuning is up to taste but quite a few setups are using way too much gain (AGC is maximum gain it does not work as intended for ADS-B).
