@@ -70,7 +70,7 @@ while ! [[ -d $DB ]] && sleep 5; do
     true
 done
 
-for i in 24h 8h 2h 48h 7d 14d 30d 90d 180d 365d 730d 1095d
+for i in 24h 8h 2h 48h 7d 14d 30d 90d 180d 365d 730d 1095d 1825d 3650d
 do
 	/usr/share/graphs1090/graphs1090.sh $i $1 &>/dev/null
 done

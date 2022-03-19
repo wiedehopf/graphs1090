@@ -64,7 +64,9 @@ do
     elif (( m % 512 == 256 )); then      graphs 180d
     elif (( m % 1024 == 512 )); then     graphs 365d
     elif (( m % 2048 == 1024 )); then    graphs 730d
-    else                                 graphs 1095d
+    elif (( m % 4096 == 2048 )); then    graphs 1095d
+    elif (( m % 8192 == 4096 )); then    graphs 1825d
+    else                                 graphs 3650d
     fi
 
     if [[ $(date +%H:%M) == 00:07 ]]; then

@@ -154,8 +154,12 @@ sudo systemctl restart collectd
 
 ### Resetting the database format
 
+Caution: while this process retains data, it can cause some data anomalies / issues, a backup is recommended before proceding. (an automatic backup is created by the script but ... better you know where your backup is)
+
 This might be a good idea if you changed from the adsb receiver project graphs and kept the data.
 Also if you upgraded at a somewhen July 15th to July 16th 2019. Had a bad setting removing maximum data keeping for some part of the data.
+
+This can be necessary to change the database to save more than 3 years of data. (if the database was created before 2022-03-20)
 
 ```
 sudo bash -c "$(curl -L -o - https://github.com/wiedehopf/graphs1090/raw/master/install.sh)"

@@ -140,6 +140,9 @@ if ! grep -e 'system_stats' -qs /etc/collectd/collectd.conf &>/dev/null; then
 	echo "Overwriting /etc/collectd/collectd.conf, the old file has been moved to /etc/collectd/collectd.conf.graphs1090"
 	echo "------------------"
 fi
+if ! grep -qs -e 'RRATimespan 576288000' /etc/collectd/collectd.conf &>/dev/null; then
+    sed -i -e 's/RRATimespan 96048000/\0\nRRATimespan 576288000/' /etc/collectd/collectd.conf
+fi
 sed -i -e 's/XFF.*/XFF 0.8/' /etc/collectd/collectd.conf
 sed -i -e 's/skyview978/skyaware978/' /etc/collectd/collectd.conf
 
