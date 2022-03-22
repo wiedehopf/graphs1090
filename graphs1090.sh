@@ -664,30 +664,16 @@ local_trailing_rate_graph() {
 	if [ $ul_message_rate ]; then upper="--rigid --upper-limit $ul_message_rate"; else upper=""; fi
 	if [[ $max_messages_line == 1 ]]
 	then
-		maxline1="VDEF:peakmessages=messages,MAXIMUM"
-		maxline2="LINE1:peakmessages#$BLUE:dashes=2,8"
+        maxline=("VDEF:peakmessages=messages,MAXIMUM" "LINE1:peakmessages#$BLUE:dashes=2,8")
 	fi
-	if [ -f $2/dump1090_messages-remote_accepted.rrd ]
-	then messages="CDEF:messages=messages1,messages2,ADDNAN"
-	else messages="CDEF:messages=messages1"
+	if [ -f $2/dump1090_messages-remote_accepted.rrd ]; then
+        messages="CDEF:messages=messages1,messages2,ADDNAN"
+	else
+        messages="CDEF:messages=messages1"
 	fi
 	r_window=$((86400))
-	rrdtool graph \
-		"$1.tmp" \
-		--end "$END_TIME" \
-		--start end-$4 \
-		$big \
-		--slope-mode \
-		--title "$3 Message Rate" \
-		--vertical-label "Messages/Second" \
-		--lower-limit 0  \
-		$upper \
-		--right-axis $position_scaling:0 \
-		--units-exponent 0 \
-		--pango-markup \
-		"TEXTALIGN:center" \
-		"DEF:messages1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE" \
-		"DEF:a1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE:end=now-86400:start=end-$r_window" \
+    WEEK=( \
+        "DEF:a1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE:end=now-86400:start=end-$r_window" \
 		"DEF:b1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE:end=now-172800:start=end-$r_window" \
 		"DEF:c1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE:end=now-259200:start=end-$r_window" \
 		"DEF:d1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE:end=now-345600:start=end-$r_window" \
@@ -708,7 +694,6 @@ local_trailing_rate_graph() {
 		"DEF:emax1=$(check $2/dump1090_messages-local_accepted.rrd):value:MAX:end=now-432000:start=end-$r_window" \
 		"DEF:fmax1=$(check $2/dump1090_messages-local_accepted.rrd):value:MAX:end=now-518400:start=end-$r_window" \
 		"DEF:gmax1=$(check $2/dump1090_messages-local_accepted.rrd):value:MAX:end=now-604800:start=end-$r_window" \
-		"DEF:messages2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE" \
 		"DEF:a2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE:end=now-86400:start=end-$r_window" \
 		"DEF:b2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE:end=now-172800:start=end-$r_window" \
 		"DEF:c2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE:end=now-259200:start=end-$r_window" \
@@ -730,7 +715,6 @@ local_trailing_rate_graph() {
 		"DEF:emax2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MAX:end=now-432000:start=end-$r_window" \
 		"DEF:fmax2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MAX:end=now-518400:start=end-$r_window" \
 		"DEF:gmax2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MAX:end=now-604800:start=end-$r_window" \
-		$messages \
 		"CDEF:a=a1,a2,ADDNAN" \
 		"CDEF:b=b1,b2,ADDNAN" \
 		"CDEF:c=c1,c2,ADDNAN" \
@@ -759,14 +743,6 @@ local_trailing_rate_graph() {
 		"CDEF:e3=e,UN,0,e,IF" \
 		"CDEF:f3=f,UN,0,f,IF" \
 		"CDEF:g3=g,UN,0,g,IF" \
-		"DEF:strong=$(check $2/dump1090_messages-strong_signals.rrd):value:AVERAGE" \
-		"DEF:positions=$(check $2/dump1090_messages-positions.rrd):value:AVERAGE" \
-		"CDEF:y2positions=positions,$position_scaling,/" \
-		"VDEF:strong_total=strong,TOTAL" \
-		"VDEF:messages_total=messages,TOTAL" \
-		"CDEF:hundred=messages,UN,100,100,IF" \
-		"CDEF:strong_percent=strong_total,hundred,*,messages_total,/" \
-		"VDEF:strong_percent_vdef=strong_percent,LAST" \
 		"SHIFT:a3:86400" \
 		"SHIFT:b3:172800" \
 		"SHIFT:c3:259200" \
@@ -802,12 +778,42 @@ local_trailing_rate_graph() {
 		"CDEF:max5=max3,gmax,MAXNAN" \
 		"CDEF:max=max4,max5,MAXNAN" \
 		"CDEF:maxarea=max,min,-" \
-		"LINE0.01:messages#$BLUE:Messages Received" \
 		"LINE1:min#FFFF99" \
 		"AREA:maxarea#FFFF99:Min/Max:STACK" \
 		"LINE1:7dayaverage#$GREEN:7 Day Average" \
+    )
+    if [[ ${4: -1} != "h" ]]; then
+        WEEK=()
+    fi
+	rrdtool graph \
+		"$1.tmp" \
+		--end "$END_TIME" \
+		--start end-$4 \
+		$big \
+		--slope-mode \
+		--title "$3 Message Rate" \
+		--vertical-label "Messages/Second" \
+		--lower-limit 0  \
+		$upper \
+		--right-axis $position_scaling:0 \
+		--units-exponent 0 \
+		--pango-markup \
+		"TEXTALIGN:center" \
+		"DEF:messages1=$(check $2/dump1090_messages-local_accepted.rrd):value:AVERAGE" \
+		"DEF:messages2=$(check $2/dump1090_messages-remote_accepted.rrd):value:AVERAGE" \
+		$messages \
+		"DEF:strong=$(check $2/dump1090_messages-strong_signals.rrd):value:AVERAGE" \
+		"DEF:positions=$(check $2/dump1090_messages-positions.rrd):value:AVERAGE" \
+		"CDEF:y2positions=positions,$position_scaling,/" \
+		"VDEF:strong_total=strong,TOTAL" \
+		"VDEF:messages_total=messages,TOTAL" \
+		"CDEF:hundred=messages,UN,100,100,IF" \
+		"CDEF:strong_percent=strong_total,hundred,*,messages_total,/" \
+		"VDEF:strong_percent_vdef=strong_percent,LAST" \
+		"LINE0.01:messages#$BLUE:Messages Received" \
+        "${WEEK[@]}" \
 		"LINE1:messages#$BLUE" \
-		$maxline1 $maxline2 \
+		"${maxline[@]}" \
         "$strong1" "$strong2" \
 		"LINE1:y2positions#$CYAN:Positions/s (RHS)\c" \
 		--watermark "Drawn: $nowlit";
