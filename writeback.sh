@@ -19,7 +19,7 @@ echo "writing DB from $RUNFOLDER to disk"
 find "$RUNFOLDER/localhost" -size -50c -type f -delete -print | sed 's/^/File empty, deleting: /' || true
 
 #tar gz localhost
-tar --directory "$RUNFOLDER" -cz -f "$RUNFOLDER/localhost.tar.gz" localhost
+tar --directory "$RUNFOLDER" -c localhost | gzip -1 -c > "$RUNFOLDER/localhost.tar.gz"
 
 mkdir -p "$TARGET"
 
@@ -36,6 +36,8 @@ fi
 cp -fT "$RUNFOLDER/localhost.tar.gz" "$TARGET/localhost.tar.gz.tmp"
 sync
 mv -f "$TARGET/localhost.tar.gz.tmp" "$TARGET/localhost.tar.gz"
+
+echo "writeback size on disk: $(du -sh "$TARGET/localhost.tar.gz" || true)" || true
 
 # remove localhost folder as it would be used with preference in the readback instead of localhost.tar.gz
 rm -rf "$TARGET/localhost"
