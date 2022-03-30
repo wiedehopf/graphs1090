@@ -33,8 +33,9 @@ if [[ -f "$TARGET/localhost.tar.gz" ]] && (( $(stat -c %s "$TARGET/localhost.tar
     find "$TARGET" -name 'auto-backup-*.tar.gz' -mtime +60 -delete
 fi
 
-rm -rf "$TARGET/localhost.tar.gz"
-cp -fT "$RUNFOLDER/localhost.tar.gz" "$TARGET/localhost.tar.gz"
+cp -fT "$RUNFOLDER/localhost.tar.gz" "$TARGET/localhost.tar.gz.tmp"
+sync
+mv -f "$TARGET/localhost.tar.gz.tmp" "$TARGET/localhost.tar.gz"
 
 # remove localhost folder as it would be used with preference in the readback instead of localhost.tar.gz
 rm -rf "$TARGET/localhost"
