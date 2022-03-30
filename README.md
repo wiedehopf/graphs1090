@@ -384,6 +384,6 @@ sudo systemctl restart collectd
 ```
 sudo systemctl stop collectd
 sudo rm /var/lib/collectd/rrd/localhost* -rf
-sudo rm /var/lib/auto-backup-$(date +%Y-week_%V).tar.gz
+sudo rm -f /var/lib/collectd/rrd/auto-backup-$(date +%Y-week_%V).tar.gz
 sudo systemctl restart collectd graphs1090
 ```
