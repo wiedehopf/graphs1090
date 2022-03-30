@@ -15,27 +15,24 @@ if ! [[ -d "$RUNFOLDER/localhost" ]]; then
 fi
 echo "writing DB from $RUNFOLDER to disk"
 
-#delete empty files (apparently sometimes collectd will create empty files and choke on them)
-find "$RUNFOLDER/localhost" -size -50c -type f -delete -print | sed 's/^/File empty, deleting: /' || true
-
-#tar gz localhost
-tar --directory "$RUNFOLDER" -c localhost | gzip -1 -c > "$RUNFOLDER/localhost.tar.gz"
-
 mkdir -p "$TARGET"
 
-if ! [[ -f "$RUNFOLDER/localhost.tar.gz" ]]; then
-    echo "FATAL: missing file: $RUNFOLDER/localhost.tar.gz"
+#tar gz localhost
+TMPF="$TARGET/localhost.tar.gz.tmp"
+rm -f "$TMPF"
+
+if ! tar --directory "$RUNFOLDER" -c localhost | gzip -1 -c > "$TMPF" || ! [[ -f "$TMPF" ]]; then
+    echo "FATAL: writeback failed"
     exit 1
 fi
 
 if [[ -f "$TARGET/localhost.tar.gz" ]] && (( $(stat -c %s "$TARGET/localhost.tar.gz") > 150000 )); then
-    mv -T "$TARGET/localhost.tar.gz" "$TARGET/auto-backup-$(date +%Y-week_%V).tar.gz" &>/dev/null || true
-    find "$TARGET" -name 'auto-backup-*.tar.gz' -mtime +60 -delete
+    mv -f -T "$TARGET/localhost.tar.gz" "$TARGET/auto-backup-$(date +%Y-week_%V).tar.gz" &>/dev/null || true
+    find "$TARGET" -name 'auto-backup-*.tar.gz' -mtime +60 -delete || true
 fi
 
-cp -fT "$RUNFOLDER/localhost.tar.gz" "$TARGET/localhost.tar.gz.tmp"
 sync
-mv -f "$TARGET/localhost.tar.gz.tmp" "$TARGET/localhost.tar.gz"
+mv -f "$TMPF" "$TARGET/localhost.tar.gz"
 
 echo "writeback size on disk: $(du -sh "$TARGET/localhost.tar.gz" || true)" || true
 

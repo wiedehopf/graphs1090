@@ -4,9 +4,24 @@ DBFOLDER=/var/lib/collectd/rrd
 RUNFOLDER=/run/collectd
 echo "copying DB from disk to $RUNFOLDER"
 
+success() {
+    #delete empty files (apparently sometimes collectd will create empty files and choke on them)
+    find "$RUNFOLDER/localhost" -size -50c -type f -delete -print | sed 's/^/File empty, deleting: /' || true
+
+    touch "$RUNFOLDER/readback-complete"
+    exit 0
+}
+
 
 if [[ -f "$DBFOLDER/localhost.tar.gz" ]] && (( $(stat -c %s "$DBFOLDER/localhost.tar.gz") > 150000 )); then
-    cp -f "$DBFOLDER/localhost.tar.gz" "$RUNFOLDER/localhost.tar.gz"
+    if tar --overwrite --directory "$RUNFOLDER" -x -f "$DBFOLDER/localhost.tar.gz"; then
+        success
+    else
+        # damaged
+        echo "file damaged, deleting: $DBFOLDER/localhost.tar.gz"
+        rm -f "$DBFOLDER/localhost.tar.gz"
+        exit 1
+    fi
 elif [[ -d "$DBFOLDER/localhost" ]] && (( "$(find "$DBFOLDER/localhost" | wc -l)" > 8 )); then
     # legacy method
     cp -aT "$DBFOLDER/localhost" "$RUNFOLDER/localhost"
@@ -27,4 +42,4 @@ else
     exit 1
 fi
 
-touch "$RUNFOLDER/readback-complete"
+success
