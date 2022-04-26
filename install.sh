@@ -212,6 +212,9 @@ elif [ -f /run/dump1090/stats.json ]; then
 elif [ -f /run/dump1090-mutability/stats.json ]; then
     ln -snf /run/dump1090-mutability $SYM/data
     sed -i -e 's?URL .*?URL "file:///usr/share/graphs1090/data-symlink"?' /etc/collectd/collectd.conf
+elif [ -f /run/shm/stats.json ]; then
+    ln -snf /run/shm $SYM/data
+    sed -i -e 's?URL .*?URL "file:///usr/share/graphs1090/data-symlink"?' /etc/collectd/collectd.conf
 else
     ln -snf /run/readsb $SYM/data
     sed -i -e 's?URL .*?URL "file:///usr/share/graphs1090/data-symlink"?' /etc/collectd/collectd.conf
