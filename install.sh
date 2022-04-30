@@ -45,8 +45,12 @@ then
             for package in $packages; do
                 apt-get install -y --no-install-suggests --no-install-recommends $package || true
             done
-            # workaround for Ubuntu 22, collectd-core package doesn't exist
-            apt-get install -y --no-install-suggests --no-install-recommends collectd || true
+            if grep -qs -e 'Jammy Jellyfish' /etc/os-release; then
+                apt purge -y collectd || true
+                apt purge -y collectd-core || true
+                wget -O /tmp/collectd-core.deb http://mirrors.kernel.org/ubuntu/pool/universe/c/collectd/collectd-core_5.12.0-9_amd64.deb
+                dpkg -i /tmp/collectd-core.deb
+            fi
         fi
     fi
     success=1
