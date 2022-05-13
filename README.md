@@ -286,22 +286,18 @@ This should be all that is required, no guarantees though!
 
 ### Backup and Restore (different architecture, for example moving from RPi to x86 or the other way around)
 
-Basically the same procedure as above, but with this difference:
-
-Before doing the backup, run this command:
+Before proceeding, run the install / update script for graphs1090 on BOTH machines to get latest script versions.
 
 ```
-sudo /usr/share/graphs1090/rrd-dump.sh /var/lib/collectd/rrd/localhost/
+sudo /usr/share/graphs1090/rrd-dump.sh /var/lib/collectd/rrd/localhost /tmp/xml.tar.gz
 ```
 
-This creates XML files from the database files in the same directory which can be later restored to database files on the target system.
+This creates XML files from the database files and places them in a designated tar.gz file which can be later restored to database files on the target system.
 
-Follow the procedure outlined in "Backup and Restore (same architecture)" (see above)
-
-After restoring as described, run this command:
+Copy the file xml.tar.gz to the new computer, place it in /tmp and run:
 
 ```
-sudo /usr/share/graphs1090/rrd-restore.sh /var/lib/collectd/rrd/localhost/
+sudo /usr/share/graphs1090/rrd-restore.sh /tmp/xml.tar.gz /var/lib/collectd/rrd/localhost
 ```
 
 Again no guarantees, but this should work.
