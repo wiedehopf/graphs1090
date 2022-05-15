@@ -219,6 +219,7 @@ cpu_graph_dump1090() {
 		--right-axis 1:0 \
 		--left-axis-format "%.0lf" \
 		--right-axis-format "%.0lf" \
+        --units-exponent 0 \
 		"DEF:demod=$(check $2/dump1090_cpu-demod.rrd):value:AVERAGE" \
 		"CDEF:demodp=demod,10,/" \
 		"DEF:reader=$(check $2/dump1090_cpu-reader.rrd):value:AVERAGE" \
@@ -253,6 +254,7 @@ tracks_graph() {
 		--right-axis 1:0 \
 		--left-axis-format "%.0lf" \
 		--right-axis-format "%.0lf" \
+        --units-exponent 0 \
 		"DEF:all=$(check $2/dump1090_tracks-all.rrd):value:AVERAGE" \
 		"DEF:single=$(check $2/dump1090_tracks-single_message.rrd):value:AVERAGE" \
 		"SHIFT:single:-60" \
@@ -291,6 +293,7 @@ cpu_graph() {
 		--upper-limit 5 \
 		--left-axis-format "%.0lf" \
 		--right-axis-format "%.0lf" \
+        --units-exponent 0 \
 		--pango-markup \
 		"DEF:idle=$(check $2/cpu-idle.rrd):value:AVERAGE" \
 		"DEF:interrupt=$(check $2/cpu-interrupt.rrd):value:AVERAGE" \
@@ -390,9 +393,9 @@ disk_io_octets_graph() {
 		--right-axis 1:0 \
 		--upper-limit 10 \
 		--lower-limit -10 \
-		--units-exponent 0 \
 		--left-axis-format "%.0lf" \
 		--right-axis-format "%.0lf" \
+		--units-exponent 0 \
 		-A \
 		"TEXTALIGN:center" \
 		"DEF:read_b=$(check $2/disk_octets.rrd):read:AVERAGE" \
@@ -503,6 +506,7 @@ network_graph() {
 		--lower-limit -10 \
 		--left-axis-format "%.0lf" \
 		--right-axis-format "%.0lf" \
+		--units-exponent 0 \
 		-A \
 		"TEXTALIGN:center" \
 		"${interfaces[@]}" \
@@ -942,10 +946,10 @@ signal_graph() {
 		-y 6:1 \
 		--left-axis-format "%.0lf" \
 		--right-axis-format "%.0lf" \
+		--units-exponent 0 \
 		--upper-limit 1    \
 		--lower-limit "$lower" \
 		--rigid \
-		--units-exponent 0 \
 		${defines[*]} \
 		"DEF:noise=$(check $2/dump1090_dbfs-noise.rrd):value:AVERAGE" \
 		"TEXTALIGN:center" \
@@ -980,10 +984,10 @@ dump1090_misc() {
 		--vertical-label "misc" \
 		--left-axis-format "%.0lf" \
 		--right-axis-format "%.0lf" \
+		--units-exponent 0 \
 		-y 3:1 \
         $upper \
 		--lower-limit 4  \
-		--units-exponent 0 \
 		${defines[*]} \
 		"TEXTALIGN:center" \
 		"LINE2:gain#$DRED:Gain\:" \
@@ -1060,10 +1064,10 @@ signal_airspy() {
 		-y 6:1 \
 		--left-axis-format "%.0lf" \
 		--right-axis-format "%.0lf" \
+		--units-exponent 0 \
         --rigid \
 		$UL \
 		$LL \
-		--units-exponent 0 \
 		${defines[*]} \
 		"TEXTALIGN:center" \
 		"AREA:peak#$LCYAN:Peak Level\:" \
@@ -1101,10 +1105,10 @@ misc_airspy() {
 		--vertical-label "misc" \
 		--left-axis-format "%.0lf" \
 		--right-axis-format "%.0lf" \
+		--units-exponent 0 \
 		-y 3:1 \
         $upper \
 		--lower-limit 0  \
-		--units-exponent 0 \
 		${defines[*]} \
 		"TEXTALIGN:center" \
 		"LINE2:gain#$DRED:Gain\:" \
@@ -1139,6 +1143,7 @@ misc_airspy() {
 		--lower-limit 0 \
 		--right-axis-format "%.1lf" \
 		--left-axis-format "%.1lf" \
+        --units-exponent 0 \
 		"TEXTALIGN:center" \
 		"DEF:all=$2/dump1090_aircraft-recent_978.rrd:total:AVERAGE" \
 		"DEF:pos=$2/dump1090_aircraft-recent_978.rrd:positions:AVERAGE" \
@@ -1175,6 +1180,7 @@ misc_airspy() {
 		--lower-limit 0  \
 		--right-axis-format "%.1lf" \
 		--left-axis-format "%.1lf" \
+        --units-exponent 0 \
 		"DEF:messages=$2/dump1090_messages-messages_978.rrd:value:AVERAGE" \
 		"LINE1:messages#$BLUE:Messages\c" \
 		"COMMENT: \n" \
