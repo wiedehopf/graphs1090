@@ -43,13 +43,13 @@ source /etc/default/graphs1090
 if [[ -n $ether ]]; then
     ether="interface-${ether}"
 else
-    ether="$(ls ${DB}/localhost | grep interface -m1)"
+    ether="$(ls ${DB}/localhost | grep -v 'interface-lo' | grep interface -m1)"
 fi
 
 if [[ -n $wifi ]]; then
     wifi="interface-${wifi}"
 else
-    wifi="$(ls ${DB}/localhost | grep interface -m2 | tail -n1)"
+    wifi="$(ls ${DB}/localhost | grep -v 'interface-lo' | grep interface -m2 | tail -n1)"
 fi
 
 if [[ -n $disk ]]; then
