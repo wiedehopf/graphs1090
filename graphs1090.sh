@@ -24,20 +24,30 @@ graph_size=default
 
 # default colorscheme
 colors=""
+
+CANVAS=FFFFFF
+
 LGREEN=45d945
-LCYAN=29a7e6
 GREEN=32CD32
 DGREEN=228B22
+
 LBLUE=4f59e3
 BLUE=0011EE
 ABLUE=0022DD
 DBLUE=0033AA
+
+LCYAN=29a7e6
 CYAN=00A0F0
+
 RED=E30022
 DRED=990000
 LRED=FFCCCB
+
 LIGHTYELLOW=FFFF99
-CANVAS=FFFFFF
+AYELLOW=ffcc00
+
+
+AGRAY=dddddd
 
 DB=/var/lib/collectd/rrd
 # settings in /etc/default/graphs1090 will overwrite the DB directory
@@ -103,7 +113,10 @@ if [[ "$colorscheme" == "dark" ]]; then
 
     LGREEN=1db992
     DGREEN=5cb85c
+    GREEN=3d532d
+
     GREEN=386619
+
 
 
     LBLUE=7fc7ff
@@ -116,9 +129,13 @@ if [[ "$colorscheme" == "dark" ]]; then
 
     RED=c52b2f
     DRED=c52b2f
-    LRED=ea9fa1
+    LRED=a6595c
 
     LIGHTYELLOW=444444
+    AYELLOW=cca300
+
+
+    AGRAY=2a2e31
 fi
 
 
@@ -506,9 +523,9 @@ memory_graph() {
 		"GPRINT:used:LAST:%4.1lf%s" \
 		"AREA:buffers#$ABLUE:Buffers\::STACK" \
 		"GPRINT:buffers:LAST:%4.1lf%s\c" \
-		"AREA:cached#ffdd99:Cache\::STACK" \
+		"AREA:cached#$LIGHTYELLOW:Cache\::STACK" \
 		"GPRINT:cached:LAST:%4.1lf%s" \
-		"AREA:free#dddddd:Unused\::STACK" \
+		"AREA:free#$AGRAY:Unused\::STACK" \
 		"GPRINT:free:LAST:%4.1lf%s\c" \
 		--watermark "Drawn: $nowlit";
 	mv "$1.tmp" "$1"
@@ -584,7 +601,7 @@ temp_graph_imperial() {
 		"CDEF:tfin_max=traw_max,1000,/,1.8,*,32,+" \
 		"CDEF:tfin_avg=traw_avg,1000,/,1.8,*,32,+" \
 		"CDEF:tfin_min=traw_min,1000,/,1.8,*,32,+" \
-		"AREA:tfin_max#ffcc00:Temperature\:" \
+		"AREA:tfin_max#$AYELLOW:Temperature\:" \
 		"GPRINT:tfin_max:LAST:%4.1lf F\c" \
 		"GPRINT:tfin_min:MIN:Min\: %4.1lf F" \
 		"GPRINT:tfin_avg:AVERAGE:Avg\: %4.1lf F" \
@@ -612,7 +629,7 @@ temp_graph_metric() {
 		"CDEF:tfin_max=traw_max,1000,/" \
 		"CDEF:tfin_min=traw_min,1000,/" \
 		"CDEF:tfin_avg=traw_avg,1000,/" \
-		"AREA:tfin_max#ffcc00:Temperature\:" \
+		"AREA:tfin_max#$AYELLOW:Temperature\:" \
 		"GPRINT:tfin_max:LAST:%4.1lf C\c" \
 		"GPRINT:tfin_min:MIN:Min\: %4.1lf C" \
 		"GPRINT:tfin_avg:AVERAGE:Avg\: %4.1lf C" \
@@ -822,7 +839,7 @@ local_trailing_rate_graph() {
 		"CDEF:maxarea=max,min,-" \
 		"LINE1:min#$LIGHTYELLOW" \
 		"AREA:maxarea#$LIGHTYELLOW:Min/Max:STACK" \
-		"LINE1:7dayaverage#$GREEN:7 Day Average" \
+		"LINE1:7dayaverage#$DGREEN:7 Day Average" \
     )
     if [[ ${4: -1} != "h" ]]; then
         WEEK=()
