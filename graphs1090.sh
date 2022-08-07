@@ -95,8 +95,10 @@ if [[ "$colorscheme" == "dark" ]]; then
         -c FONT#f2f5f4 \
         -c AXIS#f2f5f4 \
         -c FRAME#888888 \
-        -c GRID#444444
-        -c MGRID#444444
+        -c GRID#444444 \
+        -c MGRID#444444 \
+        -c SHADEA#212427 \
+        -c SHADEB#171a1c \
         "
 
     LGREEN=1db992
