@@ -22,11 +22,13 @@ sheight=324
 font_size=10.0
 graph_size=default
 
+# default colorscheme
+colors=""
 LGREEN=45d945
-LBLUE=4f59e3
 LCYAN=29a7e6
 GREEN=32CD32
 DGREEN=228B22
+LBLUE=4f59e3
 BLUE=0011EE
 ABLUE=0022DD
 DBLUE=0033AA
@@ -34,6 +36,8 @@ CYAN=00A0F0
 RED=E30022
 DRED=990000
 LRED=FFCCCB
+LIGHTYELLOW=FFFF99
+CANVAS=FFFFFF
 
 DB=/var/lib/collectd/rrd
 # settings in /etc/default/graphs1090 will overwrite the DB directory
@@ -83,10 +87,42 @@ case $graph_size in
 		;;
 esac
 
+if [[ "$colorscheme" == "dark" ]]; then
+    CANVAS=161618
+    colors="\
+        -c CANVAS#$CANVAS \
+        -c BACK#2a2e31 \
+        -c FONT#f2f5f4 \
+        -c AXIS#f2f5f4 \
+        -c FRAME#888888 \
+        -c GRID#444444
+        -c MGRID#444444
+        "
+
+    LGREEN=1db992
+    DGREEN=5cb85c
+    GREEN=386619
+
+
+    LBLUE=7fc7ff
+    BLUE=1cb992
+    ABLUE=0c5685
+    DBLUE=10366f
+
+    CYAN=00A0F0
+    LCYAN=29a7e6
+
+    RED=c52b2f
+    DRED=c52b2f
+    LRED=ea9fa1
+
+    LIGHTYELLOW=444444
+fi
+
 
 fontsize="-n TITLE:$(mult 1.1 $font_size):. -n AXIS:$(mult 0.8 $font_size):. -n UNIT:$(mult 0.9 $font_size):. -n LEGEND:$(mult 0.9 $font_size):."
 grid="-c GRID#FFFFFF --grid-dash 2:1"
-options="$grid $fontsize -e $(date +%H:%M)"
+options="$grid $fontsize -e $(date +%H:%M) $colors"
 small="$options -D --width $swidth --height $sheight"
 big="$options --width $lwidth --height $lheight"
 
@@ -229,8 +265,8 @@ cpu_graph_dump1090() {
 		$airspy_graph1 \
 		$airspy_graph2 \
 		$airspy_graph3 \
-		"AREA:readerp#008000:USB" \
-		"AREA:backgroundp#00C000:Other:STACK" \
+		"AREA:readerp#$LGREEN:USB" \
+		"AREA:backgroundp#$DGREEN:Other:STACK" \
 		"AREA:demodp#$GREEN:Demodulator\c:STACK" \
 		"COMMENT: \n" \
 		--watermark "Drawn: $nowlit";
@@ -312,9 +348,9 @@ cpu_graph() {
 		"CDEF:psystem=100,system,*,all,/" \
 		"CDEF:puser=100,user,*,all,/" \
 		"CDEF:pwait=100,wait,*,all,/" \
-		"AREA:pinterrupt#$BLUE:irq" \
+		"AREA:pinterrupt#$ABLUE:irq" \
 		"AREA:psoftirq#$DBLUE:softirq:STACK" \
-		"AREA:psteal#$BLUE:steal:STACK" \
+		"AREA:psteal#$ABLUE:steal:STACK" \
 		"AREA:pwait#C00000:io:STACK" \
 		"AREA:psystem#$RED:sys:STACK" \
 		"AREA:puser#$GREEN:user:STACK" \
@@ -372,7 +408,7 @@ disk_io_iops_graph() {
 		"GPRINT:read:AVERAGE:Avg\:%4.1lf iops" \
 		"GPRINT:read:LAST:Current\:%4.1lf iops\c" \
 		"TEXTALIGN:center" \
-		"AREA:write_neg#$BLUE:Writes" \
+		"AREA:write_neg#$ABLUE:Writes" \
 		"LINE1:write_neg#$DBLUE" \
 		"GPRINT:write:MAX:Max\:%4.1lf iops" \
 		"GPRINT:write:AVERAGE:Avg\:%4.1lf iops" \
@@ -409,7 +445,7 @@ disk_io_octets_graph() {
 		"GPRINT:read_b:AVERAGE:Avg\: %4.1lf %sB/sec" \
 		"GPRINT:read_b:LAST:Current\: %4.1lf %sB/sec\c" \
 		"TEXTALIGN:center" \
-		"AREA:write_neg#$BLUE:Writes" \
+		"AREA:write_neg#$ABLUE:Writes" \
 		"LINE1:write_neg#$DBLUE" \
 		"GPRINT:write_b:MAX:Max\: %4.1lf %sB/sec" \
 		"GPRINT:write_b:AVERAGE:Avg\: %4.1lf %sB/sec" \
@@ -782,8 +818,8 @@ local_trailing_rate_graph() {
 		"CDEF:max5=max3,gmax,MAXNAN" \
 		"CDEF:max=max4,max5,MAXNAN" \
 		"CDEF:maxarea=max,min,-" \
-		"LINE1:min#FFFF99" \
-		"AREA:maxarea#FFFF99:Min/Max:STACK" \
+		"LINE1:min#$LIGHTYELLOW" \
+		"AREA:maxarea#$LIGHTYELLOW:Min/Max:STACK" \
 		"LINE1:7dayaverage#$GREEN:7 Day Average" \
     )
     if [[ ${4: -1} != "h" ]]; then
@@ -890,7 +926,7 @@ range_graph(){
 		"CDEF:quart3=dquart3,$unitconv,*" \
 		"CDEF:median=dmedian,$unitconv,*" \
 		"AREA:quart3#$GREEN:1st to 3rd Quartile" \
-		"AREA:quart1#FFFFFF" \
+		"AREA:quart1#$CANVAS" \
 		"LINE1:range#$BLUE:Max Range" \
 		"VDEF:avgrange=range_a,AVERAGE" \
 		"LINE1:avgrange#666666:Avg Max Range\\::dashes" \
@@ -955,7 +991,7 @@ signal_graph() {
 		"TEXTALIGN:center" \
 		"CDEF:mes=median,UN,signal,median,IF" \
 		"AREA:quart1#$GREEN:1st to 3rd Quartile" \
-		"AREA:quart3#FFFFFF" \
+		"AREA:quart3#$CANVAS" \
 		"LINE1:mes#444444:Mean Median Level\:" \
 		"GPRINT:mes:AVERAGE:%4.1lf\c" \
 		"LINE1:min#$CYAN:Weakest\:" \
@@ -1076,7 +1112,7 @@ signal_airspy() {
 		"AREA:quart3#$LGREEN:1st to 3rd Quartile" \
 		"AREA:quart1#$LBLUE" \
 		"AREA:p5#$LCYAN" \
-		"AREA:min#FFFFFF" \
+		"AREA:min#$CANVAS" \
 		"LINE1:median#444444:Mean Median Level\:" \
 		"GPRINT:median:AVERAGE:%4.1lf" \
 		"LINE1:min#$LCYAN:Weakest\:" \

@@ -14,6 +14,9 @@ range=nautical
 # set the right axis unit: (leftaxis, nautical, statute, metric)
 range2=leftaxis
 
+# colorscheme, options so far: default, dark
+colorscheme=default
+
 # set graph size, possible values: small, default, large, huge, custom
 graph_size=default
 
