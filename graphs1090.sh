@@ -2,6 +2,9 @@
 
 DOCUMENTROOT=/run/graphs1090
 
+DB=/var/lib/collectd/rrd
+# settings in /etc/default/graphs1090 will overwrite the DB directory
+
 renice -n 19 -p $$
 
 trap 'echo "[ERROR] Error in line $LINENO when executing: $BASH_COMMAND"' ERR
@@ -49,8 +52,49 @@ AYELLOW=ffcc00
 
 AGRAY=dddddd
 
-DB=/var/lib/collectd/rrd
-# settings in /etc/default/graphs1090 will overwrite the DB directory
+
+source /etc/default/graphs1090
+
+if [[ "$colorscheme" == "dark" ]]; then
+    CANVAS=161618
+    colors="\
+        -c CANVAS#$CANVAS \
+        -c BACK#2a2e31 \
+        -c FONT#f2f5f4 \
+        -c AXIS#f2f5f4 \
+        -c FRAME#888888 \
+        -c GRID#444444 \
+        -c MGRID#444444 \
+        -c SHADEA#212427 \
+        -c SHADEB#171a1c \
+        "
+
+    LGREEN=1db992
+    DGREEN=5cb85c
+    GREEN=3d532d
+
+    GREEN=386619
+
+
+
+    LBLUE=7fc7ff
+    BLUE=1cb992
+    ABLUE=0c5685
+    DBLUE=10366f
+
+    CYAN=00A0F0
+    LCYAN=29a7e6
+
+    RED=c52b2f
+    DRED=c52b2f
+    LRED=a6595c
+
+    LIGHTYELLOW=444444
+    AYELLOW=cca300
+
+
+    AGRAY=2a2e31
+fi
 
 source /etc/default/graphs1090
 
@@ -96,47 +140,6 @@ case $graph_size in
 		lwidth=1096; lheight=235; swidth=619; sheight=324
 		;;
 esac
-
-if [[ "$colorscheme" == "dark" ]]; then
-    CANVAS=161618
-    colors="\
-        -c CANVAS#$CANVAS \
-        -c BACK#2a2e31 \
-        -c FONT#f2f5f4 \
-        -c AXIS#f2f5f4 \
-        -c FRAME#888888 \
-        -c GRID#444444 \
-        -c MGRID#444444 \
-        -c SHADEA#212427 \
-        -c SHADEB#171a1c \
-        "
-
-    LGREEN=1db992
-    DGREEN=5cb85c
-    GREEN=3d532d
-
-    GREEN=386619
-
-
-
-    LBLUE=7fc7ff
-    BLUE=1cb992
-    ABLUE=0c5685
-    DBLUE=10366f
-
-    CYAN=00A0F0
-    LCYAN=29a7e6
-
-    RED=c52b2f
-    DRED=c52b2f
-    LRED=a6595c
-
-    LIGHTYELLOW=444444
-    AYELLOW=cca300
-
-
-    AGRAY=2a2e31
-fi
 
 
 fontsize="-n TITLE:$(mult 1.1 $font_size):. -n AXIS:$(mult 0.8 $font_size):. -n UNIT:$(mult 0.9 $font_size):. -n LEGEND:$(mult 0.9 $font_size):."
