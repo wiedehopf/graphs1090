@@ -22,6 +22,9 @@ sudo nano /etc/default/graphs1090
 ```
 Ctrl-x to exit, y (yes) and enter to save.
 
+Checkout available options: <https://raw.githubusercontent.com/wiedehopf/graphs1090/master/default>
+Recently added: colorscheme=dark
+
 Reset configuration to defaults:
 ```
 sudo cp /usr/share/graphs1090/default-config /etc/default/graphs1090
