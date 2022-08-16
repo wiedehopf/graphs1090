@@ -77,4 +77,8 @@ disk=
 ether=
 wifi=
 
+
+# set time zone for rrdtool graphs
+#export TZ=Europe/Berlin
+
 DB=/var/lib/collectd/rrd

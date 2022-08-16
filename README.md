@@ -386,3 +386,15 @@ sudo rm /var/lib/collectd/rrd/localhost* -rf
 sudo rm -f /var/lib/collectd/rrd/auto-backup-$(date +%Y-week_%V).tar.gz
 sudo systemctl restart collectd graphs1090
 ```
+
+### Change the timezone used in the graphs
+
+Either change the global system timezone or add this to /etc/default/grahps1090 using the correct timezone:
+```
+export TZ=Europe/Berlin
+```
+
+List the timezone name using this command:
+```
+timedatectl list-timezones
+```
