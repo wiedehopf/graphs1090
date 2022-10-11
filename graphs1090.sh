@@ -16,6 +16,8 @@ div() {
 	echo $1 $2 | LC_ALL=C awk '{printf "%.9f", $1 / $2}'
 }
 
+TEMP_MULTIPLIER=1000
+
 lwidth=1096
 #1096 or 960
 lheight=235
@@ -601,9 +603,9 @@ temp_graph_imperial() {
 		"DEF:traw_max=$(check $2/gauge-cpu_temp.rrd):value:MAX" \
 		"DEF:traw_avg=$(check $2/gauge-cpu_temp.rrd):value:AVERAGE" \
 		"DEF:traw_min=$(check $2/gauge-cpu_temp.rrd):value:MIN" \
-		"CDEF:tfin_max=traw_max,1000,/,1.8,*,32,+" \
-		"CDEF:tfin_avg=traw_avg,1000,/,1.8,*,32,+" \
-		"CDEF:tfin_min=traw_min,1000,/,1.8,*,32,+" \
+		"CDEF:tfin_max=traw_max,${TEMP_MULTIPLIER},/,1.8,*,32,+" \
+		"CDEF:tfin_avg=traw_avg,${TEMP_MULTIPLIER},/,1.8,*,32,+" \
+		"CDEF:tfin_min=traw_min,${TEMP_MULTIPLIER},/,1.8,*,32,+" \
 		"AREA:tfin_max#$AYELLOW:Temperature\:" \
 		"GPRINT:tfin_max:LAST:%4.1lf F\c" \
 		"GPRINT:tfin_min:MIN:Min\: %4.1lf F" \
@@ -629,9 +631,9 @@ temp_graph_metric() {
 		"DEF:traw_max=$(check $2/gauge-cpu_temp.rrd):value:MAX" \
 		"DEF:traw_avg=$(check $2/gauge-cpu_temp.rrd):value:AVERAGE" \
 		"DEF:traw_min=$(check $2/gauge-cpu_temp.rrd):value:MIN" \
-		"CDEF:tfin_max=traw_max,1000,/" \
-		"CDEF:tfin_min=traw_min,1000,/" \
-		"CDEF:tfin_avg=traw_avg,1000,/" \
+		"CDEF:tfin_max=traw_max,${TEMP_MULTIPLIER},/" \
+		"CDEF:tfin_min=traw_min,${TEMP_MULTIPLIER},/" \
+		"CDEF:tfin_avg=traw_avg,${TEMP_MULTIPLIER},/" \
 		"AREA:tfin_max#$AYELLOW:Temperature\:" \
 		"GPRINT:tfin_max:LAST:%4.1lf C\c" \
 		"GPRINT:tfin_min:MIN:Min\: %4.1lf C" \

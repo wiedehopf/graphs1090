@@ -81,4 +81,7 @@ wifi=
 # set time zone for rrdtool graphs
 #export TZ=Europe/Berlin
 
+# set temperature multiplier, on the pi this is 1000, on some platforms you might need to set it to 1
+TEMP_MULTIPLIER=1000
+
 DB=/var/lib/collectd/rrd
