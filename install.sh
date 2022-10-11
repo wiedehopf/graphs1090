@@ -48,8 +48,11 @@ then
             if grep -qs -e 'Jammy Jellyfish' /etc/os-release; then
                 apt purge -y collectd || true
                 apt purge -y collectd-core || true
-                wget -O /tmp/collectd-core.deb http://mirrors.kernel.org/ubuntu/pool/universe/c/collectd/collectd-core_5.12.0-9_amd64.deb
-                dpkg -i /tmp/collectd-core.deb
+                wget -O /tmp/collectd-core.deb http://mirrors.kernel.org/ubuntu/pool/universe/c/collectd/collectd-core_5.12.0-11_amd64.deb || true
+                dpkg -i /tmp/collectd-core.deb || true
+            fi
+            if ! command -v collectd &>/dev/null; then
+                echo "ERROR: couldn't  install collectd, it's probably a ubuntu issue ... try installing it manually then rerun this install script!"
             fi
         fi
     fi
