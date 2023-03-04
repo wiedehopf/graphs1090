@@ -8,8 +8,8 @@ repo="https://github.com/wiedehopf/graphs1090"
 ipath=/usr/share/graphs1090
 install=0
 
-commands="git rrdtool collectd wget unzip"
-packages="git rrdtool collectd-core wget unzip bash-builtins"
+commands="git rrdtool wget unzip collectd"
+packages="git rrdtool wget unzip bash-builtins collectd-core"
 
 mkdir -p $ipath/installed
 mkdir -p /var/lib/graphs1090/scatter
@@ -41,7 +41,20 @@ then
 	echo "------------------"
 	if ! apt-get install -y --no-install-suggests --no-install-recommends $packages; then
         aptUpdate
-        apt-get install -y --no-install-suggests --no-install-recommends $packages || true
+        if ! apt-get install -y --no-install-suggests --no-install-recommends $packages; then
+            for package in $packages; do
+                apt-get install -y --no-install-suggests --no-install-recommends $package || true
+            done
+            if grep -qs -e 'Jammy Jellyfish' /etc/os-release; then
+                apt purge -y collectd || true
+                apt purge -y collectd-core || true
+                wget -O /tmp/collectd-core.deb http://mirrors.kernel.org/ubuntu/pool/universe/c/collectd/collectd-core_5.12.0-11_amd64.deb || true
+                dpkg -i /tmp/collectd-core.deb || true
+            fi
+            if ! command -v collectd &>/dev/null; then
+                echo "ERROR: couldn't  install collectd, it's probably a ubuntu issue ... try installing it manually then rerun this install script!"
+            fi
+        fi
     fi
     success=1
     hash -r

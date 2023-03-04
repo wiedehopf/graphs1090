@@ -2,6 +2,9 @@
 
 DOCUMENTROOT=/run/graphs1090
 
+DB=/var/lib/collectd/rrd
+# settings in /etc/default/graphs1090 will overwrite the DB directory
+
 renice -n 19 -p $$
 
 trap 'echo "[ERROR] Error in line $LINENO when executing: $BASH_COMMAND"' ERR
@@ -13,6 +16,8 @@ div() {
 	echo $1 $2 | LC_ALL=C awk '{printf "%.9f", $1 / $2}'
 }
 
+TEMP_MULTIPLIER=1000
+
 lwidth=1096
 #1096 or 960
 lheight=235
@@ -22,34 +27,89 @@ sheight=324
 font_size=10.0
 graph_size=default
 
-LGREEN=45d945
-LBLUE=4f59e3
-LCYAN=29a7e6
+# default colorscheme
+colors=""
+
+CANVAS=FFFFFF
+
+LGREEN=7de87d
 GREEN=32CD32
 DGREEN=228B22
+
+LBLUE=4f59e3
 BLUE=0011EE
 ABLUE=0022DD
 DBLUE=0033AA
+
+LCYAN=29a7e6
 CYAN=00A0F0
+
 RED=E30022
 DRED=990000
 LRED=FFCCCB
 
-DB=/var/lib/collectd/rrd
-# settings in /etc/default/graphs1090 will overwrite the DB directory
+LIGHTYELLOW=FFFF99
+AYELLOW=ffcc00
+
+
+AGRAY=dddddd
+
+
+source /etc/default/graphs1090
+
+if [[ "$colorscheme" == "dark" ]]; then
+    CANVAS=161618
+    colors="\
+        -c CANVAS#$CANVAS \
+        -c BACK#2a2e31 \
+        -c FONT#f2f5f4 \
+        -c AXIS#f2f5f4 \
+        -c FRAME#888888 \
+        -c GRID#444444 \
+        -c MGRID#444444 \
+        -c SHADEA#212427 \
+        -c SHADEB#171a1c \
+        "
+
+    LGREEN=1db992
+    DGREEN=5cb85c
+    GREEN=3d532d
+
+    GREEN=386619
+
+
+
+    LBLUE=7fc7ff
+    BLUE=1cb992
+    ABLUE=0c5685
+    DBLUE=10366f
+
+    CYAN=00A0F0
+    LCYAN=29a7e6
+
+    RED=c52b2f
+    DRED=c52b2f
+    LRED=a6595c
+
+    LIGHTYELLOW=444444
+    AYELLOW=cca300
+
+
+    AGRAY=2a2e31
+fi
 
 source /etc/default/graphs1090
 
 if [[ -n $ether ]]; then
     ether="interface-${ether}"
 else
-    ether="$(ls ${DB}/localhost | grep interface -m1)"
+    ether="$(ls ${DB}/localhost | grep -v 'interface-lo' | grep interface -m1)"
 fi
 
 if [[ -n $wifi ]]; then
     wifi="interface-${wifi}"
 else
-    wifi="$(ls ${DB}/localhost | grep interface -m2 | tail -n1)"
+    wifi="$(ls ${DB}/localhost | grep -v 'interface-lo' | grep interface -m2 | tail -n1)"
 fi
 
 if [[ -n $disk ]]; then
@@ -86,7 +146,7 @@ esac
 
 fontsize="-n TITLE:$(mult 1.1 $font_size):. -n AXIS:$(mult 0.8 $font_size):. -n UNIT:$(mult 0.9 $font_size):. -n LEGEND:$(mult 0.9 $font_size):."
 grid="-c GRID#FFFFFF --grid-dash 2:1"
-options="$grid $fontsize -e $(date +%H:%M)"
+options="$grid $fontsize -e $(date +%H:%M) $colors"
 small="$options -D --width $swidth --height $sheight"
 big="$options --width $lwidth --height $lheight"
 
@@ -219,6 +279,7 @@ cpu_graph_dump1090() {
 		--right-axis 1:0 \
 		--left-axis-format "%.0lf" \
 		--right-axis-format "%.0lf" \
+        --units-exponent 0 \
 		"DEF:demod=$(check $2/dump1090_cpu-demod.rrd):value:AVERAGE" \
 		"CDEF:demodp=demod,10,/" \
 		"DEF:reader=$(check $2/dump1090_cpu-reader.rrd):value:AVERAGE" \
@@ -228,8 +289,8 @@ cpu_graph_dump1090() {
 		$airspy_graph1 \
 		$airspy_graph2 \
 		$airspy_graph3 \
-		"AREA:readerp#008000:USB" \
-		"AREA:backgroundp#00C000:Other:STACK" \
+		"AREA:readerp#$LGREEN:USB" \
+		"AREA:backgroundp#$DGREEN:Other:STACK" \
 		"AREA:demodp#$GREEN:Demodulator\c:STACK" \
 		"COMMENT: \n" \
 		--watermark "Drawn: $nowlit";
@@ -253,6 +314,7 @@ tracks_graph() {
 		--right-axis 1:0 \
 		--left-axis-format "%.0lf" \
 		--right-axis-format "%.0lf" \
+        --units-exponent 0 \
 		"DEF:all=$(check $2/dump1090_tracks-all.rrd):value:AVERAGE" \
 		"DEF:single=$(check $2/dump1090_tracks-single_message.rrd):value:AVERAGE" \
 		"SHIFT:single:-60" \
@@ -291,6 +353,7 @@ cpu_graph() {
 		--upper-limit 5 \
 		--left-axis-format "%.0lf" \
 		--right-axis-format "%.0lf" \
+        --units-exponent 0 \
 		--pango-markup \
 		"DEF:idle=$(check $2/cpu-idle.rrd):value:AVERAGE" \
 		"DEF:interrupt=$(check $2/cpu-interrupt.rrd):value:AVERAGE" \
@@ -309,9 +372,9 @@ cpu_graph() {
 		"CDEF:psystem=100,system,*,all,/" \
 		"CDEF:puser=100,user,*,all,/" \
 		"CDEF:pwait=100,wait,*,all,/" \
-		"AREA:pinterrupt#$BLUE:irq" \
+		"AREA:pinterrupt#$ABLUE:irq" \
 		"AREA:psoftirq#$DBLUE:softirq:STACK" \
-		"AREA:psteal#$BLUE:steal:STACK" \
+		"AREA:psteal#$ABLUE:steal:STACK" \
 		"AREA:pwait#C00000:io:STACK" \
 		"AREA:psystem#$RED:sys:STACK" \
 		"AREA:puser#$GREEN:user:STACK" \
@@ -369,7 +432,7 @@ disk_io_iops_graph() {
 		"GPRINT:read:AVERAGE:Avg\:%4.1lf iops" \
 		"GPRINT:read:LAST:Current\:%4.1lf iops\c" \
 		"TEXTALIGN:center" \
-		"AREA:write_neg#$BLUE:Writes" \
+		"AREA:write_neg#$ABLUE:Writes" \
 		"LINE1:write_neg#$DBLUE" \
 		"GPRINT:write:MAX:Max\:%4.1lf iops" \
 		"GPRINT:write:AVERAGE:Avg\:%4.1lf iops" \
@@ -390,9 +453,9 @@ disk_io_octets_graph() {
 		--right-axis 1:0 \
 		--upper-limit 10 \
 		--lower-limit -10 \
-		--units-exponent 0 \
 		--left-axis-format "%.0lf" \
 		--right-axis-format "%.0lf" \
+		--units-exponent 0 \
 		-A \
 		"TEXTALIGN:center" \
 		"DEF:read_b=$(check $2/disk_octets.rrd):read:AVERAGE" \
@@ -406,7 +469,7 @@ disk_io_octets_graph() {
 		"GPRINT:read_b:AVERAGE:Avg\: %4.1lf %sB/sec" \
 		"GPRINT:read_b:LAST:Current\: %4.1lf %sB/sec\c" \
 		"TEXTALIGN:center" \
-		"AREA:write_neg#$BLUE:Writes" \
+		"AREA:write_neg#$ABLUE:Writes" \
 		"LINE1:write_neg#$DBLUE" \
 		"GPRINT:write_b:MAX:Max\: %4.1lf %sB/sec" \
 		"GPRINT:write_b:AVERAGE:Avg\: %4.1lf %sB/sec" \
@@ -465,9 +528,9 @@ memory_graph() {
 		"GPRINT:used:LAST:%4.1lf%s" \
 		"AREA:buffers#$ABLUE:Buffers\::STACK" \
 		"GPRINT:buffers:LAST:%4.1lf%s\c" \
-		"AREA:cached#ffdd99:Cache\::STACK" \
+		"AREA:cached#$LIGHTYELLOW:Cache\::STACK" \
 		"GPRINT:cached:LAST:%4.1lf%s" \
-		"AREA:free#dddddd:Unused\::STACK" \
+		"AREA:free#$AGRAY:Unused\::STACK" \
 		"GPRINT:free:LAST:%4.1lf%s\c" \
 		--watermark "Drawn: $nowlit";
 	mv "$1.tmp" "$1"
@@ -503,6 +566,7 @@ network_graph() {
 		--lower-limit -10 \
 		--left-axis-format "%.0lf" \
 		--right-axis-format "%.0lf" \
+		--units-exponent 0 \
 		-A \
 		"TEXTALIGN:center" \
 		"${interfaces[@]}" \
@@ -539,10 +603,10 @@ temp_graph_imperial() {
 		"DEF:traw_max=$(check $2/gauge-cpu_temp.rrd):value:MAX" \
 		"DEF:traw_avg=$(check $2/gauge-cpu_temp.rrd):value:AVERAGE" \
 		"DEF:traw_min=$(check $2/gauge-cpu_temp.rrd):value:MIN" \
-		"CDEF:tfin_max=traw_max,1000,/,1.8,*,32,+" \
-		"CDEF:tfin_avg=traw_avg,1000,/,1.8,*,32,+" \
-		"CDEF:tfin_min=traw_min,1000,/,1.8,*,32,+" \
-		"AREA:tfin_max#ffcc00:Temperature\:" \
+		"CDEF:tfin_max=traw_max,${TEMP_MULTIPLIER},/,1.8,*,32,+" \
+		"CDEF:tfin_avg=traw_avg,${TEMP_MULTIPLIER},/,1.8,*,32,+" \
+		"CDEF:tfin_min=traw_min,${TEMP_MULTIPLIER},/,1.8,*,32,+" \
+		"AREA:tfin_max#$AYELLOW:Temperature\:" \
 		"GPRINT:tfin_max:LAST:%4.1lf F\c" \
 		"GPRINT:tfin_min:MIN:Min\: %4.1lf F" \
 		"GPRINT:tfin_avg:AVERAGE:Avg\: %4.1lf F" \
@@ -567,10 +631,10 @@ temp_graph_metric() {
 		"DEF:traw_max=$(check $2/gauge-cpu_temp.rrd):value:MAX" \
 		"DEF:traw_avg=$(check $2/gauge-cpu_temp.rrd):value:AVERAGE" \
 		"DEF:traw_min=$(check $2/gauge-cpu_temp.rrd):value:MIN" \
-		"CDEF:tfin_max=traw_max,1000,/" \
-		"CDEF:tfin_min=traw_min,1000,/" \
-		"CDEF:tfin_avg=traw_avg,1000,/" \
-		"AREA:tfin_max#ffcc00:Temperature\:" \
+		"CDEF:tfin_max=traw_max,${TEMP_MULTIPLIER},/" \
+		"CDEF:tfin_min=traw_min,${TEMP_MULTIPLIER},/" \
+		"CDEF:tfin_avg=traw_avg,${TEMP_MULTIPLIER},/" \
+		"AREA:tfin_max#$AYELLOW:Temperature\:" \
 		"GPRINT:tfin_max:LAST:%4.1lf C\c" \
 		"GPRINT:tfin_min:MIN:Min\: %4.1lf C" \
 		"GPRINT:tfin_avg:AVERAGE:Avg\: %4.1lf C" \
@@ -778,9 +842,9 @@ local_trailing_rate_graph() {
 		"CDEF:max5=max3,gmax,MAXNAN" \
 		"CDEF:max=max4,max5,MAXNAN" \
 		"CDEF:maxarea=max,min,-" \
-		"LINE1:min#FFFF99" \
-		"AREA:maxarea#FFFF99:Min/Max:STACK" \
-		"LINE1:7dayaverage#$GREEN:7 Day Average" \
+		"LINE1:min#$LIGHTYELLOW" \
+		"AREA:maxarea#$LIGHTYELLOW:Min/Max:STACK" \
+		"LINE1:7dayaverage#$DGREEN:7 Day Average" \
     )
     if [[ ${4: -1} != "h" ]]; then
         WEEK=()
@@ -886,7 +950,7 @@ range_graph(){
 		"CDEF:quart3=dquart3,$unitconv,*" \
 		"CDEF:median=dmedian,$unitconv,*" \
 		"AREA:quart3#$GREEN:1st to 3rd Quartile" \
-		"AREA:quart1#FFFFFF" \
+		"AREA:quart1#$CANVAS" \
 		"LINE1:range#$BLUE:Max Range" \
 		"VDEF:avgrange=range_a,AVERAGE" \
 		"LINE1:avgrange#666666:Avg Max Range\\::dashes" \
@@ -942,16 +1006,16 @@ signal_graph() {
 		-y 6:1 \
 		--left-axis-format "%.0lf" \
 		--right-axis-format "%.0lf" \
+		--units-exponent 0 \
 		--upper-limit 1    \
 		--lower-limit "$lower" \
 		--rigid \
-		--units-exponent 0 \
 		${defines[*]} \
 		"DEF:noise=$(check $2/dump1090_dbfs-noise.rrd):value:AVERAGE" \
 		"TEXTALIGN:center" \
 		"CDEF:mes=median,UN,signal,median,IF" \
 		"AREA:quart1#$GREEN:1st to 3rd Quartile" \
-		"AREA:quart3#FFFFFF" \
+		"AREA:quart3#$CANVAS" \
 		"LINE1:mes#444444:Mean Median Level\:" \
 		"GPRINT:mes:AVERAGE:%4.1lf\c" \
 		"LINE1:min#$CYAN:Weakest\:" \
@@ -980,10 +1044,10 @@ dump1090_misc() {
 		--vertical-label "misc" \
 		--left-axis-format "%.0lf" \
 		--right-axis-format "%.0lf" \
+		--units-exponent 0 \
 		-y 3:1 \
         $upper \
 		--lower-limit 4  \
-		--units-exponent 0 \
 		${defines[*]} \
 		"TEXTALIGN:center" \
 		"LINE2:gain#$DRED:Gain\:" \
@@ -1060,10 +1124,10 @@ signal_airspy() {
 		-y 6:1 \
 		--left-axis-format "%.0lf" \
 		--right-axis-format "%.0lf" \
+		--units-exponent 0 \
         --rigid \
 		$UL \
 		$LL \
-		--units-exponent 0 \
 		${defines[*]} \
 		"TEXTALIGN:center" \
 		"AREA:peak#$LCYAN:Peak Level\:" \
@@ -1072,7 +1136,7 @@ signal_airspy() {
 		"AREA:quart3#$LGREEN:1st to 3rd Quartile" \
 		"AREA:quart1#$LBLUE" \
 		"AREA:p5#$LCYAN" \
-		"AREA:min#FFFFFF" \
+		"AREA:min#$CANVAS" \
 		"LINE1:median#444444:Mean Median Level\:" \
 		"GPRINT:median:AVERAGE:%4.1lf" \
 		"LINE1:min#$LCYAN:Weakest\:" \
@@ -1101,10 +1165,10 @@ misc_airspy() {
 		--vertical-label "misc" \
 		--left-axis-format "%.0lf" \
 		--right-axis-format "%.0lf" \
+		--units-exponent 0 \
 		-y 3:1 \
         $upper \
 		--lower-limit 0  \
-		--units-exponent 0 \
 		${defines[*]} \
 		"TEXTALIGN:center" \
 		"LINE2:gain#$DRED:Gain\:" \
@@ -1139,6 +1203,7 @@ misc_airspy() {
 		--lower-limit 0 \
 		--right-axis-format "%.1lf" \
 		--left-axis-format "%.1lf" \
+        --units-exponent 0 \
 		"TEXTALIGN:center" \
 		"DEF:all=$2/dump1090_aircraft-recent_978.rrd:total:AVERAGE" \
 		"DEF:pos=$2/dump1090_aircraft-recent_978.rrd:positions:AVERAGE" \
@@ -1175,6 +1240,7 @@ misc_airspy() {
 		--lower-limit 0  \
 		--right-axis-format "%.1lf" \
 		--left-axis-format "%.1lf" \
+        --units-exponent 0 \
 		"DEF:messages=$2/dump1090_messages-messages_978.rrd:value:AVERAGE" \
 		"LINE1:messages#$BLUE:Messages\c" \
 		"COMMENT: \n" \

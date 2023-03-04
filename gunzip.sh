@@ -1,10 +1,12 @@
 #!/bin/bash
-set -e
+trap 'echo "[ERROR] Error in line $LINENO when executing: $BASH_COMMAND"' ERR
 TARGET="$1"
 # if no target is given assume default path
 if [[ -z $TARGET ]]; then
     TARGET="/var/lib/collectd/rrd/localhost"
 fi
+
+TARGET="${TARGET%/}"
 
 mkdir -p "$TARGET"
 

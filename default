@@ -14,6 +14,9 @@ range=nautical
 # set the right axis unit: (leftaxis, nautical, statute, metric)
 range2=leftaxis
 
+# colorscheme, options so far: default, dark
+colorscheme=default
+
 # set graph size, possible values: small, default, large, huge, custom
 graph_size=default
 
@@ -73,5 +76,12 @@ disk=
 # net stats displayed for these two devices (i.e. wlp3s0 wlan0 eth0 enp0s25)
 ether=
 wifi=
+
+
+# set time zone for rrdtool graphs
+#export TZ=Europe/Berlin
+
+# set temperature multiplier, on the pi this is 1000, on some platforms you might need to set it to 1
+TEMP_MULTIPLIER=1000
 
 DB=/var/lib/collectd/rrd

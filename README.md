@@ -22,6 +22,9 @@ sudo nano /etc/default/graphs1090
 ```
 Ctrl-x to exit, y (yes) and enter to save.
 
+Checkout available options: <https://raw.githubusercontent.com/wiedehopf/graphs1090/master/default>
+Recently added: colorscheme=dark
+
 Reset configuration to defaults:
 ```
 sudo cp /usr/share/graphs1090/default-config /etc/default/graphs1090
@@ -286,22 +289,18 @@ This should be all that is required, no guarantees though!
 
 ### Backup and Restore (different architecture, for example moving from RPi to x86 or the other way around)
 
-Basically the same procedure as above, but with this difference:
-
-Before doing the backup, run this command:
+Before proceeding, run the install / update script for graphs1090 on BOTH machines to get latest script versions.
 
 ```
-sudo /usr/share/graphs1090/rrd-dump.sh /var/lib/collectd/rrd/localhost/
+sudo /usr/share/graphs1090/rrd-dump.sh /var/lib/collectd/rrd/localhost /tmp/xml.tar.gz
 ```
 
-This creates XML files from the database files in the same directory which can be later restored to database files on the target system.
+This creates XML files from the database files and places them in a designated tar.gz file which can be later restored to database files on the target system.
 
-Follow the procedure outlined in "Backup and Restore (same architecture)" (see above)
-
-After restoring as described, run this command:
+Copy the file xml.tar.gz to the new computer, place it in /tmp and run:
 
 ```
-sudo /usr/share/graphs1090/rrd-restore.sh /var/lib/collectd/rrd/localhost/
+sudo /usr/share/graphs1090/rrd-restore.sh /tmp/xml.tar.gz /var/lib/collectd/rrd/localhost
 ```
 
 Again no guarantees, but this should work.
@@ -386,4 +385,16 @@ sudo systemctl stop collectd
 sudo rm /var/lib/collectd/rrd/localhost* -rf
 sudo rm -f /var/lib/collectd/rrd/auto-backup-$(date +%Y-week_%V).tar.gz
 sudo systemctl restart collectd graphs1090
+```
+
+### Change the timezone used in the graphs
+
+Either change the global system timezone or add this to /etc/default/grahps1090 using the correct timezone:
+```
+export TZ=Europe/Berlin
+```
+
+List the timezone name using this command:
+```
+timedatectl list-timezones
 ```

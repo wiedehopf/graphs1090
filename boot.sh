@@ -12,6 +12,13 @@ fi
 # load bash sleep builtin if available
 [[ -f /usr/lib/bash/sleep ]] && enable -f /usr/lib/bash/sleep sleep || true
 
+IHTML=/usr/share/graphs1090/html/index.html
+if [[ $colorscheme == "dark" ]]; then
+    sed -i -e 's/href="bootstrap.custom..*.css"/href="bootstrap.custom.dark.css"/' "$IHTML"
+else
+    sed -i -e 's/href="bootstrap.custom..*.css"/href="bootstrap.custom.light.css"/' "$IHTML"
+fi
+
 function checkrrd() {
     if [[ -f "/var/lib/collectd/rrd/localhost/dump1090-localhost/$1" ]] \
         || [[ -f "/var/lib/collectd/rrd/localhost/dump1090-localhost/$1.gz" ]] \
@@ -23,13 +30,13 @@ function checkrrd() {
     fi
 }
 function show() {
-    if grep -qs -e 'style="display:none"> <!-- '$1' -->' /usr/share/graphs1090/html/index.html; then
-        sed -i -e 's/ style="display:none"> <!-- '$1' -->/> <!-- '$1' -->/' /usr/share/graphs1090/html/index.html
+    if grep -qs -e 'style="display:none"> <!-- '$1' -->' "$IHTML"; then
+        sed -i -e 's/ style="display:none"> <!-- '$1' -->/> <!-- '$1' -->/' "$IHTML"
     fi
 }
 function hide() {
-    if ! grep -qs -e 'style="display:none"> <!-- '$1' -->' /usr/share/graphs1090/html/index.html; then
-        sed -i -e 's/> <!-- '$1' -->/ style="display:none"> <!-- '$1' -->/' /usr/share/graphs1090/html/index.html
+    if ! grep -qs -e 'style="display:none"> <!-- '$1' -->' "$IHTML"; then
+        sed -i -e 's/> <!-- '$1' -->/ style="display:none"> <!-- '$1' -->/' "$IHTML"
     fi
 }
 function show_hide() {
