@@ -962,7 +962,7 @@ range_graph(){
 		"GPRINT:median:AVERAGE:%4.1lf (avg)" \
 		"LINE1:peakrange#$BLUE:Peak Range\\:" \
 		"GPRINT:peakrange:%1.1lf\c" \
-		"LINE1:range#$BLUE" \
+		"LINE1:range#$RED" \
 		--watermark "Drawn: $nowlit";
 	mv "$1.tmp" "$1"
 	}
@@ -1023,6 +1023,7 @@ signal_graph() {
         "$noise1" \
 		"LINE1:peak#$BLUE:Peak Level\:" \
 		"GPRINT:peak:MAX:%4.1lf\c" \
+		"LINE1:-3#$RED"\
 		--watermark "Drawn: $nowlit";
 	mv "$1.tmp" "$1"
 	}
