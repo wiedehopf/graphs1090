@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 set -e
 DBFOLDER=/var/lib/collectd/rrd
 RUNFOLDER=/run/collectd
