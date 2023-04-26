@@ -22,6 +22,7 @@ fi
 
 echo "Generating all graphs"
 /usr/share/graphs1090/boot.sh $GRAPH_DELAY
+echo "Done with initial graph generation"
 
 graphs() {
 	#echo "Generating $1 graphs"
