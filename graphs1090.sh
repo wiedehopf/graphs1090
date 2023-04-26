@@ -8,6 +8,7 @@ DB=/var/lib/collectd/rrd
 renice -n 19 -p $$
 
 trap 'echo "[ERROR] Error in line $LINENO when executing: $BASH_COMMAND"' ERR
+trap "pkill -P $$ || true; exit 1" SIGTERM SIGINT SIGHUP SIGQUIT
 
 mult() {
 	echo $1 $2 | LC_ALL=C awk '{printf "%.9f", $1 * $2}'

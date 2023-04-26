@@ -1,4 +1,15 @@
 #!/bin/bash
+
+if diff /usr/share/graphs1090/malarky.conf /etc/systemd/system/collectd.service.d/malarky.conf \
+    && grep -qs -e 'DataDir "/run/collectd"' /etc/collectd/collectd.conf \
+    && grep -qs -e 'DB=/run/collectd' /etc/default/graphs1090
+then
+    echo ---------
+    echo write reducing measures already enabled, no need to do anything for this script!
+    echo ---------
+    exit 0
+fi
+
 systemctl stop collectd &>/dev/null
 
 set -e

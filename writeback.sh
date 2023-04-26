@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+trap 'echo "[ERROR] Error in line $LINENO when executing: $BASH_COMMAND"' ERR
+
 TARGET=/var/lib/collectd/rrd
 RUNFOLDER=/run/collectd
 

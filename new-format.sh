@@ -1,6 +1,12 @@
 #!/bin/bash
 
-echo "This will take around 8 minutes, don't interrupt the process!"
+echo "This will take around 8 minutes, if you want to cancel, you have 15 seconds to Ctrl-C before it starts."
+
+sleep 15
+
+echo "15 seconds are over ... This will take around 8 minutes, don't interrupt the process!"
+
+trap "echo SIGNALS disabled, wait for this to finish" SIGTERM SIGINT SIGHUP SIGQUIT
 
 date=$(date -I)
 tmp=/tmp/rrd-tmp

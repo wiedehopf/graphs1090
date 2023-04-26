@@ -1,5 +1,8 @@
 #!/bin/bash
 
+trap 'echo "[ERROR] Error in line $LINENO when executing: $BASH_COMMAND"' ERR
+trap "pkill -P $$ || exit 0" SIGTERM SIGINT SIGHUP SIGQUIT
+
 source /etc/default/graphs1090
 
 
@@ -21,7 +24,11 @@ else
 fi
 
 echo "Generating all graphs"
-/usr/share/graphs1090/boot.sh $GRAPH_DELAY
+/usr/share/graphs1090/boot.sh $GRAPH_DELAY &
+if ! wait; then
+    echo service-graphs1090.sh: early exit
+    exit 0
+fi
 echo "Done with initial graph generation"
 
 graphs() {
@@ -74,4 +81,5 @@ do
         echo running scatter.sh
         /usr/share/graphs1090/scatter.sh
     fi
-done
+done &
+wait

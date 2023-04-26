@@ -1,5 +1,8 @@
 #!/bin/bash
 
+trap 'echo "[ERROR] Error in line $LINENO when executing: $BASH_COMMAND"' ERR
+trap "pkill -P $$ || true; exit 1" SIGTERM SIGINT SIGHUP SIGQUIT
+
 source /etc/default/graphs1090
 
 # fontconfig writes stuff to that directory for no good reason
@@ -79,5 +82,9 @@ done
 
 for i in 24h 8h 2h 48h 7d 14d 30d 90d 180d 365d 730d 1095d 1825d 3650d
 do
-	/usr/share/graphs1090/graphs1090.sh $i $1 &>/dev/null
+	/usr/share/graphs1090/graphs1090.sh $i $1 &>/dev/null &
+    if ! wait; then
+        echo "boot.sh(graphs1090): early exit"
+        exit 0
+    fi
 done
