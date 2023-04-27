@@ -43,7 +43,7 @@ def handle_config(root):
                                        name='dump978.' + instance_name,
                                        interval=60)
             else:
-                collectd.warning('No skyview978 URL defined in /etc/collectd/collectd.conf for ' + instance_name)
+                collectd.warning('No 978 URL defined in /etc/collectd/collectd.conf for ' + instance_name)
 
         else:
             collectd.warning('Ignored config entry: ' + child.key)
