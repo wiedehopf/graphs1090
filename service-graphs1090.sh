@@ -29,7 +29,6 @@ fi
 echo "Generating all graphs"
 /usr/share/graphs1090/boot.sh $GRAPH_DELAY &
 if ! wait; then
-    echo service-graphs1090.sh: early exit
     exit 0
 fi
 echo "Done with initial graph generation"
@@ -85,4 +84,6 @@ do
         /usr/share/graphs1090/scatter.sh
     fi
 done &
-wait
+if ! wait; then
+    exit 0
+fi
