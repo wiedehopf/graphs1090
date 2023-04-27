@@ -234,10 +234,12 @@ SYM=/usr/share/graphs1090/978-symlink
 mkdir -p $SYM
 if [ -f /run/skyaware978/aircraft.json ]; then
     ln -snf /run/skyaware978 $SYM/data
-    sed -i -e 's?URL_978 .*?URL_978 "file:///usr/share/graphs1090/978-symlink"?' /etc/collectd/collectd.conf
+    sed -i -e 's?.*URL_978 .*?URL_978 "file:///usr/share/graphs1090/978-symlink"?' /etc/collectd/collectd.conf
 elif [ -f /run/adsbexchange-978/aircraft.json ]; then
     ln -snf /run/adsbexchange-978 $SYM/data
-    sed -i -e 's?URL_978 .*?URL_978 "file:///usr/share/graphs1090/978-symlink"?' /etc/collectd/collectd.conf
+    sed -i -e 's?.*URL_978 .*?URL_978 "file:///usr/share/graphs1090/978-symlink"?' /etc/collectd/collectd.conf
+else
+    sed -i -e 's?.*URL_978 .*?#URL_978 "http://localhost/skyaware978"?' /etc/collectd/collectd.conf
 fi
 
 if grep jessie /etc/os-release >/dev/null

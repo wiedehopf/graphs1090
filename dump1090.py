@@ -43,7 +43,9 @@ def handle_config(root):
                                        name='dump978.' + instance_name,
                                        interval=60)
             else:
-                collectd.warning('No 978 URL defined in /etc/collectd/collectd.conf for ' + instance_name)
+                pass
+                # silence this warning ...
+                # collectd.warning('No 978 URL defined in /etc/collectd/collectd.conf for ' + instance_name)
 
         else:
             collectd.warning('Ignored config entry: ' + child.key)
