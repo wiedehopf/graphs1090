@@ -20,9 +20,10 @@ if [[ -f "$DBFOLDER/localhost.tar.gz" ]] && (( $(stat -c %s "$DBFOLDER/localhost
         # damaged
         echo "file damaged, deleting: $DBFOLDER/localhost.tar.gz"
         rm -f "$DBFOLDER/localhost.tar.gz"
-        exit 1
     fi
-elif [[ -d "$DBFOLDER/localhost" ]] && (( "$(find "$DBFOLDER/localhost" | wc -l)" > 8 )); then
+fi
+
+if [[ -d "$DBFOLDER/localhost" ]] && (( "$(find "$DBFOLDER/localhost" | wc -l)" > 8 )); then
     # legacy method
     cp -aT "$DBFOLDER/localhost" "$RUNFOLDER/localhost"
 elif [[ -f "$DBFOLDER/auto-backup-$(date +%Y-week_%V).tar.gz" ]] && (( $(stat -c %s "$DBFOLDER/auto-backup-$(date +%Y-week_%V).tar.gz") > 150000 )); then

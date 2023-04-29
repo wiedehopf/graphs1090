@@ -39,7 +39,13 @@ mv -f "$TMPF" "$TARGET/localhost.tar.gz"
 echo "writeback size on disk: $(du -sh "$TARGET/localhost.tar.gz" || true)" || true
 
 # remove localhost folder as it would be used with preference in the readback instead of localhost.tar.gz
-rm -rf "$TARGET/localhost"
+if [[ -d "$TARGET/localhost" ]]; then
+    if tar --directory "$TARGET" -c localhost | gzip -1 -c > "$TMPF"; then
+        mv -f -T "$TMPF" "$TARGET/auto-backup-old-localhost-folder-$(date +%Y-week_%V).tar.gz" &>/dev/null || true
+        rm -rf "$TARGET/localhost"
+    fi
+    rm -f "$TMPF"
+fi
 
 # remove readback-complete flag
 rm "$RUNFOLDER/readback-complete"
