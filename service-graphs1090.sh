@@ -26,6 +26,8 @@ else
     GRAPH_DELAY=0.33
 fi
 
+sleep 3
+
 echo "Generating all graphs"
 /usr/share/graphs1090/boot.sh $GRAPH_DELAY &
 if ! wait; then
