@@ -1,7 +1,7 @@
 #!/bin/bash
 
 trap 'echo "[ERROR] Error in line $LINENO when executing: $BASH_COMMAND"' ERR
-trap "pkill -P $$ || exit 0" SIGTERM SIGINT SIGHUP SIGQUIT
+trap "pkill -P $$ || true; exit 0" SIGTERM SIGINT SIGHUP SIGQUIT
 
 # make sure we're nice :)
 renice 10 $$ || true
@@ -30,9 +30,7 @@ sleep 3
 
 echo "Generating all graphs"
 /usr/share/graphs1090/boot.sh $GRAPH_DELAY &
-if ! wait; then
-    exit 0
-fi
+wait || true;
 echo "Done with initial graph generation"
 
 graphs() {
@@ -86,6 +84,4 @@ do
         /usr/share/graphs1090/scatter.sh
     fi
 done &
-if ! wait; then
-    exit 0
-fi
+wait || true;
