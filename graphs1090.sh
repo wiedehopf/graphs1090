@@ -8,6 +8,7 @@ DB=/var/lib/collectd/rrd
 renice -n 19 -p $$
 
 trap 'echo "[ERROR] Error in line $LINENO when executing: $BASH_COMMAND"' ERR
+trap "pkill -P $$ || true; exit 1" SIGTERM SIGINT SIGHUP SIGQUIT
 
 mult() {
 	echo $1 $2 | LC_ALL=C awk '{printf "%.9f", $1 * $2}'
@@ -676,6 +677,11 @@ wlan0_graph() {
 local_rate_graph() {
 	$pre
 	if [ $ul_maxima ]; then upper="--rigid --upper-limit $ul_maxima"; else upper=""; fi
+	if [ -f $2/dump1090_messages-remote_accepted.rrd ]; then
+        messages="CDEF:messages=messages1,messages2,ADDNAN"
+	else
+        messages="CDEF:messages=messages1"
+	fi
 	rrdtool graph \
 		"$1.tmp" \
 		--end "$END_TIME" \
@@ -693,24 +699,20 @@ local_rate_graph() {
 		"DEF:mlat=$(check $2/dump1090_mlat-recent.rrd):value:MAX" \
 		"DEF:messages1=$(check $2/dump1090_messages-local_accepted.rrd):value:MAX" \
 		"DEF:messages2=$(check $2/dump1090_messages-remote_accepted.rrd):value:MAX" \
+        "$messages" \
 		"DEF:positions=$(check $2/dump1090_messages-positions.rrd):value:MAX" \
 		"CDEF:y2positions=positions,$position_scaling,/" \
 		"CDEF:y2gps=gps,$position_scaling,/" \
 		"CDEF:y2mlat=mlat,$position_scaling,/" \
-		"COMMENT:Messages per second\:\t" \
-		"LINE1:messages1#$BLUE:Local\:\g" \
-		"GPRINT:messages1:MAX: %.0lf\t" \
-		"LINE1:messages2#$DGREEN:Remote\:\g" \
-		"GPRINT:messages2:MAX: %.0lf\c" \
+		"LINE1:messages#$DGREEN:Messages per second\:\g" \
+		"GPRINT:messages:MAX: %.0lf\c" \
 		"COMMENT:Aircraft seen (RHS)\:\t" \
 		"LINE1:y2mlat#000000:MLAT\:\g" \
 		"GPRINT:mlat:MAX: %.0lf\t" \
 		"LINE1:y2gps#$DRED:ADS-B\:\g" \
 		"GPRINT:gps:MAX: %.0lf\c" \
-		"LINE1:y2positions#$CYAN:Positions/s (RHS)\:\g" \
+		"LINE1:y2positions#$CYAN:Positions per second (RHS)\:\g" \
 		"GPRINT:positions:MAX: %.0lf\c" \
-		"LINE1:messages2#$DGREEN" \
-		"LINE1:messages1#$BLUE" \
 		--watermark "Drawn: $nowlit";
 	mv "$1.tmp" "$1"
 	}
