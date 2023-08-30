@@ -389,7 +389,7 @@ sudo systemctl restart collectd graphs1090
 
 ### Change the timezone used in the graphs
 
-Either change the global system timezone or add this to /etc/default/grahps1090 using the correct timezone:
+Either change the global system timezone or add this to /etc/default/graphs1090 using the correct timezone:
 ```
 export TZ=Europe/Berlin
 ```
