@@ -1009,7 +1009,7 @@ signal_graph() {
 		--left-axis-format "%.0lf" \
 		--right-axis-format "%.0lf" \
 		--units-exponent 0 \
-		--upper-limit 1    \
+		--upper-limit 3    \
 		--lower-limit "$lower" \
 		--rigid \
 		${defines[*]} \
