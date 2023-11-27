@@ -181,7 +181,7 @@ done
 
 rm -f /etc/cron.d/cron-graphs1090
 cp -r html $ipath
-cp -n default /etc/default/graphs1090
+cp --update=none default /etc/default/graphs1090
 cp default $ipath/default-config
 cp collectd.conf $ipath/default-collectd.conf
 cp service.service /lib/systemd/system/graphs1090.service
