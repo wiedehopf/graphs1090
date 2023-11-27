@@ -83,6 +83,10 @@ then
         aptUpdate
 		apt-get install --no-install-suggests --no-install-recommends -y 'libpython2.7' || true
 	fi
+elif grep -E 'bookworm' /etc/os-release -qs; then
+    if ! dpkg -s libpython3.11 2>/dev/null | grep 'Status.*installed' &>/dev/null; then
+		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.11'
+    fi
 else
     if ! dpkg -s libpython3.9 2>/dev/null | grep 'Status.*installed' &>/dev/null \
         && ! dpkg -s libpython3.10 2>/dev/null | grep 'Status.*installed' &>/dev/null
