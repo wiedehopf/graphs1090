@@ -8,8 +8,8 @@ repo="https://github.com/wiedehopf/graphs1090"
 ipath=/usr/share/graphs1090
 install=0
 
-commands="git rrdtool wget unzip collectd"
-packages="git rrdtool wget unzip bash-builtins collectd-core"
+commands="git rrdtool wget unzip collectd busybox"
+packages="git rrdtool wget unzip bash-builtins collectd-core busybox"
 
 mkdir -p $ipath/installed
 mkdir -p /var/lib/graphs1090/scatter
@@ -181,7 +181,7 @@ done
 
 rm -f /etc/cron.d/cron-graphs1090
 cp -r html $ipath
-cp -n default /etc/default/graphs1090
+busybox cp -n default /etc/default/graphs1090
 cp default $ipath/default-config
 cp collectd.conf $ipath/default-collectd.conf
 cp service.service /lib/systemd/system/graphs1090.service
@@ -228,6 +228,9 @@ elif [ -f /run/dump1090/stats.json ]; then
     sed -i -e 's?URL .*?URL "file:///usr/share/graphs1090/data-symlink"?' /etc/collectd/collectd.conf
 elif [ -f /run/dump1090-mutability/stats.json ]; then
     ln -snf /run/dump1090-mutability $SYM/data
+    sed -i -e 's?URL .*?URL "file:///usr/share/graphs1090/data-symlink"?' /etc/collectd/collectd.conf
+elif [ -f /run/shm/stats.json ]; then
+    ln -snf /run/shm $SYM/data
     sed -i -e 's?URL .*?URL "file:///usr/share/graphs1090/data-symlink"?' /etc/collectd/collectd.conf
 else
     ln -snf /run/readsb $SYM/data
