@@ -28,6 +28,12 @@ then
     install=1
 fi
 
+function copyNoClobber() {
+    if ! [[ -f "$2" ]]; then
+        cp "$1" "$2"
+    fi
+}
+
 function aptUpdate() {
     if [[ $update_done != "yes" ]]; then
         apt update && update_done=yes || true
@@ -181,7 +187,7 @@ done
 
 rm -f /etc/cron.d/cron-graphs1090
 cp -r html $ipath
-cp -n default /etc/default/graphs1090
+copyNoClobber default /etc/default/graphs1090
 cp default $ipath/default-config
 cp collectd.conf $ipath/default-collectd.conf
 cp service.service /lib/systemd/system/graphs1090.service
@@ -297,7 +303,7 @@ sed -i -e 's?$(mount | grep " on / " | grep rw)?{ mount | grep " on / " | grep r
 
 echo --------------
 echo --------------
-echo "All done! Graphs available at http://$(ip route | grep -m1 -o -P 'src \K[0-9,.]*')/graphs1090"
+echo "All done! Graphs available at http://$(ip route get 1.2.3.4 | grep -m1 -o -P 'src \K[0-9,.]*')/graphs1090"
 echo "It may take up to 10 minutes until the first data is displayed"
 
 
