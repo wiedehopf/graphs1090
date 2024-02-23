@@ -167,7 +167,7 @@ fi
 #checks a file name for existence and otherwise uses an "empty" rrd as a source so the graphs can still be printed even if the file is missing
 
 check() {
-	if [ -f $1 ]
+	if [[ -f $1 ]]
 	then
 		echo $1
 	else
@@ -181,7 +181,7 @@ check() {
 
 aircraft_graph() {
 	$pre
-	if [ $ul_aircraft ]; then upper="--rigid --upper-limit $ul_aircraft"; else upper=""; fi
+	if [[ -n $ul_aircraft ]]; then upper="--rigid --upper-limit $ul_aircraft"; else upper=""; fi
 	rrdtool graph \
 		"$1.tmp" \
 		--end "$END_TIME" \
@@ -220,9 +220,9 @@ aircraft_graph() {
 
 
 aircraft_message_rate_graph() {
-	if [ $ul_rate_per_aircraft ]; then upper="--rigid --upper-limit $ul_rate_per_aircraft"; else upper=""; fi
-	if [ $lr_rate_per_aircraft ]; then ratio="$lr_rate_per_aircraft"; else ratio=10; fi
-	if [ -f $2/dump1090_messages-remote_accepted.rrd ]
+	if [[ -n "$ul_rate_per_aircraft" ]]; then upper="--rigid --upper-limit $ul_rate_per_aircraft"; else upper=""; fi
+	if [[ -n "$lr_rate_per_aircraft" ]]; then ratio="$lr_rate_per_aircraft"; else ratio=10; fi
+	if [[ -f $2/dump1090_messages-remote_accepted.rrd ]]
 	then messages="CDEF:messages=messages1,messages2,ADDNAN"
 	else messages="CDEF:messages=messages1"
 	fi
@@ -259,8 +259,8 @@ aircraft_message_rate_graph() {
 	}
 
 cpu_graph_dump1090() {
-	if [ $ul_adsb_cpu ]; then upper="--rigid --upper-limit $ul_adsb_cpu"; else upper=""; fi
-	if [ -f $2/dump1090_cpu-airspy.rrd ]; then
+	if [[ -n $ul_adsb_cpu ]]; then upper="--rigid --upper-limit $ul_adsb_cpu"; else upper=""; fi
+	if [[ -f $2/dump1090_cpu-airspy.rrd ]]; then
 		airspy_graph1="DEF:airspy=$2/dump1090_cpu-airspy.rrd:value:AVERAGE"
 		airspy_graph2="CDEF:airspyp=airspy,10,/"
 		airspy_graph3="AREA:airspyp#$ABLUE:Airspy"
@@ -299,7 +299,7 @@ cpu_graph_dump1090() {
 	}
 
 tracks_graph() {
-	if [ $ul_tracks ]; then upper="--upper-limit $ul_tracks"; else upper=""; fi
+	if [[ -n $ul_tracks ]]; then upper="--upper-limit $ul_tracks"; else upper=""; fi
 	$pre
 	rrdtool graph \
 		"$1.tmp" \
@@ -676,8 +676,8 @@ wlan0_graph() {
 
 local_rate_graph() {
 	$pre
-	if [ $ul_maxima ]; then upper="--rigid --upper-limit $ul_maxima"; else upper=""; fi
-	if [ -f $2/dump1090_messages-remote_accepted.rrd ]; then
+	if [[ -n $ul_maxima ]]; then upper="--rigid --upper-limit $ul_maxima"; else upper=""; fi
+	if [[ -f $2/dump1090_messages-remote_accepted.rrd ]]; then
         messages="CDEF:messages=messages1,messages2,ADDNAN"
 	else
         messages="CDEF:messages=messages1"
@@ -727,12 +727,12 @@ local_trailing_rate_graph() {
         strong1="CDEF:fake1=messages"
         strong2="CDEF:fake2=messages"
     fi
-	if [ $ul_message_rate ]; then upper="--rigid --upper-limit $ul_message_rate"; else upper=""; fi
+	if [[ -n $ul_message_rate ]]; then upper="--rigid --upper-limit $ul_message_rate"; else upper=""; fi
 	if [[ $max_messages_line == 1 ]]
 	then
         maxline=("VDEF:peakmessages=messages,MAXIMUM" "LINE1:peakmessages#$BLUE:dashes=2,8")
 	fi
-	if [ -f $2/dump1090_messages-remote_accepted.rrd ]; then
+	if [[ -f $2/dump1090_messages-remote_accepted.rrd ]]; then
         messages="CDEF:messages=messages1,messages2,ADDNAN"
 	else
         messages="CDEF:messages=messages1"
@@ -909,7 +909,7 @@ range_graph(){
 		raxis=$(div 0.000539956803 $unitconv)
 	fi
 	if [[ $3 == "UAT" ]]; then
-		if [ $ul_range_uat ]; then upper="--rigid --upper-limit $ul_range_uat"; else upper=""; fi
+		if [[ -n $ul_range_uat ]]; then upper="--rigid --upper-limit $ul_range_uat"; else upper=""; fi
 		defines=( \
 			"-y 20:1" \
 			"DEF:drange=$(check $2/dump1090_range-max_range_978.rrd):value:MAX" \
@@ -920,7 +920,7 @@ range_graph(){
 			"DEF:dmedian=$(check $2/dump1090_range-median_978.rrd):value:AVERAGE" \
 		)
 	else
-		if [ $ul_range ]; then upper="--rigid --upper-limit $ul_range"; else upper=""; fi
+		if [[ -n $ul_range ]]; then upper="--rigid --upper-limit $ul_range"; else upper=""; fi
 		defines=( \
 			"-y 40:1" \
 			"DEF:drange=$(check $2/dump1090_range-max_range.rrd):value:MAX" \
@@ -996,7 +996,7 @@ signal_graph() {
             noise1="LINE1:noise#$DGREEN:Noise"
         fi
 	fi
-    if [ $ll_signal ]; then lower="$ll_signal"; else lower="-45"; fi
+    if [[ -n $ll_signal ]]; then lower="$ll_signal"; else lower="-45"; fi
 	rrdtool graph \
 		"$1.tmp" \
 		--end "$END_TIME" \
@@ -1262,7 +1262,7 @@ dump1090_graphs() {
 	range_graph ${DOCUMENTROOT}/dump1090-$2-range-$4.png ${DB}/$1/dump1090-$2 "$3" "$4" "$5"
 
 	signal_graph ${DOCUMENTROOT}/dump1090-$2-signal-$4.png ${DB}/$1/dump1090-$2 "$3" "$4" "$5"
-	if [ -f ${DB}/$1/dump1090-$2/dump1090_messages-messages_978.rrd ]
+	if [[ -f ${DB}/$1/dump1090-$2/dump1090_messages-messages_978.rrd ]]
 	then
         if grep -qs -e 'style="display:none"> <!-- dump978 -->' /usr/share/graphs1090/html/index.html; then
             sed -i -e 's/ style="display:none"> <!-- dump978 -->/> <!-- dump978 -->/' /usr/share/graphs1090/html/index.html
@@ -1321,7 +1321,7 @@ nowlit=$(date -d "$END_TIME" '+%Y-%m-%d %H:%M %Z')
 dump1090_instance="localhost"
 collectd_hostname="localhost"
 
-if [ -z $1 ]
+if [[ -z $1 ]]
 then
 	dump1090_receiver_graphs $collectd_hostname $dump1090_instance "ADS-B" "24h" "$step"
 else
