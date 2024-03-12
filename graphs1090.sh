@@ -1250,6 +1250,12 @@ misc_airspy() {
 	mv "$1.tmp" "$1"
 	}
 
+IHTML=/usr/share/graphs1090/html/index.html
+function show_graph() {
+    if grep -qs -e 'style="display:none"> <!-- '$1' -->' "$IHTML"; then
+        sed -i -e 's/ style="display:none"> <!-- '$1' -->/> <!-- '$1' -->/' "$IHTML"
+    fi
+}
 
 dump1090_graphs() {
 	aircraft_graph ${DOCUMENTROOT}/dump1090-$2-aircraft-$4.png ${DB}/$1/dump1090-$2 "$3" "$4" "$5"
@@ -1264,9 +1270,7 @@ dump1090_graphs() {
 	signal_graph ${DOCUMENTROOT}/dump1090-$2-signal-$4.png ${DB}/$1/dump1090-$2 "$3" "$4" "$5"
 	if [[ -f ${DB}/$1/dump1090-$2/dump1090_messages-messages_978.rrd ]]
 	then
-        if grep -qs -e 'style="display:none"> <!-- dump978 -->' /usr/share/graphs1090/html/index.html; then
-            sed -i -e 's/ style="display:none"> <!-- dump978 -->/> <!-- dump978 -->/' /usr/share/graphs1090/html/index.html
-        fi
+        show_graph dump978
 		range_graph ${DOCUMENTROOT}/dump1090-$2-range_978-$4.png ${DB}/$1/dump1090-$2 "UAT" "$4" "$5"
 		978_aircraft ${DOCUMENTROOT}/dump1090-$2-aircraft_978-$4.png ${DB}/$1/dump1090-$2 "UAT" "$4" "$5"
 		978_messages ${DOCUMENTROOT}/dump1090-$2-messages_978-$4.png ${DB}/$1/dump1090-$2 "UAT" "$4" "$5"
@@ -1276,15 +1280,14 @@ dump1090_graphs() {
 		df_counts ${DOCUMENTROOT}/df_counts-$2-$4.png ${DB}/$1/dump1090-$2 "df_counts" "$4" "$5"
 	fi
     if [[ -f /run/airspy_adsb/stats.json ]]; then
-        if grep -qs -e 'style="display:none"> <!-- airspy -->' /usr/share/graphs1090/html/index.html; then
-            sed -i -e 's/ style="display:none"> <!-- airspy -->/> <!-- airspy -->/' /usr/share/graphs1090/html/index.html
-        fi
+        show_graph airspy
         signal_airspy ${DOCUMENTROOT}/airspy-$2-rssi-$4.png ${DB}/$1/dump1090-$2 "rssi" "$4" "$5"
         signal_airspy ${DOCUMENTROOT}/airspy-$2-snr-$4.png ${DB}/$1/dump1090-$2 "snr" "$4" "$5"
         signal_airspy ${DOCUMENTROOT}/airspy-$2-noise-$4.png ${DB}/$1/dump1090-$2 "noise" "$4" "$5"
         misc_airspy ${DOCUMENTROOT}/airspy-$2-misc-$4.png ${DB}/$1/dump1090-$2 "misc" "$4" "$5"
     fi
     if [[ -f ${DB}/$1/dump1090-$2/dump1090_misc-gain_db.rrd ]]; then
+        show_graph dump1090-misc
         dump1090_misc ${DOCUMENTROOT}/dump1090-$2-misc-$4.png ${DB}/$1/dump1090-$2 "misc" "$4" "$5"
     fi
 }
