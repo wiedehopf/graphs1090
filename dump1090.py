@@ -24,14 +24,17 @@ def handle_config(root):
             instance_name = child.values[0]
             url = None
             url_978 = None
+            url_airspy = 'file:///run/airspy_adsb'
             for ch2 in child.children:
                 if ch2.key == 'URL':
                     url = ch2.values[0]
                 if ch2.key == 'URL_978':
                     url_978 = ch2.values[0]
+                if ch2.key == 'URL_AIRSPY':
+                    url_airspy = ch2.values[0]
             if url:
                 collectd.register_read(callback=read_1090,
-                                       data=(instance_name, 'localhost', url),
+                                       data=(instance_name, 'localhost', url, url_airspy),
                                        name='dump1090.' + instance_name,
                                        interval=60)
             else:
@@ -109,7 +112,9 @@ def dispatch_quartiles(data, stats, name):
                     interval = 60)
 
 def read_airspy(data):
-    instance_name,host,url = data
+    instance_name, host, url, url_airspy = data
+    data = (instance_name, host, url)
+
 
     try:
         #airspy cpu usage
@@ -154,9 +159,10 @@ def read_airspy(data):
         pass
 
     try:
-        with closing(urlopen('file:///run/airspy_adsb/stats.json', None, 5.0)) as stats_file:
+        with closing(urlopen(url_airspy + '/stats.json', None, 5.0)) as stats_file:
             stats = json.load(stats_file)
-    except:
+    except Exception as error:
+        #collectd.warning(str(error))
         return
 
     dispatch_quartiles(data, stats, 'rssi')
@@ -174,7 +180,8 @@ def read_airspy(data):
     dispatch_df(data, stats, 'df_counts')
 
 def read_1090(data):
-    instance_name,host,url = data
+    instance_name, host, url, url_airspy = data
+    data = (instance_name, host, url)
 
     #NaN rrd
     V.dispatch(plugin_instance = instance_name,
@@ -185,8 +192,9 @@ def read_1090(data):
                values = [1])
 
     try:
-        read_airspy(data)
-    except:
+        read_airspy((instance_name, host, url, url_airspy))
+    except Exception as error:
+        collectd.warning(str(error))
         pass
 
     try:

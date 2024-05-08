@@ -1279,7 +1279,7 @@ dump1090_graphs() {
 	if [[ -f ${DB}/$1/dump1090-$2/df_count_minute-17.rrd ]]; then
 		df_counts ${DOCUMENTROOT}/df_counts-$2-$4.png ${DB}/$1/dump1090-$2 "df_counts" "$4" "$5"
 	fi
-    if [[ -f /run/airspy_adsb/stats.json ]]; then
+	if [[ -f ${DB}/$1/dump1090-$2/airspy_misc-samplerate.rrd ]]; then
         show_graph airspy
         signal_airspy ${DOCUMENTROOT}/airspy-$2-rssi-$4.png ${DB}/$1/dump1090-$2 "rssi" "$4" "$5"
         signal_airspy ${DOCUMENTROOT}/airspy-$2-snr-$4.png ${DB}/$1/dump1090-$2 "snr" "$4" "$5"
