@@ -25,6 +25,7 @@ def handle_config(root):
             url = None
             url_978 = None
             url_airspy = 'file:///run/airspy_adsb'
+            url_signal = None
             for ch2 in child.children:
                 if ch2.key == 'URL':
                     url = ch2.values[0]
@@ -32,9 +33,11 @@ def handle_config(root):
                     url_978 = ch2.values[0]
                 if ch2.key == 'URL_AIRSPY':
                     url_airspy = ch2.values[0]
+                if ch2.key == 'URL_1090_SIGNAL':
+                    url_signal = ch2.values[0]
             if url:
                 collectd.register_read(callback=read_1090,
-                                       data=(instance_name, 'localhost', url, url_airspy),
+                                       data=(instance_name, 'localhost', url, url_airspy, url_signal),
                                        name='dump1090.' + instance_name,
                                        interval=60)
             else:
@@ -179,44 +182,9 @@ def read_airspy(data):
 
     dispatch_df(data, stats, 'df_counts')
 
-def read_1090(data):
-    instance_name, host, url, url_airspy = data
-    data = (instance_name, host, url)
 
-    #NaN rrd
-    V.dispatch(plugin_instance = instance_name,
-               host=host,
-               type='dump1090_dbfs',
-               type_instance='NaN',
-               time=time.time(),
-               values = [1])
-
-    try:
-        read_airspy((instance_name, host, url, url_airspy))
-    except Exception as error:
-        collectd.warning(str(error))
-        pass
-
-    try:
-        with closing(urlopen(url + '/data/stats.json', None, 5.0)) as stats_file:
-            stats = json.load(stats_file)
-
-        with closing(urlopen(url + '/data/receiver.json', None, 5.0)) as receiver_file:
-            receiver = json.load(receiver_file)
-
-        if has_key(receiver,'lat'):
-            rlat = float(receiver['lat'])
-            rlon = float(receiver['lon'])
-        else:
-            rlat = rlon = None
-
-        with closing(urlopen(url + '/data/aircraft.json', None, 5.0)) as aircraft_file:
-            aircraft_data = json.load(aircraft_file)
-
-    except Exception as error:
-        collectd.warning(str(error))
-        return
-
+def handle_signal_stuff(data, stats, aircraft_data):
+    instance_name, host, url = data
 
     try:
         if has_key(stats['last1min'],'adaptive'):
@@ -332,6 +300,72 @@ def read_1090(data):
                interval = 60)
 
 
+    if has_key(stats['total'],'local'):
+        if has_key(stats['total']['local'],'strong_signals'):
+            V.dispatch(plugin_instance = instance_name,
+                       host=host,
+                       type='dump1090_messages',
+                       type_instance='strong_signals',
+                       time=stats['total']['end'],
+                       values = [stats['total']['local']['strong_signals']],
+                       interval = 60)
+
+
+
+def read_1090(data):
+    instance_name, host, url, url_airspy, url_signal = data
+    data = (instance_name, host, url)
+
+    #NaN rrd
+    V.dispatch(plugin_instance = instance_name,
+               host=host,
+               type='dump1090_dbfs',
+               type_instance='NaN',
+               time=time.time(),
+               values = [1])
+
+    try:
+        read_airspy((instance_name, host, url, url_airspy))
+    except Exception as error:
+        collectd.warning(str(error))
+        pass
+
+    try:
+        with closing(urlopen(url + '/data/stats.json', None, 5.0)) as stats_file:
+            stats = json.load(stats_file)
+
+        with closing(urlopen(url + '/data/receiver.json', None, 5.0)) as receiver_file:
+            receiver = json.load(receiver_file)
+
+        if has_key(receiver,'lat'):
+            rlat = float(receiver['lat'])
+            rlon = float(receiver['lon'])
+        else:
+            rlat = rlon = None
+
+        with closing(urlopen(url + '/data/aircraft.json', None, 5.0)) as aircraft_file:
+            aircraft_data = json.load(aircraft_file)
+
+        stats_signal = None
+        aircraft_data_signal = None
+        if url_signal:
+            try:
+                with closing(urlopen(url_signal + '/data/stats.json', None, 5.0)) as stats_file:
+                    stats_signal = json.load(stats_file)
+                with closing(urlopen(url_signal + '/data/aircraft.json', None, 5.0)) as aircraft_file:
+                    aircraft_data_signal = json.load(aircraft_file)
+            except:
+                pass
+
+    except Exception as error:
+        collectd.warning(str(error))
+        return
+
+    if stats_signal and aircraft_data_signal:
+        handle_signal_stuff(data, stats_signal, aircraft_data_signal)
+    else:
+        handle_signal_stuff(data, stats, aircraft_data)
+
     # Local message counts
     if has_key(stats['total'],'local'):
         counts = stats['total']['local']['accepted']
@@ -350,15 +384,6 @@ def read_1090(data):
                        type_instance='local_accepted_%d' % i,
                        time=stats['total']['end'],
                        values = [counts[i]])
-
-        if has_key(stats['total']['local'],'strong_signals'):
-            V.dispatch(plugin_instance = instance_name,
-                       host=host,
-                       type='dump1090_messages',
-                       type_instance='strong_signals',
-                       time=stats['total']['end'],
-                       values = [stats['total']['local']['strong_signals']],
-                       interval = 60)
 
     # Remote message counts
     if has_key(stats['total'],'remote'):
