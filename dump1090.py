@@ -247,7 +247,12 @@ def handle_signal_stuff(data, stats, aircraft_data):
     for a in aircraft_data['aircraft']:
         if has_key(a,'rssi') and a['messages'] > 4 and a['seen'] < 30 :
             rssi = a['rssi']
-            if rssi > -49.4 and not 'lat' in a.get('tisb', ()):
+            source = a.get('type',"")
+            if (
+                rssi > -49.4
+                and not source.startswith('tisb')
+                and not source.startswith('adsr')
+            ):
                 signals.append(rssi)
 
     signals.sort()
@@ -355,6 +360,7 @@ def read_1090(data):
                 with closing(urlopen(url_signal + '/data/aircraft.json', None, 5.0)) as aircraft_file:
                     aircraft_data_signal = json.load(aircraft_file)
             except:
+                collectd.warning("Could not get data from " + url_signal)
                 pass
 
     except Exception as error:
