@@ -33,8 +33,10 @@ if [[ -f "$TARGET/localhost.tar.gz" ]] && (( $(stat -c %s "$TARGET/localhost.tar
     find "$TARGET" -name 'auto-backup-*.tar.gz' -mtime +60 -delete || true
 fi
 
-sync
-mv -f "$TMPF" "$TARGET/localhost.tar.gz"
+sync -f "$TARGET" \
+    && mv -f "$TMPF" "$TARGET/localhost.tar.gz"
+
+rm -f "$RUNFOLDER/readback-complete"
 
 echo "writeback size on disk: $(du -sh "$TARGET/localhost.tar.gz" || true)" || true
 
@@ -47,6 +49,3 @@ if [[ -d "$TARGET/localhost" ]]; then
     rm -f "$TMPF"
 fi
 
-# remove readback-complete flag
-rm "$RUNFOLDER/readback-complete"
-sync

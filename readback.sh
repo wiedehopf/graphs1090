@@ -12,6 +12,9 @@ success() {
     exit 0
 }
 
+# remove data in run folder
+rm -rf "$RUNFOLDER/localhost"
+
 
 if [[ -f "$DBFOLDER/localhost.tar.gz" ]] && (( $(stat -c %s "$DBFOLDER/localhost.tar.gz") > 150000 )); then
     if tar --overwrite --directory "$RUNFOLDER" -x -f "$DBFOLDER/localhost.tar.gz"; then
