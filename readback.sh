@@ -4,6 +4,9 @@ DBFOLDER=/var/lib/collectd/rrd
 RUNFOLDER=/run/collectd
 echo "copying DB from disk to $RUNFOLDER"
 
+# make sure runfolder exists just in case
+mkdir -p "$RUNFOLDER"
+
 success() {
     #delete empty files (apparently sometimes collectd will create empty files and choke on them)
     find "$RUNFOLDER/localhost" -size -50c -type f -delete -print | sed 's/^/File empty, deleting: /' || true
@@ -20,9 +23,9 @@ if [[ -f "$DBFOLDER/localhost.tar.gz" ]] && (( $(stat -c %s "$DBFOLDER/localhost
     if tar --overwrite --directory "$RUNFOLDER" -x -f "$DBFOLDER/localhost.tar.gz"; then
         success
     else
-        # damaged
-        echo "file damaged, deleting: $DBFOLDER/localhost.tar.gz"
-        rm -f "$DBFOLDER/localhost.tar.gz"
+        # possibly damaged
+        echo "tar xf didn't work: $DBFOLDER/localhost.tar.gz"
+        #rm -f "$DBFOLDER/localhost.tar.gz"
     fi
 fi
 
