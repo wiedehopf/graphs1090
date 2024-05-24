@@ -29,18 +29,20 @@ if ! tar --directory "$RUNFOLDER" -c localhost | gzip -1 -c > "$TMPF" || ! [[ -f
 fi
 
 if [[ -f "$TARGET/localhost.tar.gz" ]] && (( $(stat -c %s "$TARGET/localhost.tar.gz") > 150000 )); then
-    mv -f -T "$TARGET/localhost.tar.gz" "$TARGET/auto-backup-$(date +%Y-week_%V).tar.gz" &>/dev/null || true
-    find "$TARGET" -name 'auto-backup-*.tar.gz' -mtime +60 -delete || true
+    BACKUP="$TARGET/auto-backup-$(date +%Y-week_%V).tar.gz"
+    # overwrite auto-backup only if it's smaller or less than 0.5 MB larger than the newly created file
+    if ! [[ -f "$BACKUP" ]] || (( $(stat -c %s "$BACKUP") < $(stat -c %s "$TARGET/localhost.tar.gz") + 512 * 1024 )); then
+        mv -v -f -T "$TARGET/localhost.tar.gz" "$BACKUP" &>/dev/null || true
+    fi
+    find "$TARGET" -name 'auto-backup-*.tar.gz' -mtime +60  -printf "Removing %P (older than 60 days)\n" -delete || true
 fi
 
 sync -f "$TARGET" \
     && mv -f "$TMPF" "$TARGET/localhost.tar.gz"
 
-rm -f "$RUNFOLDER/readback-complete"
-
 echo "writeback size on disk: $(du -sh "$TARGET/localhost.tar.gz" || true)" || true
 
-# remove localhost folder as it would be used with preference in the readback instead of localhost.tar.gz
+# remove localhost folder as it will be outdated
 if [[ -d "$TARGET/localhost" ]]; then
     if tar --directory "$TARGET" -c localhost | gzip -1 -c > "$TMPF"; then
         mv -f -T "$TMPF" "$TARGET/auto-backup-old-localhost-folder-$(date +%Y-week_%V).tar.gz" &>/dev/null || true
