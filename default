@@ -84,4 +84,13 @@ wifi=
 # set temperature multiplier, on the pi this is 1000, on some platforms you might need to set it to 1
 TEMP_MULTIPLIER=1000
 
+# the text showing in the tab button
+WWW_TITLE="graphs1090"
+# the text shown at the top of the webpage
+WWW_HEADER="Performance Graphs"
+
+# set to yes to hide system graphs from the web page and not waste CPU either to create the pngs
+HIDE_SYSTEM=no
+# this does not turn off the data collection for the system stats as automatic changes to collectd.conf are somewhat complicated
+
 DB=/var/lib/collectd/rrd

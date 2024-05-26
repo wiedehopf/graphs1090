@@ -15,11 +15,27 @@ fi
 # load bash sleep builtin if available
 [[ -f /usr/lib/bash/sleep ]] && enable -f /usr/lib/bash/sleep sleep || true
 
+function chk_enabled() {
+    case "${1,,}" in
+        1 | true | on | enabled | enable | yes | y | ok | always | set )
+            return 0
+        ;;
+    esac
+    return 1
+}
+
 IHTML=/usr/share/graphs1090/html/index.html
 if [[ $colorscheme == "dark" ]]; then
     sed -i -e 's/href="bootstrap.custom..*.css"/href="bootstrap.custom.dark.css"/' "$IHTML"
 else
     sed -i -e 's/href="bootstrap.custom..*.css"/href="bootstrap.custom.light.css"/' "$IHTML"
+fi
+
+if [[ -n "$WWW_TITLE" ]]; then
+    sed -i -e "s#<title>.*</title>#<title>${WWW_TITLE}</title>#" "$IHTML"
+fi
+if [[ -n "$WWW_HEADER" ]]; then
+    sed -i -e "s#<h1>.*</h1>#<h1>${WWW_HEADER}</h1>#" "$IHTML"
 fi
 
 function checkrrd() {
@@ -52,6 +68,13 @@ function show_hide() {
 show_hide dump1090_messages-messages_978.rrd dump978
 show_hide airspy_rssi-max.rrd airspy
 show_hide dump1090_misc-gain_db.rrd dump1090-misc
+
+
+if ! chk_enabled "$HIDE_SYSTEM"; then
+    show system
+else
+    hide system
+fi
 
 if [[ $all_large == "yes" ]]; then
     if grep -qs -e 'flex: 50%; // all_large' /usr/share/graphs1090/html/portal.css; then

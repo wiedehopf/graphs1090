@@ -16,6 +16,14 @@ mult() {
 div() {
 	echo $1 $2 | LC_ALL=C awk '{printf "%.9f", $1 / $2}'
 }
+function chk_enabled() {
+    case "${1,,}" in
+        1 | true | on | enabled | enable | yes | y | ok | always | set )
+            return 0
+        ;;
+    esac
+    return 1
+}
 
 TEMP_MULTIPLIER=1000
 
@@ -1311,7 +1319,9 @@ system_graphs() {
 
 dump1090_receiver_graphs() {
 	dump1090_graphs "$1" "$2" "$3" "$4" "$5"
-	system_graphs "$1" "$2" "$3" "$4" "$5"
+    if ! chk_enabled "$HIDE_SYSTEM"; then
+        system_graphs "$1" "$2" "$3" "$4" "$5"
+    fi
 }
 
 
