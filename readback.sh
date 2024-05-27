@@ -12,6 +12,7 @@ fail() {
 }
 
 success() {
+    mkdir -p "$RUNFOLDER/localhost"
     #delete empty files (apparently sometimes collectd will create empty files and choke on them)
     find "$RUNFOLDER/localhost" -size -50c -type f -delete -print | sed 's/^/File empty, deleting: /' || true
 
@@ -35,10 +36,10 @@ fi
 function readback_tar() {
     if ! [[ -f "$1" ]]; then
         echo "readback of $1 aborted, file does not exit"
-        return 1
+        return 2
     elif (( $(stat -c %s "$1") < 150000 )); then
         echo "readback of $1 aborted, file is too small"
-        return 1
+        return 2
     fi
     if out=$(tar --overwrite --directory "$RUNFOLDER" -x -f "$1" 2>&1); then
         echo "readback of $1 was successful"
@@ -53,17 +54,17 @@ function readback_tar() {
         echo "FATAL: readback failed due to insufficient space or permission issue in $RUNFOLDER"
         fail
     fi
-    return 1
+    return 9
 }
 
 function readback_folder() {
     if ! [[ -d "$1" ]]; then
         echo "readback of $1 aborted, folder does not exit"
-        return 1
+        return 2
     fi
     if (( "$(find "$1" | wc -l)" < 9 )); then
         echo "readback of $1 aborted, folder does not contain enough files"
-        return 1
+        return 2
     fi
     if cp -aT "$1" "$RUNFOLDER/localhost"; then
         echo "readback of $1 was successful (transitioning from non compressed dir)"
@@ -71,21 +72,28 @@ function readback_folder() {
     fi
     echo "FATAL: readback of $1 failed"
     fail
-    return 1
+    return 9
 }
 
 current="$DBFOLDER/localhost.tar.gz"
 this_week="$DBFOLDER/auto-backup-$(date +%Y-week_%V).tar.gz"
 last_week="$DBFOLDER/auto-backup-$(date +%Y-week_%V -d '1 week ago').tar.gz"
 
-if readback_tar "$current"; then
-    success
-elif readback_folder "$DBFOLDER/localhost"; then
-    success
-elif readback_tar "$this_week"; then
-    success
-elif readback_tar "$last_week"; then
+failcodes=""
+readback_tar "$current" && success || failcodes+="$?"
+readback_folder "$DBFOLDER/localhost" && success || failcodes+="$?"
+readback_tar "$this_week" && success || failcodes+="$?"
+readback_tar "$last_week" && success || failcodes+="$?"
+
+echo "readback: got failcodes $failcodes"
+
+if grep -qs -e "9" <<< "$failcodes"; then
+    echo "FATAL: all readbacks failed and there seems to be existing data!"
+    fail
+else
+    echo "readback: No valid existing data files found, starting fresh!"
     success
 fi
+
 
 fail
