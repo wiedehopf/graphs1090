@@ -178,7 +178,7 @@ do
     # only add interface starting with et en and wl
     case $iface in
         et*|en*|wl*)
-sed -ie '/<Plugin "interface">/{a\
+sed -i -e '/<Plugin "interface">/{a\
     Interface "'$iface'"
 }' /etc/collectd/collectd.conf
         ;;
