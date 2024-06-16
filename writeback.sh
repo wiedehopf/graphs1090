@@ -37,8 +37,12 @@ if [[ -f "$TARGET/localhost.tar.gz" ]] && (( $(stat -c %s "$TARGET/localhost.tar
     find "$TARGET" -name 'auto-backup-*.tar.gz' -mtime +60  -printf "Removing %P (older than 60 days)\n" -delete || true
 fi
 
-sync -f "$TARGET" \
-    && mv -f "$TMPF" "$TARGET/localhost.tar.gz"
+if ! sync "$TMPF"; then
+    echo "writeback failed due to sync failure"
+    exit 1
+fi
+
+mv -f "$TMPF" "$TARGET/localhost.tar.gz"
 
 echo "writeback size on disk: $(du -sh "$TARGET/localhost.tar.gz" || true)" || true
 
