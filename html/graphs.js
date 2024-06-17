@@ -107,43 +107,44 @@ function switchView(newTimeFrame) {
 		$("#dump1090-signal_978-link").attr("href", "graphs/dump1090-" + $hostName + "-signal_978-" + $timeFrame + ".png?time=" + $timestamp);
 	}
 
-    $("#system-cpu-image").attr("src", "graphs/system-" + $hostName + "-cpu-" + $timeFrame + ".png?time=" + $timestamp);
-    $("#system-cpu-link").attr("href", "graphs/system-" + $hostName + "-cpu-" + $timeFrame + ".png?time=" + $timestamp);
+    if ($("#panel_system").css("display") !== "none") {
+        $("#system-cpu-image").attr("src", "graphs/system-" + $hostName + "-cpu-" + $timeFrame + ".png?time=" + $timestamp);
+        $("#system-cpu-link").attr("href", "graphs/system-" + $hostName + "-cpu-" + $timeFrame + ".png?time=" + $timestamp);
 
-    element =  document.getElementById('system-eth0_bandwidth-image');
-    if (typeof(element) != 'undefined' && element != null) {
-        $("#system-eth0_bandwidth-image").attr("src", "graphs/system-" + $hostName + "-eth0_bandwidth-" + $timeFrame + ".png?time=" + $timestamp);
-        $("#system-eth0_bandwidth-link").attr("href", "graphs/system-" + $hostName + "-eth0_bandwidth-" + $timeFrame + ".png?time=" + $timestamp);
+        element =  document.getElementById('system-eth0_bandwidth-image');
+        if (typeof(element) != 'undefined' && element != null) {
+            $("#system-eth0_bandwidth-image").attr("src", "graphs/system-" + $hostName + "-eth0_bandwidth-" + $timeFrame + ".png?time=" + $timestamp);
+            $("#system-eth0_bandwidth-link").attr("href", "graphs/system-" + $hostName + "-eth0_bandwidth-" + $timeFrame + ".png?time=" + $timestamp);
+        }
+        element =  document.getElementById('system-network_bandwidth-image');
+        if (typeof(element) != 'undefined' && element != null) {
+            $("#system-network_bandwidth-image").attr("src", "graphs/system-" + $hostName + "-network_bandwidth-" + $timeFrame + ".png?time=" + $timestamp);
+            $("#system-network_bandwidth-link").attr("href", "graphs/system-" + $hostName + "-network_bandwidth-" + $timeFrame + ".png?time=" + $timestamp);
+        }
+        
+        $("#system-memory-image").attr("src", "graphs/system-" + $hostName + "-memory-" + $timeFrame + ".png?time=" + $timestamp);
+        $("#system-memory-link").attr("href", "graphs/system-" + $hostName + "-memory-" + $timeFrame + ".png?time=" + $timestamp);
+
+        element =  document.getElementById('system-temperature_imperial-image');
+        if (typeof(element) != 'undefined' && element != null) {
+            $("#system-temperature_imperial-image").attr("src", "graphs/system-" + $hostName + "-temperature_imperial-" + $timeFrame + ".png?time=" + $timestamp);
+            $("#system-temperature_imperial-link").attr("href", "graphs/system-" + $hostName + "-temperature_imperial-" + $timeFrame + ".png?time=" + $timestamp);
+        }
+        element =  document.getElementById('system-temperature-image');
+        if (typeof(element) != 'undefined' && element != null) {
+            $("#system-temperature-image").attr("src", "graphs/system-" + $hostName + "-temperature-" + $timeFrame + ".png?time=" + $timestamp);
+            $("#system-temperature-link").attr("href", "graphs/system-" + $hostName + "-temperature-" + $timeFrame + ".png?time=" + $timestamp);
+        }
+
+        $("#system-df_root-image").attr("src", "graphs/system-" + $hostName + "-df_root-" + $timeFrame + ".png?time=" + $timestamp);
+        $("#system-df_root-link").attr("href", "graphs/system-" + $hostName + "-df_root-" + $timeFrame + ".png?time=" + $timestamp);
+
+        $("#system-disk_io_iops-image").attr("src", "graphs/system-" + $hostName + "-disk_io_iops-" + $timeFrame + ".png?time=" + $timestamp);
+        $("#system-disk_io_iops-link").attr("href", "graphs/system-" + $hostName + "-disk_io_iops-" + $timeFrame + ".png?time=" + $timestamp);
+
+        $("#system-disk_io_octets-image").attr("src", "graphs/system-" + $hostName + "-disk_io_octets-" + $timeFrame + ".png?time=" + $timestamp);
+        $("#system-disk_io_octets-link").attr("href", "graphs/system-" + $hostName + "-disk_io_octets-" + $timeFrame + ".png?time=" + $timestamp);
     }
-    element =  document.getElementById('system-network_bandwidth-image');
-    if (typeof(element) != 'undefined' && element != null) {
-        $("#system-network_bandwidth-image").attr("src", "graphs/system-" + $hostName + "-network_bandwidth-" + $timeFrame + ".png?time=" + $timestamp);
-        $("#system-network_bandwidth-link").attr("href", "graphs/system-" + $hostName + "-network_bandwidth-" + $timeFrame + ".png?time=" + $timestamp);
-    }
-    
-    $("#system-memory-image").attr("src", "graphs/system-" + $hostName + "-memory-" + $timeFrame + ".png?time=" + $timestamp);
-    $("#system-memory-link").attr("href", "graphs/system-" + $hostName + "-memory-" + $timeFrame + ".png?time=" + $timestamp);
-
-    element =  document.getElementById('system-temperature_imperial-image');
-    if (typeof(element) != 'undefined' && element != null) {
-        $("#system-temperature_imperial-image").attr("src", "graphs/system-" + $hostName + "-temperature_imperial-" + $timeFrame + ".png?time=" + $timestamp);
-        $("#system-temperature_imperial-link").attr("href", "graphs/system-" + $hostName + "-temperature_imperial-" + $timeFrame + ".png?time=" + $timestamp);
-    }
-    element =  document.getElementById('system-temperature-image');
-    if (typeof(element) != 'undefined' && element != null) {
-        $("#system-temperature-image").attr("src", "graphs/system-" + $hostName + "-temperature-" + $timeFrame + ".png?time=" + $timestamp);
-        $("#system-temperature-link").attr("href", "graphs/system-" + $hostName + "-temperature-" + $timeFrame + ".png?time=" + $timestamp);
-    }
-
-    $("#system-df_root-image").attr("src", "graphs/system-" + $hostName + "-df_root-" + $timeFrame + ".png?time=" + $timestamp);
-    $("#system-df_root-link").attr("href", "graphs/system-" + $hostName + "-df_root-" + $timeFrame + ".png?time=" + $timestamp);
-
-    $("#system-disk_io_iops-image").attr("src", "graphs/system-" + $hostName + "-disk_io_iops-" + $timeFrame + ".png?time=" + $timestamp);
-    $("#system-disk_io_iops-link").attr("href", "graphs/system-" + $hostName + "-disk_io_iops-" + $timeFrame + ".png?time=" + $timestamp);
-
-    $("#system-disk_io_octets-image").attr("src", "graphs/system-" + $hostName + "-disk_io_octets-" + $timeFrame + ".png?time=" + $timestamp);
-    $("#system-disk_io_octets-link").attr("href", "graphs/system-" + $hostName + "-disk_io_octets-" + $timeFrame + ".png?time=" + $timestamp);
-
 	// Set the button related to the selected time frame to active.
     $("#btn-2h").removeClass('active');
     $("#btn-8h").removeClass('active');
