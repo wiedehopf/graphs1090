@@ -1,3 +1,46 @@
+let usp;
+try {
+    // let's make this case insensitive
+    usp = {
+        params: new URLSearchParams(),
+        has: function(s) {return this.params.has(s.toLowerCase());},
+        get: function(s) {
+            let val = this.params.get(s.toLowerCase());
+            if (val) {
+                // make XSS a bit harder
+                val = val.replace(/[<>#&]/g, '');
+                //console.log("usp.get(" + s + ") = " + val);
+            }
+            return val;
+        },
+        getFloat: function(s) {
+            if (!this.params.has(s.toLowerCase())) return null;
+            const param =  this.params.get(s.toLowerCase());
+            if (!param) return null;
+            const val = parseFloat(param);
+            if (isNaN(val)) return null;
+            return val;
+        },
+        getInt: function(s)  {
+            if (!this.params.has(s.toLowerCase())) return null;
+            const param =  this.params.get(s.toLowerCase());
+            if (!param) return null;
+            const val = parseInt(param, 10);
+            if (isNaN(val)) return null;
+            return val;
+        }
+    };
+    const inputParams = new URLSearchParams(window.location.search);
+    for (const [k, v] of inputParams) {
+        usp.params.append(k.toLowerCase(), v);
+    }
+} catch (error) {
+    console.error(error);
+    usp = {
+        has: function() {return false;},
+        get: function() {return null;},
+    }
+}
 //*** BEGIN USER DEFINED VARIABLES ***//
 
 // Set the default time frame to use when loading images when the page is first accessed.
@@ -12,6 +55,14 @@ $refreshInterval = 60000
 
 //*** END USER DEFINED VARIABLES ***//
 
+
+if (usp.get('refreshInterval')) {
+    $refreshInterval = usp.get('refreshInterval') * 1000;
+}
+
+if (usp.get('timeframe')) {
+    $timeFrame = usp.get('timeframe');
+}
 
 //*** DO NOT EDIT BELOW THIS LINE UNLESS YOU KNOW WHAT YOU ARE DOING ***//
 
