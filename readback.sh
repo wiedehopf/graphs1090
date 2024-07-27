@@ -82,8 +82,12 @@ last_week="$DBFOLDER/auto-backup-$(date +%Y-week_%V -d '1 week ago').tar.gz"
 failcodes=""
 readback_tar "$current" && success || failcodes+="$?"
 readback_folder "$DBFOLDER/localhost" && success || failcodes+="$?"
-readback_tar "$this_week" && success || failcodes+="$?"
-readback_tar "$last_week" && success || failcodes+="$?"
+if [[ -f "$DBFOLDER/.norestorebackup" ]]; then
+    rm -f "$DBFOLDER/.norestorebackup"
+else
+    readback_tar "$this_week" && success || failcodes+="$?"
+    readback_tar "$last_week" && success || failcodes+="$?"
+fi
 
 echo "readback: got failcodes $failcodes"
 

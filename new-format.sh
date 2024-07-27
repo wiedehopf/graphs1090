@@ -15,17 +15,14 @@ cd /var/lib/collectd/rrd
 systemctl stop collectd
 cp -T -n localhost.tar.gz $date-new-format-backup.tar.gz
 
-if ! [[ -f /usr/share/graphs1090/noMalarky ]]; then
-    /usr/share/graphs1090/stopMalarky.sh
-    rm -f /usr/share/graphs1090/noMalarky
-fi
-
 systemctl stop collectd
 /usr/share/graphs1090/gunzip.sh /var/lib/collectd/rrd/localhost
 
 cp -T -r -n localhost $date
 cp -T -r localhost $tmp
 rm -r localhost
+
+touch .norestorebackup
 
 systemctl start collectd
 sleep 60
@@ -52,10 +49,6 @@ done
 
 cp -T -r -n $tmp localhost
 systemctl start collectd
-
-if ! [[ -f /usr/share/graphs1090/noMalarky ]]; then
-    /usr/share/graphs1090/malarky.sh
-fi
 
 systemctl restart graphs1090
 
