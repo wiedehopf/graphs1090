@@ -92,5 +92,7 @@ WWW_HEADER="Performance Graphs"
 # set to yes to hide system graphs from the web page and not waste CPU either to create the pngs
 HIDE_SYSTEM=no
 # this does not turn off the data collection for the system stats as automatic changes to collectd.conf are somewhat complicated
+# you can use /usr/share/graphs1090/git/hide_system-collectd.conf though, that's up to you to copy to /etc/collectd/collectd.conf
+# that collectd.conf by default has 978 data collection disabled, if you want to enable it, uncomment the URL_978 line
 
 DB=/var/lib/collectd/rrd
