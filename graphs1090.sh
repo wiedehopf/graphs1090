@@ -324,9 +324,8 @@ tracks_graph() {
 		--left-axis-format "%.0lf" \
 		--right-axis-format "%.0lf" \
         --units-exponent 0 \
-		"DEF:all=$(check $2/dump1090_tracks-all.rrd):value:AVERAGE" \
-		"DEF:single=$(check $2/dump1090_tracks-single_message.rrd):value:AVERAGE" \
-		"SHIFT:single:-60" \
+		"DEF:all=$(check $2/dump1090_tracks-all.rrd):value:AVERAGE:start=end-$4-1h" \
+		"DEF:single=$(check $2/dump1090_tracks-single_message.rrd):value:AVERAGE:start=end-$4-1h" \
 		"CDEF:s=single,3600,*" \
 		"CDEF:m=all,3600,*,s,-" \
 		"CDEF:s8=s,480,TRENDNAN,4.1,*" \
