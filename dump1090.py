@@ -595,7 +595,9 @@ def read_978(data):
             # GPS position, include in range statistics
             else:
                 gps += 1
-                ranges.append(distance)
+                # limit 978 data collection to 350 nmi (1 nmi = 1852 m)
+                if distance < 350 * 1852:
+                    ranges.append(distance)
 
     # Aircraft numbers
     V.dispatch(plugin_instance = instance_name,
