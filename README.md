@@ -287,7 +287,7 @@ sudo systemctl restart collectd graphs1090
 
 This should be all that is required, no guarantees though!
 
-### Backup and Restore (different architecture, for example moving from RPi to x86 or the other way around)
+### Backup and Restore (moving from 32bit to 64bit, between arm64 and amd64 should be fine using the normal backup but no guarantees)
 
 Before proceeding, run the install / update script for graphs1090 on BOTH machines to get latest script versions.
 
