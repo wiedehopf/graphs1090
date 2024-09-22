@@ -681,6 +681,9 @@ def read_978(data):
         if has_key(a,'rssi') and a['messages'] > 2 and a['seen'] < 60 :
             rssi = a['rssi']
             if rssi > -49.4 and not 'lat' in a.get('tisb', ()):
+                # clamp rssi to 0
+                if rssi > 0:
+                    rssi = 0
                 signals.append(rssi)
 
     signals.sort()
