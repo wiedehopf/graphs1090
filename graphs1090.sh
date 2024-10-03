@@ -547,7 +547,7 @@ memory_graph() {
 
 network_graph() {
 	$pre
-	if [[ $(ls ${DB}/localhost | grep interface -c) < 2 ]]
+	if [[ $(ls ${DB}/localhost | grep -v 'interface-lo' | grep interface -c) < 2 ]]
 	then
 		interfaces=(\
 			"DEF:rx_b=$(check $2/$ether/if_octets.rrd):rx:AVERAGE" \
