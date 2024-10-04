@@ -4,7 +4,7 @@ trap 'echo "[ERROR] Error in line $LINENO when executing: $BASH_COMMAND"' ERR
 trap "pkill -P $$ || true; exit 0" SIGTERM SIGINT SIGHUP SIGQUIT
 
 # make sure we're nice :)
-renice 10 $$ || true
+renice 20 $$ || true
 
 source /etc/default/graphs1090
 
