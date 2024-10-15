@@ -352,6 +352,21 @@ sudo systemctl restart collectd graphs1090
 
 If it all worked, the two datasets should be integrated now.
 
+### Move graphs data to adsb.im
+
+#### on the old install:
+
+- Update graphs1090 to the most recent version by running the install script
+- Run the following command:
+```
+sudo /usr/share/graphs1090/generate-adsb.im-backup.sh
+```
+- The backup file is available for download where the graphs are viewed by adding `/graphs1090-to-adsb.im.backup` to the URL (example: `http://192.168.1.38/graphs1090/graphs1090-to-adsb.im.backup`)
+
+#### on the adsb.im install:
+
+- In the webinterface, use System -> Restore and supply it with the file you just downloaded
+
 
 ### Ubuntu 20 fixes (symptom: collectd errors out on startup)
 
