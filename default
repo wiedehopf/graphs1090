@@ -95,4 +95,6 @@ HIDE_SYSTEM=no
 # you can use /usr/share/graphs1090/git/hide_system-collectd.conf though, that's up to you to copy to /etc/collectd/collectd.conf
 # that collectd.conf by default has 978 data collection disabled, if you want to enable it, uncomment the URL_978 line
 
+# this variable is ignored if /run/collectd/localhost exists, in that case /run/collectd is used
+# still leaving the variable here in case this change causes issues
 DB=/var/lib/collectd/rrd

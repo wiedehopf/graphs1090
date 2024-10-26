@@ -2,9 +2,6 @@
 
 DOCUMENTROOT=/run/graphs1090
 
-DB=/var/lib/collectd/rrd
-# settings in /etc/default/graphs1090 will overwrite the DB directory
-
 renice -n 19 -p $$
 
 trap 'echo "[ERROR] Error in line $LINENO when executing: $BASH_COMMAND"' ERR
@@ -64,7 +61,17 @@ AYELLOW=ffcc00
 AGRAY=dddddd
 
 
+DB=/var/lib/collectd/rrd
+
 source /etc/default/graphs1090
+
+# autodetect and use /run/collectd as DB folder if it exists and has localhost
+# folder having it automatically changed in /etc/default/graphs1090 causes
+# issues for example when the user replaces his configuration with the default
+# which is a valid approach
+if [[ -d /run/collectd/localhost ]]; then
+    DB=/run/collectd
+fi
 
 if [[ "$colorscheme" == "dark" ]]; then
     CANVAS=161618
