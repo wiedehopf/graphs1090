@@ -23,13 +23,14 @@ fi
 if (( DRAW_INTERVAL < 20 )); then
     GRAPH_DELAY=0
 else
-    GRAPH_DELAY=0.33
+    GRAPH_DELAY=0
 fi
 
 sleep 3
 
 echo "Generating all graphs"
-/usr/share/graphs1090/boot.sh $GRAPH_DELAY &
+# use zero delay for the first generation of graphs to speed it up
+/usr/share/graphs1090/boot.sh 0 &
 wait || true;
 echo "Done with initial graph generation"
 

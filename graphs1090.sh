@@ -2,7 +2,7 @@
 
 DOCUMENTROOT=/run/graphs1090
 
-renice -n 19 -p $$
+renice -n 20 -p $$
 
 trap 'echo "[ERROR] Error in line $LINENO when executing: $BASH_COMMAND"' ERR
 trap "pkill -P $$ || true; exit 1" SIGTERM SIGINT SIGHUP SIGQUIT
@@ -174,8 +174,10 @@ fi
 # load bash sleep builtin if available
 [[ -f /usr/lib/bash/sleep ]] && enable -f /usr/lib/bash/sleep sleep || true
 
-pre="sleep 0.01"
-if ! [ -z "$2" ]; then
+pre=""
+if [[ $2 == 0 ]]; then
+    pre=""
+elif ! [ -z "$2" ]; then
 	pre="sleep $2"
 fi
 
