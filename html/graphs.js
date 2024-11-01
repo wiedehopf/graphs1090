@@ -207,6 +207,11 @@ function switchView(newTimeFrame) {
     $("#btn-1825d").removeClass('active');
     $("#btn-3650d").removeClass('active');
     $("#btn-" + timeFrame).addClass('active');
+
+
+    let pathName = window.location.pathname.replace(/\/+/, '/') || "/";
+    let url = window.location.origin + pathName + "?timeframe=" + timeFrame;
+    window.history.replaceState("object or string", "Title", url);
 }
 
 let verbose = true;
