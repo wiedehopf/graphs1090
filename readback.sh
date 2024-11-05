@@ -37,7 +37,7 @@ function readback_tar() {
     if ! [[ -f "$1" ]]; then
         echo "readback of $1 aborted, file does not exit"
         return 2
-    elif (( $(stat -c %s "$1") < 150000 )); then
+    elif (( $(stat -c %s "$1") < 50000 )); then
         echo "readback of $1 aborted, file is too small"
         return 2
     fi
