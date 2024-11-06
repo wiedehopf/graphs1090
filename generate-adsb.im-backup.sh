@@ -1,9 +1,28 @@
 #!/bin/bash
 trap 'echo "[ERROR] Error in line $LINENO when executing: $BASH_COMMAND"' ERR
+
+function cleanup {
+    systemctl start collectd
+}
+trap cleanup EXIT
+
 set -e
+
+systemctl stop collectd
+
+if ! [[ -f /var/lib/collectd/rrd/localhost.tar.gz ]]; then
+    cd /var/lib/collectd/rrd
+    tar -cz -f rrd.tar.gz localhost
+fi
+
 cd /usr/share/graphs1090/html/
 mkdir -p ultrafeeder/graphs1090/rrd
-systemctl restart collectd
-cp /var/lib/collectd/rrd/localhost.tar.gz ultrafeeder/graphs1090/rrd
+
+if [[ -f /var/lib/collectd/rrd/localhost.tar.gz ]]; then
+    cp /var/lib/collectd/rrd/localhost.tar.gz ultrafeeder/graphs1090/rrd
+else
+    cp /var/lib/collectd/rrd/rrd.tar.gz ultrafeeder/graphs1090/rrd
+fi
+
 zip -0 -r graphs1090-to-adsb.im.backup ultrafeeder
 rm -rf ultrafeeder
