@@ -3,7 +3,17 @@
 trap 'echo "[ERROR] Error in line $LINENO when executing: $BASH_COMMAND"' ERR
 trap "pkill -P $$ || true; exit 1" SIGTERM SIGINT SIGHUP SIGQUIT
 
+DB=/var/lib/collectd/rrd
+
 source /etc/default/graphs1090
+
+# autodetect and use /run/collectd as DB folder if it exists and has localhost
+# folder having it automatically changed in /etc/default/graphs1090 causes
+# issues for example when the user replaces his configuration with the default
+# which is a valid approach
+if [[ -d /run/collectd/localhost ]]; then
+    DB=/run/collectd
+fi
 
 # fontconfig writes stuff to that directory for no good reason
 # graphs1090 is mostly used on RPis, avoiding frequent disk writes is preferred
@@ -98,10 +108,15 @@ fi
 	#/usr/share/graphs1090/rem_rra.sh /var/lib/collectd/rrd/localhost/
 #fi
 
-while ! [[ -d $DB ]] && sleep 5; do
-    echo Sleeping a bit, waiting for database directory / collectd to start.
-    true
+for i in {1..30}; do
+    if [[ -f $DB/localhost/dump1090-localhost/dump1090_dbfs-NaN.rrd ]]; then break; fi
+    if (( i == 5 )); then
+        echo Waiting at most another 25 seconds for database directory / collectd to start.
+    fi
+    sleep 1
 done
+
+echo "Generating all graphs"
 
 for i in 24h 8h 2h 48h 7d 14d 30d 90d 180d 365d 730d 1095d 1825d 3650d
 do
@@ -111,3 +126,5 @@ do
         exit 0
     fi
 done
+
+echo "Done with initial graph generation"

@@ -6,7 +6,17 @@ trap "pkill -P $$ || true; exit 0" SIGTERM SIGINT SIGHUP SIGQUIT
 # make sure we're nice :)
 renice 20 $$ || true
 
+DB=/var/lib/collectd/rrd
+
 source /etc/default/graphs1090
+
+# autodetect and use /run/collectd as DB folder if it exists and has localhost
+# folder having it automatically changed in /etc/default/graphs1090 causes
+# issues for example when the user replaces his configuration with the default
+# which is a valid approach
+if [[ -d /run/collectd/localhost ]]; then
+    DB=/run/collectd
+fi
 
 
 if [[ -z $DRAW_INTERVAL ]]; then
@@ -26,13 +36,9 @@ else
     GRAPH_DELAY=0
 fi
 
-sleep 3
-
-echo "Generating all graphs"
 # use zero delay for the first generation of graphs to speed it up
 /usr/share/graphs1090/boot.sh 0 &
 wait || true;
-echo "Done with initial graph generation"
 
 graphs() {
 	#echo "Generating $1 graphs"
