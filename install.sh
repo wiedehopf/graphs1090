@@ -89,18 +89,32 @@ then
         aptUpdate
 		apt-get install --no-install-suggests --no-install-recommends -y 'libpython2.7' || true
 	fi
+elif grep -E 'bullseye' /etc/os-release -qs; then
+    if ! dpkg -s libpython3.9 2>/dev/null | grep 'Status.*installed' &>/dev/null; then
+		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.9'
+    fi
 elif grep -E 'bookworm' /etc/os-release -qs; then
     if ! dpkg -s libpython3.11 2>/dev/null | grep 'Status.*installed' &>/dev/null; then
 		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.11'
     fi
+elif grep -E 'trixie' /etc/os-release -qs; then
+    if ! dpkg -s libpython3.12 2>/dev/null | grep 'Status.*installed' &>/dev/null; then
+		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.12'
+    fi
 else
     if ! dpkg -s libpython3.9 2>/dev/null | grep 'Status.*installed' &>/dev/null \
-        && ! dpkg -s libpython3.10 2>/dev/null | grep 'Status.*installed' &>/dev/null
+        && ! dpkg -s libpython3.10 2>/dev/null | grep 'Status.*installed' &>/dev/null \
+        && ! dpkg -s libpython3.11 2>/dev/null | grep 'Status.*installed' &>/dev/null \
+        && ! dpkg -s libpython3.12 2>/dev/null | grep 'Status.*installed' &>/dev/null \
+        && ! dpkg -s libpython3.13 2>/dev/null | grep 'Status.*installed' &>/dev/null
 	then
         aptUpdate
 
-		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.9' \
-		|| apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.10'
+		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.9'
+		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.10'
+		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.11'
+		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.12'
+		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.13'
 	fi
 fi
 
