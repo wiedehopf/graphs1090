@@ -82,42 +82,6 @@ then
 	fi
 fi
 
-if grep -E 'stretch|jessie|buster' /etc/os-release -qs
-then
-	if ! dpkg -s libpython2.7 2>/dev/null | grep 'Status.*installed' &>/dev/null
-	then
-        aptUpdate
-		apt-get install --no-install-suggests --no-install-recommends -y 'libpython2.7' || true
-	fi
-elif grep -E 'bullseye' /etc/os-release -qs; then
-    if ! dpkg -s libpython3.9 2>/dev/null | grep 'Status.*installed' &>/dev/null; then
-		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.9'
-    fi
-elif grep -E 'bookworm' /etc/os-release -qs; then
-    if ! dpkg -s libpython3.11 2>/dev/null | grep 'Status.*installed' &>/dev/null; then
-		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.11'
-    fi
-elif grep -E 'trixie' /etc/os-release -qs; then
-    if ! dpkg -s libpython3.12 2>/dev/null | grep 'Status.*installed' &>/dev/null; then
-		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.12'
-    fi
-else
-    if ! dpkg -s libpython3.9 2>/dev/null | grep 'Status.*installed' &>/dev/null \
-        && ! dpkg -s libpython3.10 2>/dev/null | grep 'Status.*installed' &>/dev/null \
-        && ! dpkg -s libpython3.11 2>/dev/null | grep 'Status.*installed' &>/dev/null \
-        && ! dpkg -s libpython3.12 2>/dev/null | grep 'Status.*installed' &>/dev/null \
-        && ! dpkg -s libpython3.13 2>/dev/null | grep 'Status.*installed' &>/dev/null
-	then
-        aptUpdate
-
-		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.9'
-		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.10'
-		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.11'
-		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.12'
-		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.13'
-	fi
-fi
-
 # make sure commands are available if they were just installed
 hash -r
 
@@ -279,30 +243,26 @@ if [[ $lighttpd == yes ]]; then
     systemctl restart lighttpd
 fi
 
+# if libpython is missing, this will hopefully install the correct version
+# sample output of collectd when libpython is missing:
+# ERROR: dlopen("/usr/lib/collectd/python.so") failed: libpython3.12.so.1.0: cannot open shared object file: No such file or directory. The most common cause for this problem is missing dependencies. Use ldd(1) to check the dependencies of the plugin / shared object.
+if libpython=$(collectd 2>&1 | grep -oE 'libpython[0-9]*\.[0-9]*'); then
+    aptUpdate
+    apt-get install --no-install-suggests --no-install-recommends -y "${libpython}"
+fi
+
 systemctl enable collectd &>/dev/null
 systemctl restart collectd &>/dev/null || true
 
 if ! systemctl status collectd &>/dev/null; then
     echo --------------
-    echo "collectd isn't working, trying to install various libpython versions to work around the issue."
+    echo "Showing the log for collectd using this command: journalctl --no-pager -u collectd | tail -n40"
     echo --------------
-    apt update
-    apt-get install --no-install-suggests --no-install-recommends -y 'libpython2.7' || true
-    apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.9' || \
-        apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.8' || \
-        apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.7' || true
-
-    systemctl restart collectd || true
-    if ! systemctl status collectd &>/dev/null; then
-        echo --------------
-        echo "Showing the log for collectd using this command: journalctl --no-pager -u collectd | tail -n40"
-        echo --------------
-        journalctl --no-pager -u collectd | tail -n40
-        echo --------------
-        echo "collectd still isn't working, you can try and rerun the install script at some other time."
-        echo "Or report this issue with the full 40 lines above."
-        echo --------------
-    fi
+    journalctl --no-pager -u collectd | tail -n40
+    echo --------------
+    echo "collectd isn't working, you can try and rerun the install script at some other time."
+    echo "Or report this issue with the full 40 lines above."
+    echo --------------
 fi
 
 if ! [[ -f /usr/share/graphs1090/noMalarky ]]; then
