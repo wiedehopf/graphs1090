@@ -109,12 +109,11 @@ else
         && ! dpkg -s libpython3.13 2>/dev/null | grep 'Status.*installed' &>/dev/null
 	then
         aptUpdate
-
-		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.9'
-		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.10'
-		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.11'
-		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.12'
-		apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.13'
+		   apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.9'  \
+		|| apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.10' \
+		|| apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.11' \
+		|| apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.12' \
+		|| apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.13'
 	fi
 fi
 
