@@ -30,6 +30,7 @@
 				<button type="button" id="btn-1095d" class="btn btn-default btn-sm" onclick="switchView('1095d')">3 years</button>
 				<button type="button" id="btn-1825d" class="btn btn-default btn-sm" onclick="switchView('1825d')">5 years</button>
 				<button type="button" id="btn-3650d" class="btn btn-default btn-sm" onclick="switchView('3650d')">10 years</button>
+				<button type="button" id="btn-crosshair" class="btn btn-default btn-sm" onclick="toggleCrosshair()">Crosshair</button>
 			</div>
 			<div class="padding"></div>
 			<!-- Dump1090 Graphs -->
@@ -228,6 +229,13 @@
 				</p>
 			</div>
 		</footer>
+
+
+		<div id="crosshair" class="cursor" style="display: none">
+			<div class="vt"></div>
+			<div class="hl"></div>
+		</div>
+
 		<script src="jquery-3.6.4.min.js"></script>
 		<script src="bootstrap.min.js"></script>
 
