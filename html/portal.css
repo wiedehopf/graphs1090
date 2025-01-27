@@ -69,19 +69,3 @@ html, body {
   z-index: 1;
   pointer-events: none;
 }
-
-.vt {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  background: black;
-}
-
-.hl {
-  position: absolute;
-  height: 1px;
-  left: 0;
-  right: 0;
-  background: black;
-}

@@ -16,3 +16,19 @@
 #footer {
     background-color: #f5f5f5;
 }
+
+.vt {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: black;
+}
+
+.hl {
+  position: absolute;
+  height: 1px;
+  left: 0;
+  right: 0;
+  background: black;
+}
