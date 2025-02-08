@@ -354,6 +354,9 @@ If it all worked, the two datasets should be integrated now.
 
 ### Move graphs data to adsb.im
 
+The old install needs to be 64bit, if it is not, you'll have to export to XML, import from XML on a
+64bit system and then follow the following instructions.
+
 #### on the old install:
 
 - Update graphs1090 to the most recent version by running the install script
