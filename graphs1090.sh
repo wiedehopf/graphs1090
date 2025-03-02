@@ -925,9 +925,15 @@ range_graph(){
 		raxis=$(div 0.000539956803 $unitconv)
 	fi
 	if [[ $3 == "UAT" ]]; then
-		if [[ -n $ul_range_uat ]]; then upper="--rigid --upper-limit $ul_range_uat"; else upper=""; fi
+		if [[ -n $ul_range_uat ]]; then
+            upper="--rigid --upper-limit $ul_range_uat"
+            Y=$(( (ul_range / 300 + 1) * 20))
+        else
+            upper="";
+            Y=20
+        fi
 		defines=( \
-			"-y 20:1" \
+			"-y $Y:1" \
 			"DEF:drange=$(check $2/dump1090_range-max_range_978.rrd):value:MAX" \
 			"DEF:drange_a=$(check $2/dump1090_range-max_range_978.rrd):value:AVERAGE" \
 			"DEF:dmin=$(check $2/dump1090_range-minimum_978.rrd):value:MIN" \
@@ -936,9 +942,15 @@ range_graph(){
 			"DEF:dmedian=$(check $2/dump1090_range-median_978.rrd):value:AVERAGE" \
 		)
 	else
-		if [[ -n $ul_range ]]; then upper="--rigid --upper-limit $ul_range"; else upper=""; fi
+        if [[ -n $ul_range ]]; then
+            upper="--rigid --upper-limit $ul_range"
+            Y=$(( (ul_range / 600 + 1) * 40))
+        else
+            upper=""
+            Y=40
+        fi
 		defines=( \
-			"-y 40:1" \
+			"-y $Y:1" \
 			"DEF:drange=$(check $2/dump1090_range-max_range.rrd):value:MAX" \
 			"DEF:drange_a=$(check $2/dump1090_range-max_range.rrd):value:AVERAGE" \
 			"DEF:dmin=$(check $2/dump1090_range-minimum.rrd):value:MIN" \
