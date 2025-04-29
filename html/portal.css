@@ -69,3 +69,11 @@ html, body {
   z-index: 1;
   pointer-events: none;
 }
+
+.sticky-bar {
+  top: 0;
+  position: sticky;
+  z-index: 1;
+  padding: 2px;
+  text-align: center;
+}

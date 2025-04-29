@@ -15,23 +15,25 @@
 	<body>
 		<div class="container">
 			<h1>Performance Graphs</h1>
-			<div class="btn-group" role="group">
-				<button type="button" id="btn-2h" class="btn btn-default btn-sm active" onclick="switchView('2h')">2 hours</button>
-				<button type="button" id="btn-8h" class="btn btn-default btn-sm" onclick="switchView('8h')">8 hours</button>
-				<button type="button" id="btn-24h" class="btn btn-default btn-sm" onclick="switchView('24h')">24 hours</button>
-				<button type="button" id="btn-48h" class="btn btn-default btn-sm" onclick="switchView('48h')">48 hours</button>
-				<button type="button" id="btn-7d" class="btn btn-default btn-sm" onclick="switchView('7d')">7 days</button>
-				<button type="button" id="btn-14d" class="btn btn-default btn-sm" onclick="switchView('14d')">14 days</button>
-				<button type="button" id="btn-30d" class="btn btn-default btn-sm" onclick="switchView('30d')">30 days</button>
-				<button type="button" id="btn-90d" class="btn btn-default btn-sm" onclick="switchView('90d')">3 months</button>
-				<button type="button" id="btn-180d" class="btn btn-default btn-sm" onclick="switchView('180d')">6 months</button>
-				<button type="button" id="btn-365d" class="btn btn-default btn-sm" onclick="switchView('365d')">1 year</button>
-				<button type="button" id="btn-730d" class="btn btn-default btn-sm" onclick="switchView('730d')">2 years</button>
-				<button type="button" id="btn-1095d" class="btn btn-default btn-sm" onclick="switchView('1095d')">3 years</button>
-				<button type="button" id="btn-1825d" class="btn btn-default btn-sm" onclick="switchView('1825d')">5 years</button>
-				<button type="button" id="btn-3650d" class="btn btn-default btn-sm" onclick="switchView('3650d')">10 years</button>
-				<button type="button" id="btn-crosshair" class="btn btn-default btn-sm" onclick="toggleCrosshair()">Crosshair</button>
-			</div>
+            <div class="sticky-bar">
+                <div class="btn-group sticky-bar" role="group">
+                    <button type="button" id="btn-2h" class="btn btn-default btn-sm active" onclick="switchView('2h')">2 hours</button>
+                    <button type="button" id="btn-8h" class="btn btn-default btn-sm" onclick="switchView('8h')">8 hours</button>
+                    <button type="button" id="btn-24h" class="btn btn-default btn-sm" onclick="switchView('24h')">24 hours</button>
+                    <button type="button" id="btn-48h" class="btn btn-default btn-sm" onclick="switchView('48h')">48 hours</button>
+                    <button type="button" id="btn-7d" class="btn btn-default btn-sm" onclick="switchView('7d')">7 days</button>
+                    <button type="button" id="btn-14d" class="btn btn-default btn-sm" onclick="switchView('14d')">14 days</button>
+                    <button type="button" id="btn-30d" class="btn btn-default btn-sm" onclick="switchView('30d')">30 days</button>
+                    <button type="button" id="btn-90d" class="btn btn-default btn-sm" onclick="switchView('90d')">3 months</button>
+                    <button type="button" id="btn-180d" class="btn btn-default btn-sm" onclick="switchView('180d')">6 months</button>
+                    <button type="button" id="btn-365d" class="btn btn-default btn-sm" onclick="switchView('365d')">1 year</button>
+                    <button type="button" id="btn-730d" class="btn btn-default btn-sm" onclick="switchView('730d')">2 years</button>
+                    <button type="button" id="btn-1095d" class="btn btn-default btn-sm" onclick="switchView('1095d')">3 years</button>
+                    <button type="button" id="btn-1825d" class="btn btn-default btn-sm" onclick="switchView('1825d')">5 years</button>
+                    <button type="button" id="btn-3650d" class="btn btn-default btn-sm" onclick="switchView('3650d')">10 years</button>
+                    <button type="button" id="btn-crosshair" class="btn btn-default btn-sm" onclick="toggleCrosshair()">Crosshair</button>
+                </div>
+            </div>
 			<div class="padding"></div>
 			<!-- Dump1090 Graphs -->
 			<div id="panel_1090" style="display:block" class="panel panel-default">
