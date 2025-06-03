@@ -251,6 +251,10 @@ if libpython=$(collectd 2>&1 | grep -oE 'libpython[0-9]*\.[0-9]*'); then
     apt-get install --no-install-suggests --no-install-recommends -y "${libpython}"
 fi
 
+# the above can apparently start and keep running collectd.
+# kill it
+pkill -9 collectd
+
 systemctl enable collectd &>/dev/null
 systemctl restart collectd &>/dev/null || true
 
