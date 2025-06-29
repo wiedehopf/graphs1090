@@ -604,58 +604,61 @@ network_graph() {
 	mv "$1.tmp" "$1"
 	}
 
-temp_graph_imperial() {
+temp_graph() {
+    unit_long="Celsius"
+    unit="C"
+    ll=20
+    ul=70
+    mult=1
+    add=0
+    other_graph=()
+    if [[ -f $2/gauge-other_temp1.rrd ]]; then
+        other_graph=( \
+            "DEF:o1raw_max=$(check $2/gauge-other_temp1.rrd):value:MAX" \
+            "DEF:o1raw_avg=$(check $2/gauge-other_temp1.rrd):value:AVERAGE" \
+            "DEF:o1raw_min=$(check $2/gauge-other_temp1.rrd):value:MIN" \
+            "CDEF:o1fin_max=o1raw_max,${TEMP_MULTIPLIER},/,$mult,*,$add,+" \
+            "CDEF:o1fin_avg=o1raw_avg,${TEMP_MULTIPLIER},/,$mult,*,$add,+" \
+            "CDEF:o1fin_min=o1raw_min,${TEMP_MULTIPLIER},/,$mult,*,$add,+" \
+            "LINE3:o1fin_avg#$ABLUE:Other Temperature" \
+            "GPRINT:o1fin_avg:LAST:Curr\: %4.1lf $unit" \
+            "GPRINT:o1fin_min:MIN:Min\: %4.1lf $unit" \
+            "GPRINT:o1fin_avg:AVERAGE:Avg\: %4.1lf $unit" \
+            "GPRINT:o1fin_max:MAX:Max\: %4.1lf $unit\c" \
+        )
+    fi
+	if [[ $farenheit == 1 ]]; then
+        unit_long="Fahrenheit"
+        uint="F"
+        ll=$(( ll * 18 / 10 + 32 ))
+        ul=$(( ul * 18 / 10 + 32 ))
+        mult=1.8
+        add=32
+    fi
 	$pre
 	rrdtool graph \
 		"$1.tmp" \
 		--end "$END_TIME" \
 		--start end-$4 \
 		$small \
-		--title "Maximum Core Temperature" \
-		--vertical-label "Degrees Fahrenheit" \
+		--title "Maximum Temperature" \
+		--vertical-label "Degrees $unit_long" \
 		--right-axis 1:0 \
-		--lower-limit 77 \
-		--upper-limit 153 \
+		--lower-limit $ll \
+		--upper-limit $ul \
 		-A \
 		"DEF:traw_max=$(check $2/gauge-cpu_temp.rrd):value:MAX" \
 		"DEF:traw_avg=$(check $2/gauge-cpu_temp.rrd):value:AVERAGE" \
 		"DEF:traw_min=$(check $2/gauge-cpu_temp.rrd):value:MIN" \
-		"CDEF:tfin_max=traw_max,${TEMP_MULTIPLIER},/,1.8,*,32,+" \
-		"CDEF:tfin_avg=traw_avg,${TEMP_MULTIPLIER},/,1.8,*,32,+" \
-		"CDEF:tfin_min=traw_min,${TEMP_MULTIPLIER},/,1.8,*,32,+" \
-		"AREA:tfin_max#$AYELLOW:Temperature\:" \
-		"GPRINT:tfin_max:LAST:%4.1lf F\c" \
-		"GPRINT:tfin_min:MIN:Min\: %4.1lf F" \
-		"GPRINT:tfin_avg:AVERAGE:Avg\: %4.1lf F" \
-		"GPRINT:tfin_max:MAX:Max\: %4.1lf F\c" \
-		--watermark "Drawn: $nowlit";
-	mv "$1.tmp" "$1"
-	}
-
-temp_graph_metric() {
-	$pre
-	rrdtool graph \
-		"$1.tmp" \
-		--end "$END_TIME" \
-		--start end-$4 \
-		$small \
-		--title "Maximum Core Temperature" \
-		--vertical-label "Degrees Celsius" \
-		--right-axis 1:0 \
-		--lower-limit 24 \
-		--upper-limit 66 \
-		-A \
-		"DEF:traw_max=$(check $2/gauge-cpu_temp.rrd):value:MAX" \
-		"DEF:traw_avg=$(check $2/gauge-cpu_temp.rrd):value:AVERAGE" \
-		"DEF:traw_min=$(check $2/gauge-cpu_temp.rrd):value:MIN" \
-		"CDEF:tfin_max=traw_max,${TEMP_MULTIPLIER},/" \
-		"CDEF:tfin_min=traw_min,${TEMP_MULTIPLIER},/" \
-		"CDEF:tfin_avg=traw_avg,${TEMP_MULTIPLIER},/" \
-		"AREA:tfin_max#$AYELLOW:Temperature\:" \
-		"GPRINT:tfin_max:LAST:%4.1lf C\c" \
-		"GPRINT:tfin_min:MIN:Min\: %4.1lf C" \
-		"GPRINT:tfin_avg:AVERAGE:Avg\: %4.1lf C" \
-		"GPRINT:tfin_max:MAX:Max\: %4.1lf C\c" \
+		"CDEF:tfin_max=traw_max,${TEMP_MULTIPLIER},/,$mult,*,$add,+" \
+		"CDEF:tfin_avg=traw_avg,${TEMP_MULTIPLIER},/,$mult,*,$add,+" \
+		"CDEF:tfin_min=traw_min,${TEMP_MULTIPLIER},/,$mult,*,$add,+" \
+        "AREA:tfin_max#$AYELLOW:CPU Temperature" \
+		"GPRINT:tfin_avg:LAST:Curr\: %4.1lf $unit" \
+		"GPRINT:tfin_min:MIN:Min\: %4.1lf $unit" \
+		"GPRINT:tfin_avg:AVERAGE:Avg\: %4.1lf $unit" \
+		"GPRINT:tfin_max:MAX:Max\: %4.1lf $unit\c" \
+		"${other_graph[@]}" \
 		--watermark "Drawn: $nowlit";
 	mv "$1.tmp" "$1"
 	}
@@ -1327,12 +1330,7 @@ system_graphs() {
 	disk_io_octets_graph ${DOCUMENTROOT}/system-$2-disk_io_octets-$4.png ${DB}/$1/$disk "$3" "$4" "$5"
 	memory_graph ${DOCUMENTROOT}/system-$2-memory-$4.png ${DB}/$1/system_stats "$3" "$4" "$5"
 	network_graph ${DOCUMENTROOT}/system-$2-network_bandwidth-$4.png ${DB}/$1 "$3" "$4" "$5"
-	if [[ $farenheit == 1 ]]
-	then
-		temp_graph_imperial ${DOCUMENTROOT}/system-$2-temperature-$4.png ${DB}/$1/table-$2 "$3" "$4" "$5"
-	else
-		temp_graph_metric ${DOCUMENTROOT}/system-$2-temperature-$4.png ${DB}/$1/table-$2 "$3" "$4" "$5"
-	fi
+    temp_graph ${DOCUMENTROOT}/system-$2-temperature-$4.png ${DB}/$1/table-$2 "$3" "$4" "$5"
 	#eth0_graph ${DOCUMENTROOT}/system-$2-eth0_bandwidth-$4.png ${DB}/$1/$ether "$3" "$4" "$5"
 	#wlan0_graph ${DOCUMENTROOT}/system-$2-wlan0_bandwidth-$4.png ${DB}/$1/$wifi "$3" "$4" "$5"
 }
