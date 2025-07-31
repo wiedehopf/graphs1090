@@ -469,8 +469,8 @@ def read_1090(data):
                 mlat += 1
             elif 'lat' in a.get('tisb', ()):
                 tisb += 1
-            # GPS position, include in range statistics
-            else:
+            elif a.get('type') in [ 'adsb_icao', 'adsr_icao' ]:
+                # ADS-B or ADS-R (can be uat) position, include in range statistics
                 gps += 1
                 ranges.append(distance)
 
