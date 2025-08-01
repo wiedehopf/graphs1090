@@ -936,7 +936,6 @@ range_graph(){
             Y=20
         fi
 		defines=( \
-			"-y $Y:1" \
 			"DEF:drange=$(check $2/dump1090_range-max_range_978.rrd):value:MAX" \
 			"DEF:drange_a=$(check $2/dump1090_range-max_range_978.rrd):value:AVERAGE" \
 			"DEF:dmin=$(check $2/dump1090_range-minimum_978.rrd):value:MIN" \
@@ -953,7 +952,6 @@ range_graph(){
             Y=40
         fi
 		defines=( \
-			"-y $Y:1" \
 			"DEF:drange=$(check $2/dump1090_range-max_range.rrd):value:MAX" \
 			"DEF:drange_a=$(check $2/dump1090_range-max_range.rrd):value:AVERAGE" \
 			"DEF:dmin=$(check $2/dump1090_range-minimum.rrd):value:MIN" \
