@@ -63,6 +63,12 @@ Otherwise you'll have to configure the location by editing /etc/default/dump1090
 For the adsbx image the location is configured in /boot/adsb-config.txt.
 For the piaware image you'll need to configure the location on the online FA stats page.
 
+If you're interested in non-ADSB range, for example ADS-C or HFDL, there is an command to include
+all non-ADSB positions for the range graph but it has to be rerun after each update of graphs1090:
+```
+sed -i -e 's/range_include_nonadsb = False/range_include_nonadsb = True/' /usr/share/graphs1090/dump1090.py
+```
+
 ### Reducing writes to the sd-card (enabled by default)
 
 To reduce writes to the sd-card, data is only written to the sd-card every 24h.

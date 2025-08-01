@@ -456,6 +456,8 @@ def read_1090(data):
 
     ranges = []
 
+    range_include_nonadsb = False
+
     for a in aircraft_data['aircraft']:
         if a['seen'] < 60: total += 1
         if has_key(a,'seen_pos') and a['seen_pos'] < 60:
@@ -469,7 +471,8 @@ def read_1090(data):
                 mlat += 1
             elif 'lat' in a.get('tisb', ()):
                 tisb += 1
-            elif a.get('type') in [ 'adsb_icao', 'adsr_icao' ]:
+
+            if range_include_nonadsb or a.get('type') in [ 'adsb_icao', 'adsr_icao' ]:
                 # ADS-B or ADS-R (can be uat) position, include in range statistics
                 gps += 1
                 ranges.append(distance)
@@ -511,7 +514,7 @@ def read_1090(data):
                    time=aircraft_data['now'],
                    values = [minimum])
 
-    if has_key(stats['last1min'],'max_distance'):
+    if not range_include_nonadsb and has_key(stats['last1min'],'max_distance'):
         max_range = stats['last1min']['max_distance'];
     # max range is always dispatched, even if zero
     V.dispatch(plugin_instance = instance_name,
