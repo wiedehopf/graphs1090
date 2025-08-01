@@ -28,7 +28,15 @@ if ! [[ -f $prune_py ]]; then
         exit 1
     fi
 fi
-if rrdtool dump "$rrdfile" | python3 "$prune_py" "$limit" | rrdtool restore -f - "$tmpfile"; then
-    mv -f "$tmpfile" "$rrdfile"
+if [[ $1 == 1090 ]]; then
+    for rrdfile in "${DB}/localhost/dump1090-localhost/dump1090_range-"*; do
+        if rrdtool dump "$rrdfile" | python3 "$prune_py" "$limit" | rrdtool restore -f - "$tmpfile"; then
+            mv -f "$tmpfile" "$rrdfile"
+        fi
+    done
+else
+    if rrdtool dump "$rrdfile" | python3 "$prune_py" "$limit" | rrdtool restore -f - "$tmpfile"; then
+        mv -f "$tmpfile" "$rrdfile"
+    fi
 fi
 
