@@ -130,8 +130,8 @@ if [[ -f /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_cpu-airspy.
     rrdtool tune --maximum value:U /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_cpu-airspy.rrd
 fi
 
-cp dump1090.db dump1090.py system_stats.py LICENSE $ipath
-cp *.sh $ipath
+cp dump1090.db LICENSE $ipath
+cp *.py *.sh $ipath
 cp malarky.conf $ipath
 chmod u+x $ipath/*.sh
 if ! grep -e 'system_stats' -qs /etc/collectd/collectd.conf &>/dev/null; then
