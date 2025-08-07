@@ -472,7 +472,7 @@ def read_1090(data):
             elif 'lat' in a.get('tisb', ()):
                 tisb += 1
 
-            if range_include_nonadsb or a.get('type') in [ 'adsb_icao', 'adsr_icao' ]:
+            if range_include_nonadsb or a.get('type') in [ 'adsb_icao', 'adsr_icao', None]:
                 # ADS-B or ADS-R (can be uat) position, include in range statistics
                 gps += 1
                 ranges.append(distance)
