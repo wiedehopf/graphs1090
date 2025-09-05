@@ -360,8 +360,7 @@ If it all worked, the two datasets should be integrated now.
 
 ### Move graphs data to adsb.im
 
-The old install needs to be 64bit, if it is not, you'll have to export to XML, import from XML on a
-64bit system and then follow the following instructions.
+The old install needs to be 64bit, if it is not take a look at these notes: https://github.com/dirkhh/adsb-feeder-image/issues/338
 
 #### on the old install:
 
