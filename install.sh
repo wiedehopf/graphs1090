@@ -253,7 +253,7 @@ fi
 
 # the above can apparently start and keep running collectd.
 # kill it
-pkill -9 collectd
+pkill -9 collectd || true
 
 systemctl enable collectd &>/dev/null
 systemctl restart collectd &>/dev/null || true
