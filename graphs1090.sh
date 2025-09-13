@@ -627,9 +627,9 @@ temp_graph() {
             "GPRINT:o1fin_max:MAX:Max\: %4.1lf $unit\c" \
         )
     fi
-	if [[ $farenheit == 1 ]]; then
+	if [[ $fahrenheit == 1 || $farenheit == 1 ]]; then
         unit_long="Fahrenheit"
-        uint="F"
+        unit="F"
         ll=$(( ll * 18 / 10 + 32 ))
         ul=$(( ul * 18 / 10 + 32 ))
         mult=1.8

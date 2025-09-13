@@ -6,8 +6,8 @@
 # other graphs are drawn at certain multiples of this interval (2h: 2x 8h: 4x 24h: 8x 48h: 16x 7d: 32x ....)
 DRAW_INTERVAL=60
 
-# set to 1 to enable farenheit instead of celsius
-farenheit=0
+# set to 1 to enable fahrenheit instead of celsius
+fahrenheit=0
 
 # set range graph to either nautical, statute, or metric
 range=nautical
