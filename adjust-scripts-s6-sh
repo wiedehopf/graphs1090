@@ -2,6 +2,7 @@
 
 SCRIPT_DIR=/usr/share/graphs1090
 sed -i -e 's#systemctl stop collectd#s6-svc -d /run/service/collectd; s6-svc -wd /run/service/collectd#g' "${SCRIPT_DIR}"/*.sh
-sed -i -e 's#systemctl restart collectd#s6-svc -r /run/service/collectd#g' "${SCRIPT_DIR}"/*.sh
+# s6-svc restart doesn't start stopped services, just use start instead that should work
+sed -i -e 's#systemctl restart collectd#s6-svc -u /run/service/collectd#g' "${SCRIPT_DIR}"/*.sh
 sed -i -e 's#systemctl restart graphs1090#s6-svc -r /run/service/graphs1090#g' "${SCRIPT_DIR}"/*.sh
 sed -i -e 's#systemctl start collectd#s6-svc -u /run/service/collectd#g' "${SCRIPT_DIR}"/*.sh
