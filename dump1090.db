@@ -1,5 +1,6 @@
-dump1090_messages	value:DERIVE:0:U
-dump1090_cpu		value:DERIVE:0:U
+dump1090_messages	value:DERIVE:0:36000
+dump1090_tracks		value:DERIVE:0:16000
+dump1090_cpu		value:DERIVE:0:6000
 dump1090_dbfs		value:GAUGE:U:0
 airspy_rssi			value:GAUGE:-1000:1000
 airspy_snr			value:GAUGE:-1000:1000
@@ -10,7 +11,6 @@ airspy_aircraft     value:GAUGE:0:U
 df_count_minute		value:GAUGE:0:U
 dump1090_aircraft	total:GAUGE:0:U, positions:GAUGE:0:U
 dump1090_range		value:GAUGE:0:U
-dump1090_tracks		value:DERIVE:0:U
 dump1090_mlat		value:GAUGE:0:U
 dump1090_tisb		value:GAUGE:0:U
 dump1090_gps		value:GAUGE:0:U
