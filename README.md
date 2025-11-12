@@ -360,8 +360,6 @@ If it all worked, the two datasets should be integrated now.
 
 ### Move graphs data to adsb.im
 
-The old install needs to be 64bit, if it is not take a look at these notes: https://github.com/dirkhh/adsb-feeder-image/issues/338
-
 #### on the old install:
 
 - Update graphs1090 to the most recent version by running the install script
@@ -374,6 +372,8 @@ sudo /usr/share/graphs1090/generate-adsb.im-backup.sh
 #### on the adsb.im install:
 
 - In the webinterface, use System -> Restore and supply it with the file you just downloaded
+- If your old system was 32 bit, you need to update adsb.im to beta before importing as that support
+is not in stable yet
 
 
 ### Ubuntu 20 fixes (symptom: collectd errors out on startup)
