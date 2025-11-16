@@ -1088,11 +1088,11 @@ dump1090_misc() {
 	}
 df_counts() {
 	$pre
-	DF=(0 4 5 11 16 17 18 19 21)
-	colors=($GREEN $BLUE $DBLUE $ABLUE $RED $DRED $DGREEN $CYAN $LRED)
+	DF=(0 4 5 11 16 17 18 19 20 21)
+	colors=($GREEN $BLUE $DBLUE $ABLUE $RED $DRED $DGREEN $CYAN $LBLUE $LRED)
 	defines=()
 	graphs=()
-	for i in $(seq 0 8); do
+	for i in $(seq 0 9); do
 		df="${DF[i]}"
 		defines+=("DEF:df_min${df}=$(check $2/df_count_minute-$df.rrd):value:AVERAGE")
 		if [[ $df == 11 ]]; then
