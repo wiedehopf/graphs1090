@@ -131,7 +131,7 @@ fi
 if [[ -n $disk ]]; then
     disk="disk-${disk}"
 else
-    disk="$(ls ${DB}/localhost | grep disk -m1)"
+    disk="$(grep -F -o -m 1 -e mmcblk0 -e mmcblk1 -e sda -e hda -e nvme0n1 </proc/diskstats || ls ${DB}/localhost | grep disk -m1)"
 fi
 
 
