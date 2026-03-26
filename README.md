@@ -15,6 +15,11 @@ sudo bash -c "$(curl -L -o - https://github.com/wiedehopf/graphs1090/raw/master/
 Note on data loss: When removing or losing power you will lose graph data generated after 23:42 of the previous day.
 To avoid that issue `sudo shutdown now` before unplugging the pi. See the section on reducing writes for more detail.
 
+Force reinstall: Download install.sh and run `bash install.sh reinstall`
+
+Install local changes: clone repository, make changes, run ./install.sh test to install local
+repository
+
 ## Configuration (optional):
 Edit the configuration file to change graph layout options, for example size:
 ```
@@ -47,9 +52,13 @@ http://192.168.x.yy:8542
 
 ### Adjusting gain
 
+
+The below is outdated, dump1090-fa and readsb have auto gain functions which will adjust gain on the
+fly. This is generally a good approach.
+In some rare scenariors you might still prefer the below.
+
 The fine tuning is up to taste but quite a few setups are using way too much gain (AGC is maximum gain it does not work as intended for ADS-B).
 Thus i'll link some guidelines on how to set your gain: https://github.com/wiedehopf/adsb-scripts/wiki/Optimizing-gain
-If you can't be bothered and would rather use something automatic: https://github.com/wiedehopf/adsb-scripts/wiki/Automatic-gain-optimization-for-readsb-and-dump1090-fa
 
 ### Range graph isn't working
 
@@ -60,8 +69,9 @@ My install scripts for either of them provide a handy command line utility:
  - https://github.com/wiedehopf/adsb-scripts/wiki/Automatic-installation-for-dump1090-fa
 
 Otherwise you'll have to configure the location by editing /etc/default/dump1090-fa or /etc/default/readsb.
-For the adsbx image the location is configured in /boot/adsb-config.txt.
 For the piaware image you'll need to configure the location on the online FA stats page.
+
+If you can't make it work, give https://adsb.im a try.
 
 If you're interested in non-ADSB range, for example ADS-C or HFDL, there is an command to include
 all non-ADSB positions for the range graph but it has to be rerun after each update of graphs1090:
