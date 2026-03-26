@@ -101,6 +101,21 @@ function getGIT() {
     rm -rf "$tmp" "$tmp.folder"; return 1
 }
 
+# Check if update is needed by comparing versions
+if [[ "$1" != "test" ]]; then
+    remote_version=$(wget --timeout=10 -q -O - "$repo/raw/master/version" 2>/dev/null | head -1) || true
+    local_version=$(head -1 "$ipath/version" 2>/dev/null) || true
+    if [[ -n "$remote_version" ]] && [[ -n "$local_version" ]] && [[ "$remote_version" == "$local_version" ]] && [[ -f "$ipath/html/index.html" ]]; then
+        # ensure installed HTML shows the correct version
+        if [[ -f "$ipath/html/index.html" ]] && ! grep -qs "graphs1090-version\">| $local_version<" "$ipath/html/index.html"; then
+            sed -i -e 's|<span id="graphs1090-version">.*</span>|<span id="graphs1090-version">| '"$local_version"'</span>|' "$ipath/html/index.html"
+            echo "graphs1090 HTML version updated to $local_version"
+        fi
+        echo "graphs1090 is already up to date ($local_version)"
+        exit 0
+    fi
+fi
+
 if [[ "$1" == "test" ]]
 then
 	true
@@ -164,7 +179,9 @@ sed -i -e '/<Plugin "interface">/{a\
 done
 
 rm -f /etc/cron.d/cron-graphs1090
+cp version $ipath
 cp -r html $ipath
+sed -i -e 's|<span id="graphs1090-version">.*</span>|<span id="graphs1090-version">| '"$(head -1 $ipath/version)"'</span>|' "$ipath/html/index.html"
 copyNoClobber default /etc/default/graphs1090
 cp default $ipath/default-config
 cp collectd.conf $ipath/default-collectd.conf
