@@ -6,8 +6,9 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" href="portal.css">
 		<script>
-			const _t = localStorage.getItem('theme');
-			if (_t) document.documentElement.dataset.theme = _t;
+			const theme = localStorage.getItem('theme')
+				|| (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+			document.documentElement.dataset.theme = theme;
 		</script>
 		<link rel="icon" type="image/png" href="graphs-favicon.png">
 		<link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -232,7 +233,7 @@
             <p>
             <a href="https://github.com/wiedehopf/graphs1090#graphs1090">graphs1090 on github</a>
             <span id="graphs1090-version"><!-- version --></span>
-            &nbsp;&nbsp;<button id="theme-toggle" class="btn" onclick="toggleTheme()"></button>
+            <button id="theme-toggle" class="btn" onclick="toggleTheme()"></button>
             </p>
         </div>
 

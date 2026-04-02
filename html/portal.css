@@ -17,23 +17,6 @@
     --panel-head-border: #dde1e6;
 }
 
-@media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-        --bg: #111113;
-        --surface: #1c1c1f;
-        --border: #2e2e33;
-        --text: #e4e4e7;
-        --text-muted: #71717a;
-        --accent: #5b9eff;
-        --btn-bg: #242428;
-        --btn-text: #e4e4e7;
-        --btn-border: #3a3a40;
-        --btn-hover: #2e2e34;
-        --panel-head-bg: #212125;
-        --panel-head-border: #2e2e33;
-    }
-}
-
 :root[data-theme="dark"] {
     --bg: #111113;
     --surface: #1c1c1f;
@@ -186,6 +169,10 @@ h1 {
 
 .container > p a:hover {
     text-decoration: underline;
+}
+
+#theme-toggle {
+    margin-left: 12px;
 }
 
 /* Crosshair overlay */

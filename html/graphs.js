@@ -178,13 +178,13 @@ function crosshairListener(e) {
     cursorHL.style.top = e.clientY + 'px';
 }
 
+function isDarkTheme() {
+    return document.documentElement.dataset.theme === 'dark';
+}
+
 function toggleTheme() {
-    const html = document.documentElement;
-    const isDark = html.dataset.theme
-        ? html.dataset.theme === 'dark'
-        : window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const next = isDark ? 'light' : 'dark';
-    html.dataset.theme = next;
+    const next = isDarkTheme() ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
     localStorage.setItem('theme', next);
     updateThemeButton();
 }
@@ -192,24 +192,18 @@ function toggleTheme() {
 function updateThemeButton() {
     const btn = document.getElementById('theme-toggle');
     if (!btn) return;
-    const html = document.documentElement;
-    const isDark = html.dataset.theme
-        ? html.dataset.theme === 'dark'
-        : window.matchMedia('(prefers-color-scheme: dark)').matches;
-    btn.textContent = isDark ? '☀ Light' : '☾ Dark';
+    btn.textContent = isDarkTheme() ? '☀ Light' : '☾ Dark';
 }
 
 updateThemeButton();
 
-let crosshair = false;
 function toggleCrosshair() {
-    crosshair = !crosshair;
     const crosshairEl = document.getElementById('crosshair');
-    if (crosshair) {
+    const show = crosshairEl.style.display === 'none';
+    crosshairEl.style.display = show ? 'block' : 'none';
+    if (show) {
         document.addEventListener('mousemove', crosshairListener);
-        crosshairEl.style.display = 'block';
     } else {
         document.removeEventListener('mousemove', crosshairListener);
-        crosshairEl.style.display = 'none';
     }
 }
