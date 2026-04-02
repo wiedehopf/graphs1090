@@ -4,8 +4,11 @@
 		<meta charset="utf-8">
 		<title>graphs1090</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<link rel="stylesheet" href="bootstrap.custom.light.css">
 		<link rel="stylesheet" href="portal.css">
+		<script>
+			const _t = localStorage.getItem('theme');
+			if (_t) document.documentElement.dataset.theme = _t;
+		</script>
 		<link rel="icon" type="image/png" href="graphs-favicon.png">
 		<link rel="apple-touch-icon" href="apple-touch-icon.png">
 		<meta name="apple-mobile-web-app-capable" content="yes">
@@ -229,6 +232,7 @@
             <p>
             <a href="https://github.com/wiedehopf/graphs1090#graphs1090">graphs1090 on github</a>
             <span id="graphs1090-version"><!-- version --></span>
+            &nbsp;&nbsp;<button id="theme-toggle" class="btn" onclick="toggleTheme()"></button>
             </p>
         </div>
 
@@ -237,13 +241,6 @@
 			<div class="vt"></div>
 			<div class="hl"></div>
 		</div>
-
-		<script src="jquery-3.6.4.min.js"></script>
-		<script src="bootstrap.min.js"></script>
-
-		<script type="text/javascript">
-			$('#graphs-link').addClass("active");
-		</script>
 
 		<script src="graphs.js"></script>
 
