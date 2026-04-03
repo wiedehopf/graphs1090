@@ -31,9 +31,9 @@ if (( DRAW_INTERVAL < 1 )); then
 fi
 
 if (( DRAW_INTERVAL < 20 )); then
-    GRAPH_DELAY=0
+    GRAPH_DELAY=
 else
-    GRAPH_DELAY=0
+    GRAPH_DELAY=0.4
 fi
 
 # use zero delay for the first generation of graphs to speed it up
