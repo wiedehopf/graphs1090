@@ -23,21 +23,20 @@ try {
             if (val) {
                 // make XSS a bit harder
                 val = val.replace(/[<>#&]/g, '');
-                //console.log("usp.get(" + s + ") = " + val);
             }
             return val;
         },
         getFloat: function(s) {
             if (!this.params.has(s.toLowerCase())) return null;
-            const param =  this.params.get(s.toLowerCase());
+            const param = this.params.get(s.toLowerCase());
             if (!param) return null;
             const val = parseFloat(param);
             if (isNaN(val)) return null;
             return val;
         },
-        getInt: function(s)  {
+        getInt: function(s) {
             if (!this.params.has(s.toLowerCase())) return null;
-            const param =  this.params.get(s.toLowerCase());
+            const param = this.params.get(s.toLowerCase());
             if (!param) return null;
             const val = parseInt(param, 10);
             if (isNaN(val)) return null;
@@ -66,6 +65,12 @@ if (usp.get('timeframe')) {
 
 //*** DO NOT EDIT BELOW THIS LINE UNLESS YOU KNOW WHAT YOU ARE DOING ***//
 
+function setGraph(id, src) {
+    const img = document.getElementById(id + '-image');
+    const link = document.getElementById(id + '-link');
+    if (img) img.src = src;
+    if (link) link.href = src;
+}
 
 function switchView(newTimeFrame) {
     clearTimeout(refreshTimer);
@@ -75,143 +80,69 @@ function switchView(newTimeFrame) {
         timeFrame = newTimeFrame;
     }
 
-    // Set the timestamp variable to be used in querystring.
-    $timestamp = Math.round(new Date().getTime() / 1000 / 15) * 15;
+    const timestamp = Math.round(new Date().getTime() / 1000 / 15) * 15;
 
-    // Display images for the requested time frame and create links to full sized images for the requested time frame.
-    var element;
-    $("#dump1090-local_trailing_rate-image").attr("src", "graphs/dump1090-" + hostName + "-local_trailing_rate-" + timeFrame + ".png?time=" + $timestamp);
-    $("#dump1090-local_trailing_rate-link").attr("href", "graphs/dump1090-" + hostName + "-local_trailing_rate-" + timeFrame + ".png?time=" + $timestamp);
-
-    $("#dump1090-local_rate-image").attr("src", "graphs/dump1090-" + hostName + "-local_rate-" + timeFrame + ".png?time=" + $timestamp);
-    $("#dump1090-local_rate-link").attr("href", "graphs/dump1090-" + hostName + "-local_rate-" + timeFrame + ".png?time=" + $timestamp);
-
-    $("#dump1090-aircraft_message_rate-image").attr("src", "graphs/dump1090-" + hostName + "-aircraft_message_rate-" + timeFrame + ".png?time=" + $timestamp);
-    $("#dump1090-aircraft_message_rate-link").attr("href", "graphs/dump1090-" + hostName + "-aircraft_message_rate-" + timeFrame + ".png?time=" + $timestamp);
-
-    $("#dump1090-aircraft-image").attr("src", "graphs/dump1090-" + hostName + "-aircraft-" + timeFrame + ".png?time=" + $timestamp);
-    $("#dump1090-aircraft-link").attr("href", "graphs/dump1090-" + hostName + "-aircraft-" + timeFrame + ".png?time=" + $timestamp);
-
-    $("#dump1090-tracks-image").attr("src", "graphs/dump1090-" + hostName + "-tracks-" + timeFrame + ".png?time=" + $timestamp);
-    $("#dump1090-tracks-link").attr("href", "graphs/dump1090-" + hostName + "-tracks-" + timeFrame + ".png?time=" + $timestamp);
-
-    element =  document.getElementById('dump1090-range-image');
-    if (typeof(element) != 'undefined' && element != null) {
-        $("#dump1090-range-image").attr("src", "graphs/dump1090-" + hostName + "-range-" + timeFrame + ".png?time=" + $timestamp);
-        $("#dump1090-range-link").attr("href", "graphs/dump1090-" + hostName + "-range-" + timeFrame + ".png?time=" + $timestamp);
+    function graphUrl(source, metric) {
+        return `graphs/${source}-${hostName}-${metric}-${timeFrame}.png?time=${timestamp}`;
     }
 
-    element =  document.getElementById('dump1090-range_imperial_statute-image');
-    if (typeof(element) != 'undefined' && element != null) {
-        $("#dump1090-range_imperial_statute-image").attr("src", "graphs/dump1090-" + hostName + "-range_imperial_statute-" + timeFrame + ".png?time=" + $timestamp);
-        $("#dump1090-range_imperial_statute-link").attr("href", "graphs/dump1090-" + hostName + "-range_imperial_statute-" + timeFrame + ".png?time=" + $timestamp);
+    setGraph('dump1090-local_trailing_rate', graphUrl('dump1090', 'local_trailing_rate'));
+    setGraph('dump1090-local_rate',          graphUrl('dump1090', 'local_rate'));
+    setGraph('dump1090-aircraft_message_rate', graphUrl('dump1090', 'aircraft_message_rate'));
+    setGraph('dump1090-aircraft',            graphUrl('dump1090', 'aircraft'));
+    setGraph('dump1090-tracks',              graphUrl('dump1090', 'tracks'));
+    setGraph('dump1090-signal',              graphUrl('dump1090', 'signal'));
+    setGraph('dump1090-cpu',                 graphUrl('dump1090', 'cpu'));
+    setGraph('dump1090-misc',                graphUrl('dump1090', 'misc'));
+
+    if (document.getElementById('dump1090-range-image'))
+        setGraph('dump1090-range', graphUrl('dump1090', 'range'));
+    if (document.getElementById('dump1090-range_imperial_statute-image'))
+        setGraph('dump1090-range_imperial_statute', graphUrl('dump1090', 'range_imperial_statute'));
+    if (document.getElementById('dump1090-range_metric-image'))
+        setGraph('dump1090-range_metric', graphUrl('dump1090', 'range_metric'));
+
+    const panelAirspy = document.getElementById('panel_airspy');
+    if (panelAirspy && panelAirspy.style.display !== 'none') {
+        setGraph('airspy-rssi',  graphUrl('airspy', 'rssi'));
+        setGraph('airspy-snr',   graphUrl('airspy', 'snr'));
+        setGraph('airspy-noise', graphUrl('airspy', 'noise'));
+        setGraph('airspy-misc',  graphUrl('airspy', 'misc'));
+        setGraph('df_counts', `graphs/df_counts-${hostName}-${timeFrame}.png?time=${timestamp}`);
     }
 
-    element =  document.getElementById('dump1090-range_metric-image');
-    if (typeof(element) != 'undefined' && element != null) {
-        $("#dump1090-range_metric-image").attr("src", "graphs/dump1090-" + hostName + "-range_metric-" + timeFrame + ".png?time=" + $timestamp);
-        $("#dump1090-range_metric-link").attr("href", "graphs/dump1090-" + hostName + "-range_metric-" + timeFrame + ".png?time=" + $timestamp);
+    const panel978 = document.getElementById('panel_978');
+    if (panel978 && panel978.style.display !== 'none') {
+        setGraph('dump1090-aircraft_978', graphUrl('dump1090', 'aircraft_978'));
+        setGraph('dump1090-range_978',    graphUrl('dump1090', 'range_978'));
+        setGraph('dump1090-messages_978', graphUrl('dump1090', 'messages_978'));
+        setGraph('dump1090-signal_978',   graphUrl('dump1090', 'signal_978'));
     }
 
-    $("#dump1090-signal-image").attr("src", "graphs/dump1090-" + hostName + "-signal-" + timeFrame + ".png?time=" + $timestamp);
-    $("#dump1090-signal-link").attr("href", "graphs/dump1090-" + hostName + "-signal-" + timeFrame + ".png?time=" + $timestamp);
+    const panelSystem = document.getElementById('panel_system');
+    if (panelSystem && panelSystem.style.display !== 'none') {
+        setGraph('system-cpu',             graphUrl('system', 'cpu'));
+        setGraph('system-memory',          graphUrl('system', 'memory'));
+        setGraph('system-df_root',         graphUrl('system', 'df_root'));
+        setGraph('system-disk_io_iops',    graphUrl('system', 'disk_io_iops'));
+        setGraph('system-disk_io_octets',  graphUrl('system', 'disk_io_octets'));
 
-    $("#dump1090-cpu-image").attr("src", "graphs/dump1090-" + hostName + "-cpu-" + timeFrame + ".png?time=" + $timestamp);
-    $("#dump1090-cpu-link").attr("href", "graphs/dump1090-" + hostName + "-cpu-" + timeFrame + ".png?time=" + $timestamp);
-
-    $("#dump1090-misc-image").attr("src", "graphs/dump1090-" + hostName + "-misc-" + timeFrame + ".png?time=" + $timestamp);
-    $("#dump1090-misc-link").attr("href", "graphs/dump1090-" + hostName + "-misc-" + timeFrame + ".png?time=" + $timestamp);
-
-    if ($("#panel_airspy").css("display") !== "none") {
-        $("#airspy-rssi-image").attr("src", "graphs/airspy-" + hostName + "-rssi-" + timeFrame + ".png?time=" + $timestamp);
-        $("#airspy-rssi-link").attr("href", "graphs/airspy-" + hostName + "-rssi-" + timeFrame + ".png?time=" + $timestamp);
-
-        $("#airspy-snr-image").attr("src", "graphs/airspy-" + hostName + "-snr-" + timeFrame + ".png?time=" + $timestamp);
-        $("#airspy-snr-link").attr("href", "graphs/airspy-" + hostName + "-snr-" + timeFrame + ".png?time=" + $timestamp);
-
-        $("#airspy-noise-image").attr("src", "graphs/airspy-" + hostName + "-noise-" + timeFrame + ".png?time=" + $timestamp);
-        $("#airspy-noise-link").attr("href", "graphs/airspy-" + hostName + "-noise-" + timeFrame + ".png?time=" + $timestamp);
-
-        $("#airspy-misc-image").attr("src", "graphs/airspy-" + hostName + "-misc-" + timeFrame + ".png?time=" + $timestamp);
-        $("#airspy-misc-link").attr("href", "graphs/airspy-" + hostName + "-misc-" + timeFrame + ".png?time=" + $timestamp);
-
-        $("#df_counts-image").attr("src", "graphs/df_counts-" + hostName + "-" + timeFrame + ".png?time=" + $timestamp);
-        $("#df_counts-link").attr("href", "graphs/df_counts-" + hostName + "-" + timeFrame + ".png?time=" + $timestamp);
+        if (document.getElementById('system-eth0_bandwidth-image'))
+            setGraph('system-eth0_bandwidth', graphUrl('system', 'eth0_bandwidth'));
+        if (document.getElementById('system-network_bandwidth-image'))
+            setGraph('system-network_bandwidth', graphUrl('system', 'network_bandwidth'));
+        if (document.getElementById('system-temperature_imperial-image'))
+            setGraph('system-temperature_imperial', graphUrl('system', 'temperature_imperial'));
+        if (document.getElementById('system-temperature-image'))
+            setGraph('system-temperature', graphUrl('system', 'temperature'));
     }
 
-    if ($("#panel_978").css("display") !== "none") {
-        $("#dump1090-aircraft_978-image").attr("src", "graphs/dump1090-" + hostName + "-aircraft_978-" + timeFrame + ".png?time=" + $timestamp);
-        $("#dump1090-aircraft_978-link").attr("href", "graphs/dump1090-" + hostName + "-aircraft_978-" + timeFrame + ".png?time=" + $timestamp);
+    // Update active button
+    document.querySelectorAll('.btn-group .btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById('btn-' + timeFrame)?.classList.add('active');
 
-        $("#dump1090-range_978-image").attr("src", "graphs/dump1090-" + hostName + "-range_978-" + timeFrame + ".png?time=" + $timestamp);
-        $("#dump1090-range_978-link").attr("href", "graphs/dump1090-" + hostName + "-range_978-" + timeFrame + ".png?time=" + $timestamp);
-
-        $("#dump1090-messages_978-image").attr("src", "graphs/dump1090-" + hostName + "-messages_978-" + timeFrame + ".png?time=" + $timestamp);
-        $("#dump1090-messages_978-link").attr("href", "graphs/dump1090-" + hostName + "-messages_978-" + timeFrame + ".png?time=" + $timestamp);
-
-        $("#dump1090-signal_978-image").attr("src", "graphs/dump1090-" + hostName + "-signal_978-" + timeFrame + ".png?time=" + $timestamp);
-        $("#dump1090-signal_978-link").attr("href", "graphs/dump1090-" + hostName + "-signal_978-" + timeFrame + ".png?time=" + $timestamp);
-    }
-
-    if ($("#panel_system").css("display") !== "none") {
-        $("#system-cpu-image").attr("src", "graphs/system-" + hostName + "-cpu-" + timeFrame + ".png?time=" + $timestamp);
-        $("#system-cpu-link").attr("href", "graphs/system-" + hostName + "-cpu-" + timeFrame + ".png?time=" + $timestamp);
-
-        element =  document.getElementById('system-eth0_bandwidth-image');
-        if (typeof(element) != 'undefined' && element != null) {
-            $("#system-eth0_bandwidth-image").attr("src", "graphs/system-" + hostName + "-eth0_bandwidth-" + timeFrame + ".png?time=" + $timestamp);
-            $("#system-eth0_bandwidth-link").attr("href", "graphs/system-" + hostName + "-eth0_bandwidth-" + timeFrame + ".png?time=" + $timestamp);
-        }
-        element =  document.getElementById('system-network_bandwidth-image');
-        if (typeof(element) != 'undefined' && element != null) {
-            $("#system-network_bandwidth-image").attr("src", "graphs/system-" + hostName + "-network_bandwidth-" + timeFrame + ".png?time=" + $timestamp);
-            $("#system-network_bandwidth-link").attr("href", "graphs/system-" + hostName + "-network_bandwidth-" + timeFrame + ".png?time=" + $timestamp);
-        }
-
-        $("#system-memory-image").attr("src", "graphs/system-" + hostName + "-memory-" + timeFrame + ".png?time=" + $timestamp);
-        $("#system-memory-link").attr("href", "graphs/system-" + hostName + "-memory-" + timeFrame + ".png?time=" + $timestamp);
-
-        element =  document.getElementById('system-temperature_imperial-image');
-        if (typeof(element) != 'undefined' && element != null) {
-            $("#system-temperature_imperial-image").attr("src", "graphs/system-" + hostName + "-temperature_imperial-" + timeFrame + ".png?time=" + $timestamp);
-            $("#system-temperature_imperial-link").attr("href", "graphs/system-" + hostName + "-temperature_imperial-" + timeFrame + ".png?time=" + $timestamp);
-        }
-        element =  document.getElementById('system-temperature-image');
-        if (typeof(element) != 'undefined' && element != null) {
-            $("#system-temperature-image").attr("src", "graphs/system-" + hostName + "-temperature-" + timeFrame + ".png?time=" + $timestamp);
-            $("#system-temperature-link").attr("href", "graphs/system-" + hostName + "-temperature-" + timeFrame + ".png?time=" + $timestamp);
-        }
-
-        $("#system-df_root-image").attr("src", "graphs/system-" + hostName + "-df_root-" + timeFrame + ".png?time=" + $timestamp);
-        $("#system-df_root-link").attr("href", "graphs/system-" + hostName + "-df_root-" + timeFrame + ".png?time=" + $timestamp);
-
-        $("#system-disk_io_iops-image").attr("src", "graphs/system-" + hostName + "-disk_io_iops-" + timeFrame + ".png?time=" + $timestamp);
-        $("#system-disk_io_iops-link").attr("href", "graphs/system-" + hostName + "-disk_io_iops-" + timeFrame + ".png?time=" + $timestamp);
-
-        $("#system-disk_io_octets-image").attr("src", "graphs/system-" + hostName + "-disk_io_octets-" + timeFrame + ".png?time=" + $timestamp);
-        $("#system-disk_io_octets-link").attr("href", "graphs/system-" + hostName + "-disk_io_octets-" + timeFrame + ".png?time=" + $timestamp);
-    }
-    // Set the button related to the selected time frame to active.
-    $("#btn-2h").removeClass('active');
-    $("#btn-8h").removeClass('active');
-    $("#btn-24h").removeClass('active');
-    $("#btn-48h").removeClass('active');
-    $("#btn-7d").removeClass('active');
-    $("#btn-14d").removeClass('active');
-    $("#btn-30d").removeClass('active');
-    $("#btn-90d").removeClass('active');
-    $("#btn-180d").removeClass('active');
-    $("#btn-365d").removeClass('active');
-    $("#btn-730d").removeClass('active');
-    $("#btn-1095d").removeClass('active');
-    $("#btn-1825d").removeClass('active');
-    $("#btn-3650d").removeClass('active');
-    $("#btn-" + timeFrame).addClass('active');
-
-
-    let pathName = window.location.pathname.replace(/\/+/, '/') || "/";
-    let url = window.location.origin + pathName + "?timeframe=" + timeFrame;
-    window.history.replaceState("object or string", "Title", url);
+    const pathName = window.location.pathname.replace(/\/+/, '/') || '/';
+    window.history.replaceState(null, '', window.location.origin + pathName + '?timeframe=' + timeFrame);
 }
 
 let verbose = true;
@@ -220,45 +151,59 @@ let timersActive = false;
 
 function handleVisibilityChange() {
     if (document.hidden && timersActive) {
-        verbose && console.log(new Date().toLocaleTimeString() + " visibility change: stopping timers");
+        verbose && console.log(new Date().toLocaleTimeString() + ' visibility change: stopping timers');
         clearTimeout(refreshTimer);
         timersActive = false;
     }
     if (!document.hidden && !timersActive) {
-        verbose && console.log(new Date().toLocaleTimeString() + " visibility change: starting timers");
+        verbose && console.log(new Date().toLocaleTimeString() + ' visibility change: starting timers');
         timersActive = true;
-        // Display the images for the supplied time frame. (starts refreshTimer)
         switchView();
     }
 }
 
-// Warn if the browser doesn't support addEventListener or the Page Visibility API
-if (typeof document.addEventListener === "undefined" || document.hidden === undefined) {
-    console.error("hidden tab handler requires a browser that supports the Page Visibility API.");
+if (typeof document.addEventListener === 'undefined' || document.hidden === undefined) {
+    console.error('hidden tab handler requires a browser that supports the Page Visibility API.');
 } else {
-    document.addEventListener("visibilitychange", handleVisibilityChange, false);
+    document.addEventListener('visibilitychange', handleVisibilityChange, false);
 }
 
-// start the timer stuff
 handleVisibilityChange();
 
-
-const cursorVT = document.querySelector('.vt')
-const cursorHL = document.querySelector('.hl')
+const cursorVT = document.querySelector('.vt');
+const cursorHL = document.querySelector('.hl');
 
 function crosshairListener(e) {
-    cursorVT.setAttribute('style', `left: ${e.clientX}px;`)
-    cursorHL.setAttribute('style', `top: ${e.clientY}px;`)
+    cursorVT.style.left = e.clientX + 'px';
+    cursorHL.style.top = e.clientY + 'px';
 }
 
-let crosshair = false;
+function isDarkTheme() {
+    return document.documentElement.dataset.theme === 'dark';
+}
+
+function toggleTheme() {
+    const next = isDarkTheme() ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    localStorage.setItem('theme', next);
+    updateThemeButton();
+}
+
+function updateThemeButton() {
+    const btn = document.getElementById('theme-toggle');
+    if (!btn) return;
+    btn.textContent = isDarkTheme() ? '☀ Light' : '☾ Dark';
+}
+
+updateThemeButton();
+
 function toggleCrosshair() {
-    crosshair = !crosshair;
-    if (crosshair) {
+    const crosshairEl = document.getElementById('crosshair');
+    const show = crosshairEl.style.display === 'none';
+    crosshairEl.style.display = show ? 'block' : 'none';
+    if (show) {
         document.addEventListener('mousemove', crosshairListener);
-        $("#crosshair").show();
     } else {
         document.removeEventListener('mousemove', crosshairListener);
-        $("#crosshair").hide();
     }
 }
