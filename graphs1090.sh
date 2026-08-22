@@ -630,7 +630,7 @@ temp_graph() {
             "GPRINT:o1fin_max:MAX:Max\: %4.1lf $unit\c" \
         )
     fi
-	if [[ $fahrenheit == 1 || $farenheit == 1 ]]; then
+        if [[ $fahrenheit == 1 || $farenheit == 1 ]]; then
         unit_long="Fahrenheit"
         unit="F"
         ll=$(( ll * 18 / 10 + 32 ))
@@ -638,33 +638,36 @@ temp_graph() {
         mult=1.8
         add=32
     fi
-	prefunc
-	rrdtool graph \
-		"$1.tmp" \
-		--end "$END_TIME" \
-		--start end-$4 \
-		$small \
-		--title "Maximum Temperature" \
-		--vertical-label "Degrees $unit_long" \
-		--right-axis 1:0 \
-		--lower-limit $ll \
-		--upper-limit $ul \
-		-A \
-		"DEF:traw_max=$(check $2/gauge-cpu_temp.rrd):value:MAX" \
-		"DEF:traw_avg=$(check $2/gauge-cpu_temp.rrd):value:AVERAGE" \
-		"DEF:traw_min=$(check $2/gauge-cpu_temp.rrd):value:MIN" \
-		"CDEF:tfin_max=traw_max,${TEMP_MULTIPLIER},/,$mult,*,$add,+" \
-		"CDEF:tfin_avg=traw_avg,${TEMP_MULTIPLIER},/,$mult,*,$add,+" \
-		"CDEF:tfin_min=traw_min,${TEMP_MULTIPLIER},/,$mult,*,$add,+" \
-        "AREA:tfin_max#$AYELLOW:CPU Temperature" \
-		"GPRINT:tfin_avg:LAST:Curr\: %4.1lf $unit" \
-		"GPRINT:tfin_min:MIN:Min\: %4.1lf $unit" \
-		"GPRINT:tfin_avg:AVERAGE:Avg\: %4.1lf $unit" \
-		"GPRINT:tfin_max:MAX:Max\: %4.1lf $unit\c" \
-		"${other_graph[@]}" \
-		--watermark "Drawn: $nowlit";
-	mv "$1.tmp" "$1"
-	}
+        prefunc
+        rrdtool graph \
+                "$1.tmp" \
+                --end "$END_TIME" \
+                --start end-$4 \
+                $small \
+                --title "Maximum Temperature" \
+                --vertical-label "Degrees $unit_long" \
+                --right-axis 1:0 \
+                --lower-limit $ll \
+                --upper-limit $ul \
+                -A \
+                "DEF:traw_max=$(check $2/gauge-cpu_temp.rrd):value:MAX" \
+                "DEF:traw_avg=$(check $2/gauge-cpu_temp.rrd):value:AVERAGE" \
+                "DEF:traw_min=$(check $2/gauge-cpu_temp.rrd):value:MIN" \
+                "DEF:sdr_avg=/var/lib/collectd/rrd/localhost/sdr_telemetry/temperature-sdr.rrd:value:AVERAGE" \
+                "CDEF:tfin_max=traw_max,${TEMP_MULTIPLIER},/,$mult,*,$add,+" \
+                "CDEF:tfin_avg=traw_avg,${TEMP_MULTIPLIER},/,$mult,*,$add,+" \
+                "CDEF:tfin_min=traw_min,${TEMP_MULTIPLIER},/,$mult,*,$add,+" \
+        "AREA:tfin_max#$AYELLOW:CPU" \
+                "GPRINT:tfin_avg:LAST:Curr\: %4.1lf $unit" \
+                "GPRINT:tfin_min:MIN:Min\: %4.1lf $unit" \
+                "GPRINT:tfin_avg:AVERAGE:Avg\: %4.1lf $unit" \
+                "GPRINT:tfin_max:MAX:Max\: %4.1lf $unit\c" \
+                "LINE2:sdr_avg#00FF00:RTL SDR" \
+                "GPRINT:sdr_avg:LAST:Curr\: %4.1lf $unit\c" \
+                "${other_graph[@]}" \
+                --watermark "Drawn: $nowlit";
+        mv "$1.tmp" "$1"
+        }
 
 wlan0_graph() {
 	prefunc
