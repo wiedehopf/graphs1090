@@ -653,7 +653,7 @@ temp_graph() {
                 "DEF:traw_max=$(check $2/gauge-cpu_temp.rrd):value:MAX" \
                 "DEF:traw_avg=$(check $2/gauge-cpu_temp.rrd):value:AVERAGE" \
                 "DEF:traw_min=$(check $2/gauge-cpu_temp.rrd):value:MIN" \
-                "DEF:sdr_avg=/var/lib/collectd/rrd/localhost/sdr_telemetry/temperature-sdr.rrd:value:AVERAGE" \
+                "DEF:sdr_avg=${DB}/localhost/sdr_telemetry/temperature-sdr.rrd:value:AVERAGE" \
                 "CDEF:tfin_max=traw_max,${TEMP_MULTIPLIER},/,$mult,*,$add,+" \
                 "CDEF:tfin_avg=traw_avg,${TEMP_MULTIPLIER},/,$mult,*,$add,+" \
                 "CDEF:tfin_min=traw_min,${TEMP_MULTIPLIER},/,$mult,*,$add,+" \
