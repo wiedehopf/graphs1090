@@ -76,6 +76,7 @@ function show_hide() {
     fi
 }
 show_hide dump1090_messages-messages_978.rrd dump978
+show_hide dump978_misc-gain_db.rrd dump978-gain
 show_hide airspy_rssi-max.rrd airspy
 show_hide dump1090_misc-gain_db.rrd dump1090-misc
 

@@ -151,6 +151,9 @@ function switchView(newTimeFrame) {
 
         $("#dump1090-signal_978-image").attr("src", "graphs/dump1090-" + hostName + "-signal_978-" + timeFrame + ".png?time=" + $timestamp);
         $("#dump1090-signal_978-link").attr("href", "graphs/dump1090-" + hostName + "-signal_978-" + timeFrame + ".png?time=" + $timestamp);
+
+        $("#dump1090-gain_978-image").attr("src", "graphs/dump1090-" + hostName + "-gain_978-" + timeFrame + ".png?time=" + $timestamp);
+        $("#dump1090-gain_978-link").attr("href", "graphs/dump1090-" + hostName + "-gain_978-" + timeFrame + ".png?time=" + $timestamp);
     }
 
     if ($("#panel_system").css("display") !== "none") {

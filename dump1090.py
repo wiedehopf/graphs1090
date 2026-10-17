@@ -198,7 +198,7 @@ def handle_signal_stuff(data, stats, aircraft_data):
         elif has_key(stats['last1min'],'local') and has_key(stats['last1min']['local'],'gain_db'):
             stuff = stats['last1min']['local']
             dispatch_misc(stats['last1min']['end'], data, stuff, 'gain_db', 'dump1090_misc')
-    except:
+    except Exception as error:
         collectd.warning(str(error))
         pass
 
@@ -315,6 +315,78 @@ def handle_signal_stuff(data, stats, aircraft_data):
                        values = [stats['total']['local']['strong_signals']],
                        interval = 60)
 
+
+def dispatch_978_gain(instance_name, host, url, fallback_time):
+    gain = None
+    sample_time = fallback_time
+    stats = None
+
+    # Right now, dump978 doesn't export stats like dump1090 but maybe in the
+    # future it will. Keep this code in if/when it happens (it doesn't hurt to run)
+    try:
+        with closing(urlopen(url + '/data/stats.json', None, 5.0)) as stats_file:
+            stats = json.load(stats_file)
+    except Exception:
+        pass
+
+    # this assumes the stats is structured like dump1090 and can handle the case
+    # the json turns out to be in some other layout
+    if isinstance(stats, dict):
+        last1min = stats.get('last1min', {})
+        if not isinstance(last1min, dict):
+            last1min = {}
+        last1min_time = last1min.get('end', fallback_time)
+        candidates = [
+            (last1min.get('adaptive'), last1min_time),
+            (last1min, last1min_time),
+            (stats, stats.get('now', fallback_time)),
+            (last1min.get('local'), last1min_time),
+        ]
+        for source, source_time in candidates:
+            if isinstance(source, dict) and 'gain_db' in source:
+                try:
+                    candidate_gain = float(source['gain_db'])
+                except (TypeError, ValueError):
+                    continue
+                if not math.isnan(candidate_gain) and not math.isinf(candidate_gain):
+                    gain = candidate_gain
+                    sample_time = source_time
+                    break
+
+    # sdr-enthusiasts dump978 container exports this when autogain is used
+    if gain is None:
+        for stats_url in [url + '/data/stats.prom', url + '/stats.prom']:
+            try:
+                with closing(urlopen(stats_url, None, 5.0)) as stats_file:
+                    prometheus_data = stats_file.read()
+                if sys.version_info > (3, 0):
+                    prometheus_data = prometheus_data.decode('utf-8')
+                for line in prometheus_data.splitlines():
+                    fields = line.strip().split()
+                    if len(fields) >= 2 and (
+                        fields[0] == 'autogain_current_value'
+                        or fields[0].startswith('autogain_current_value{')
+                    ):
+                        try:
+                            candidate_gain = float(fields[1])
+                        except ValueError:
+                            continue
+                        if not math.isnan(candidate_gain) and not math.isinf(candidate_gain):
+                            gain = candidate_gain
+                            break
+                if gain is not None:
+                    break
+            except Exception:
+                pass
+
+    if gain is not None:
+        V.dispatch(plugin_instance=instance_name,
+                   host=host,
+                   type='dump978_misc',
+                   type_instance='gain_db',
+                   time=sample_time,
+                   values = [gain],
+                   interval = 60)
 
 
 def read_1090(data):
@@ -568,6 +640,8 @@ def read_978(data):
 
         with closing(urlopen(url + '/data/aircraft.json', None, 5.0)) as aircraft_file:
             aircraft_data = json.load(aircraft_file)
+
+        dispatch_978_gain(instance_name, host, url, aircraft_data.get('now', time.time()))
 
     except URLError as error:
         #collectd.warning(str(error))
