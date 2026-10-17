@@ -1089,6 +1089,35 @@ dump1090_misc() {
 		--watermark "Drawn: $nowlit";
 	mv "$1.tmp" "$1"
 	}
+
+dump978_gain() {
+	prefunc
+	defines=( \
+		"DEF:gain=$(check $2/dump978_misc-gain_db.rrd):value:AVERAGE" \
+	)
+	if [[ -n "$ul_dump978_gain" ]]; then upper="--rigid --upper-limit $ul_dump978_gain"; else upper=""; fi
+	rrdtool graph \
+		"$1.tmp" \
+		--end "$END_TIME" \
+		--start end-$4 \
+		$small \
+		--title "UAT Gain" \
+		--right-axis 1:0 \
+		--vertical-label "misc" \
+		--left-axis-format "%.0lf" \
+		--right-axis-format "%.0lf" \
+		--units-exponent 0 \
+		-y 3:1 \
+		$upper \
+		--lower-limit 4 \
+		${defines[*]} \
+		"TEXTALIGN:center" \
+		"LINE2:gain#$DRED:Gain\\:" \
+		"GPRINT:gain:LAST:%2.1lf" \
+		--watermark "Drawn: $nowlit";
+	mv "$1.tmp" "$1"
+	}
+
 df_counts() {
 	prefunc
 	DF=(0 4 5 11 16 17 18 19 20 21)
@@ -1100,7 +1129,7 @@ df_counts() {
 		defines+=("DEF:df_min${df}=$(check $2/df_count_minute-$df.rrd):value:AVERAGE")
 		if [[ $df == 11 ]]; then
 			defines+=("CDEF:df${df}=df_min${df},120,/")
-			graphs+=("LINE1.5:df${df}#${colors[$i]}:DF${df} halfed")
+			graphs+=("LINE1.5:df${df}#${colors[$i]}:DF${df} halved")
 			graphs+=("GPRINT:df${df}:LAST:%4.1lf")
 		else
 			defines+=("CDEF:df${df}=df_min${df},60,/")
@@ -1307,6 +1336,11 @@ dump1090_graphs() {
 		978_aircraft ${DOCUMENTROOT}/dump1090-$2-aircraft_978-$4.png ${DB}/$1/dump1090-$2 "UAT" "$4" "$5"
 		978_messages ${DOCUMENTROOT}/dump1090-$2-messages_978-$4.png ${DB}/$1/dump1090-$2 "UAT" "$4" "$5"
 		signal_graph ${DOCUMENTROOT}/dump1090-$2-signal_978-$4.png ${DB}/$1/dump1090-$2 "UAT" "$4" "$5"
+		# UAT gain is usually unavailable, hide this for most setups
+		if [[ -f ${DB}/$1/dump1090-$2/dump978_misc-gain_db.rrd ]]; then
+			show_graph dump978-gain
+			dump978_gain ${DOCUMENTROOT}/dump1090-$2-gain_978-$4.png ${DB}/$1/dump1090-$2 "UAT" "$4" "$5"
+		fi
 	fi
 	if [[ -f ${DB}/$1/dump1090-$2/df_count_minute-17.rrd ]]; then
 		df_counts ${DOCUMENTROOT}/df_counts-$2-$4.png ${DB}/$1/dump1090-$2 "df_counts" "$4" "$5"

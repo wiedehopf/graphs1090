@@ -15,3 +15,4 @@ dump1090_mlat		value:GAUGE:0:U
 dump1090_tisb		value:GAUGE:0:U
 dump1090_gps		value:GAUGE:0:U
 dump1090_misc       value:GAUGE:U:U
+dump978_misc        value:GAUGE:U:U
