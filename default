@@ -56,9 +56,9 @@ ul_range=
 ul_maxima=
 ul_rate_per_aircraft=
 ul_adsb_cpu=
-ul_dump1090_misc=
+ul_misc=
 ul_range_uat=
-ul_dump978_gain=
+ul_uat_gain=
 # set custom lower limit for signal graph
 ll_signal=
 

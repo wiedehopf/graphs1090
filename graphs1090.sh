@@ -1066,7 +1066,7 @@ dump1090_misc() {
     defines=( \
         "DEF:gain=$(check $2/dump1090_misc-gain_db.rrd):value:AVERAGE" \
     )
-	if [[ -n "$ul_dump1090_misc" ]]; then upper="--rigid --upper-limit $ul_dump1090_misc"; else upper=""; fi
+	if [[ -n "$ul_misc" ]]; then upper="--rigid --upper-limit $ul_misc"; else upper=""; fi
     TITLE="Misc"
 	rrdtool graph \
 		"$1.tmp" \
@@ -1095,7 +1095,7 @@ dump978_gain() {
 	defines=( \
 		"DEF:gain=$(check $2/dump978_misc-gain_db.rrd):value:AVERAGE" \
 	)
-	if [[ -n "$ul_dump978_gain" ]]; then upper="--rigid --upper-limit $ul_dump978_gain"; else upper=""; fi
+	if [[ -n "$ul_uat_gain" ]]; then upper="--rigid --upper-limit $ul_uat_gain"; else upper=""; fi
 	rrdtool graph \
 		"$1.tmp" \
 		--end "$END_TIME" \
